@@ -4,5 +4,5 @@ import { Button } from "@mui/material";
 
 it("App Router: Works with Client Components", () => {
   render(<Button>테스트</Button>);
-  expect(screen.getByRole("button")).toHaveTextContent("테스트");
+  expect(screen.getByRole("button")).toHaveTextContent("테트");
 });
