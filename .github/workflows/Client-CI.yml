@@ -1,0 +1,43 @@
+name: Client Unit test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  
+jobs:
+  run_test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Node.js 20.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20.x
+
+    - name: install deps 
+      run: npm install
+      working-directory: client
+      
+    - name: run test
+      run: npm run test:ci
+      working-directory: client
+      
+    - name: Request change
+      uses: actions/github-script@0.2.0  
+      with:
+          github-token: ${{github.token}}  
+          script: |                        
+            const ref = "${{github.ref}}"
+            const pull_number = Number(ref.split("/")[2])
+            await github.pulls.createReview({
+              ...context.repo,
+              pull_number,
+              body:"[Unit test] 유닛테스트를 통과하지 못했습니다.",
+              event: "REQUEST_CHANGES"
+            })
+      if: failure() 
