@@ -39,7 +39,7 @@ const LoginPage = () => {
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
             <LockOutlinedIcon />
           </Avatar>
-          <Typography component="h1" variant="h5">
+          <Typography component="h1" variant="h1">
             Sign in
           </Typography>
           {/* form */}
@@ -47,11 +47,11 @@ const LoginPage = () => {
           <Grid container>
             <Grid item xs>
               <Link href={FORGOTPASSWORD}>
-                <Typography variant="body2">Forgot password?</Typography>
+                <Typography variant="label">Forgot password?</Typography>
               </Link>
             </Grid>
             <Grid item>
-              <Typography variant="body2">
+              <Typography variant="label">
                 계정이 없으신가요? <Link href={SIGNUP}>회원가입</Link>
               </Typography>
             </Grid>
