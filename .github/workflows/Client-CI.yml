@@ -1,10 +1,6 @@
 name: Client Unit test
 
 on:
-  push:
-    branches: ["main"]
-    paths:
-      - "client/**"
   pull_request:
     branches: ["main"]
     paths:
