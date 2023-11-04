@@ -10,7 +10,7 @@ on:
     branches: ["main"]
 
 jobs:
-  test:
+  Create_ChatGPT_CodeReview:
     runs-on: ubuntu-latest
     steps:
       - uses: anc95/ChatGPT-CodeReview@main
