@@ -1,5 +1,7 @@
 Dockerfile
 .dockerignore
+storybook.Dockerfile
+storybook-static
 node_modules
 npm-debug.log
 README.md

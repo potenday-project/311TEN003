@@ -2,7 +2,7 @@ import { Button, ButtonProps as MuiButtonProps } from "@mui/material";
 import { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
-  title: "Design system/Button",
+  title: "Design system/Input/Button",
   component: Button,
   tags: ["autodocs"],
   argTypes: {
