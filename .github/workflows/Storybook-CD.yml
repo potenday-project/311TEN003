@@ -1,0 +1,40 @@
+name: Storybook CD
+on:
+  push:
+    branches: ["main"]
+    paths: client/**
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Build Docker Image
+        run: docker build -f storybook.Dockerfile -t ${{ secrets.CLIENT_STORYBOOK_REPO }}/${{ secrets.CLIENT_STORYBOOK_NAME }}:latest .
+        working-directory: ./client
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.CLIENT_DOCKER_USERNAME }}
+          password: ${{ secrets.CLIENT_DOCKER_PASSWORD }}
+
+      - name: Push Image to Dockerhub
+        run: docker push ${{ secrets.CLIENT_STORYBOOK_REPO }}/${{ secrets.CLIENT_STORYBOOK_NAME }}:latest
+
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: ${{ secrets.STORYBOOK_CLOUD_HOST }}
+          username: root
+          password: ${{ secrets.STORYBOOK_CLOUD_PASSWORD }}
+          port: ${{ secrets.STORYBOOK_CLOUD_PORT }}
+          script: |
+            sudo docker pull ${{ secrets.CLIENT_STORYBOOK_REPO }}/${{ secrets.CLIENT_STORYBOOK_NAME }}:latest
+            sudo docker rm -f $(docker ps -qa)
+            sudo docker run --name storybook-static -d -p 80:80  ${{ secrets.CLIENT_STORYBOOK_REPO }}/${{ secrets.CLIENT_STORYBOOK_NAME }}:latest
+            docker image prune -f
