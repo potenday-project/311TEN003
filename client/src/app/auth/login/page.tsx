@@ -40,19 +40,28 @@ const LoginPage = () => {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h1">
-            Sign in
+            {nameOfApp}
           </Typography>
           {/* form */}
           <SigninForm />
           <Grid container>
             <Grid item xs>
               <Link href={FORGOTPASSWORD}>
-                <Typography variant="label">Forgot password?</Typography>
+                <Typography variant="label">비밀번호 재설정</Typography>
               </Link>
             </Grid>
             <Grid item>
               <Typography variant="label">
-                계정이 없으신가요? <Link href={SIGNUP}>회원가입</Link>
+                계정이 없으신가요?{" "}
+                <Link href={SIGNUP}>
+                  <Typography
+                    variant="label"
+                    color="primary"
+                    sx={{ fontWeight: "bold" }}
+                  >
+                    회원가입
+                  </Typography>
+                </Link>
               </Typography>
             </Grid>
           </Grid>
