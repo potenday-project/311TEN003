@@ -1,9 +1,10 @@
-import { Button, Paper } from "@mui/material";
+import PostCardList from "@/components/post/PostCardList";
+import { Container } from "@mui/material";
 
 export default function Home() {
   return (
-      <Paper>
-        <Button href={'/hi'}>버튼</Button>
-      </Paper>
+    <Container sx={{ px: { xs: 0, sm: 4 } }} maxWidth={"lg"}>
+      <PostCardList />
+    </Container>
   );
 }
