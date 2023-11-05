@@ -1,12 +1,6 @@
 "use client";
 import useLogin from "@/hooks/useLogin";
-import {
-  Box,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  TextField,
-} from "@mui/material";
+import { Box, Button, TextField } from "@mui/material";
 
 import { useState } from "react";
 
@@ -31,7 +25,7 @@ const SigninForm = () => {
         required
         fullWidth
         id="email"
-        label="Email Address"
+        label="이메일 / 아이디"
         name="email"
         autoComplete="email"
         autoFocus
@@ -43,14 +37,10 @@ const SigninForm = () => {
         required
         fullWidth
         name="password"
-        label="Password"
+        label="비밀번호"
         type="password"
         id="password"
         autoComplete="current-password"
-      />
-      <FormControlLabel
-        control={<Checkbox value="remember" color="primary" />}
-        label="Remember me"
       />
       <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
         Sign In
