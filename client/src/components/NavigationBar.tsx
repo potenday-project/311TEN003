@@ -11,12 +11,13 @@ import SearchIcon from "~/assets/icons/SearchIcon.svg";
 import PostIcon from "~/assets/icons/PostIcon.svg";
 import BeverageIcon from "~/assets/icons/BeverageIcon.svg";
 import MyIcon from "~/assets/icons/MyIcon.svg";
+import HOME, { MY_PROFILE, WIKI } from "@/const/clientPath";
 
 const NavbarData = [
   {
     iconComponent: <img src={HomeIcon.src} />,
     label: "홈",
-    href: "/",
+    href: HOME,
   },
   {
     iconComponent: <img src={SearchIcon.src} />,
@@ -29,10 +30,12 @@ const NavbarData = [
   {
     iconComponent: <img src={BeverageIcon.src} />,
     label: "술과사전",
+    href: WIKI,
   },
   {
     iconComponent: <img src={MyIcon.src} />,
     label: "내 정보",
+    href: MY_PROFILE,
   },
 ];
 
