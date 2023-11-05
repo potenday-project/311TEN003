@@ -52,21 +52,30 @@ const theme = createTheme({
   palette: {
     mode: "light",
     primary: {
-      main: "#82BCDB",
+      main: "#7B1FA2",
       contrastText: "#fff",
     },
     secondary: {
-      main: "#00dde6",
+      main: "#C2185B",
     },
     text: {
-      primary: "#3D4A59",
-      secondary: "#558C99",
-      disabled: "#6D7A89",
+      primary: "#1C1C1C",
+      secondary: "#8A8A8A",
+      disabled: "#B8B8B8",
     },
     divider: "#CDD4D4",
     background: {
-      default: "#E9F3F3",
+      default: "#F5F5F5",
       paper: "#fefefe",
+    },
+    info: {
+      main: "#00C853",
+    },
+    error: {
+      main: "#D50000",
+    },
+    warning: {
+      main: "#FFD600",
     },
   },
   components: {

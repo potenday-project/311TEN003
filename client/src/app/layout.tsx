@@ -3,7 +3,8 @@ import ThemeRegistry from "@/components/theme/ThemeRegistry";
 import { nameOfApp, oneLineMessage } from "@/const/brand";
 import OverrideCSS from "@/const/overrideCSS";
 import { GlobalStyles } from "@mui/material";
-import Pretendard from "@/assets/font/Pretendard";
+import Pretendard from "~/assets/font/Pretendard";
+import NavigationBar from "~/components/NavigationBar";
 
 export const metadata: Metadata = {
   title: `${nameOfApp} | ${oneLineMessage}`,
@@ -25,6 +26,7 @@ export default function RootLayout({
         <ThemeRegistry options={{ key: "mui" }}>
           <GlobalStyles styles={OverrideCSS} />
           {children}
+          <NavigationBar />
         </ThemeRegistry>
       </body>
     </html>
