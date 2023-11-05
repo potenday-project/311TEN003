@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import ThemeRegistry from "@/components/theme/ThemeRegistry";
 import { nameOfApp, oneLineMessage } from "@/const/brand";
 import OverrideCSS from "@/const/overrideCSS";
-import { GlobalStyles } from "@mui/material";
+import { Box, GlobalStyles } from "@mui/material";
 import Pretendard from "~/assets/font/Pretendard";
 import NavigationBar from "~/components/NavigationBar";
 
@@ -25,7 +25,14 @@ export default function RootLayout({
       <body>
         <ThemeRegistry options={{ key: "mui" }}>
           <GlobalStyles styles={OverrideCSS} />
-          {children}
+          <Box
+            sx={{
+              maxHeight: "calc(100vh - 56px)",
+              overflow: "auto",
+            }}
+          >
+            {children}
+          </Box>
           <NavigationBar />
         </ThemeRegistry>
       </body>
