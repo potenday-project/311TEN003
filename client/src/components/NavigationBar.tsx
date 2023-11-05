@@ -63,6 +63,7 @@ interface NavbarIconButtonInterface extends Omit<ButtonBaseProps, "children"> {
   iconComponent: React.ReactNode;
   href?: string;
 }
+
 export const NavbarIconButton = ({
   children,
   iconComponent,
