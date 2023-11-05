@@ -23,9 +23,9 @@ const config: StorybookConfig = {
   },
   staticDirs: [
     {
-      from: '../src/assets/font',
-      to: '/src/assets/font'
-    }
+      from: "../src/assets",
+      to: "/src/assets",
+    },
   ],
   webpackFinal: async (config, { configType }) => {
     config.resolve!.alias = {
