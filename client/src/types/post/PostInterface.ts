@@ -30,4 +30,8 @@ export interface PostInterface {
    * 이미지 Href 배열
    */
   image: [] | string[];
+  /**
+   * 사용자가 추가한 해시태그
+   */
+  tags: [] | string[];
 }
