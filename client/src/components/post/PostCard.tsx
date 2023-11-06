@@ -1,6 +1,7 @@
 "use client";
+import { POST_DETAIL } from "@/const/clientPath";
 import { PostInterface } from "@/types/post/PostInterface";
-import createPostDetailPath from "@/utils/createPostDetailPath";
+
 import { MoreVertOutlined } from "@mui/icons-material";
 import {
   Avatar,
@@ -25,7 +26,7 @@ const PostCard = ({
   id,
 }: PostInterface) => {
   return (
-    <Link href={createPostDetailPath(userId, id)}>
+    <Link href={`${POST_DETAIL(userId, id)}`}>
       <Card sx={{ display: "flex", gap: 2, p: 2 }}>
         <Avatar
           sx={{ bgcolor: "secondary.main" }}
