@@ -35,9 +35,14 @@ const theme = createTheme({
       lineHeight: "16px",
       letterSpacing: "0em",
     },
-    caption: {
+    caption1: {
       fontSize: "12px",
       lineHeight: "16px",
+    },
+    caption2: {
+      fontSize: "10px",
+      lineHeight: "12px",
+      letterSpacing: "0em",
     },
 
     fontWeightRegular: 400,
@@ -91,11 +96,15 @@ const theme = createTheme({
 declare module "@mui/material/styles" {
   interface TypographyVariants {
     label: React.CSSProperties;
+    caption1: React.CSSProperties;
+    caption2: React.CSSProperties;
   }
 
   // allow configuration using `createTheme`
   interface TypographyVariantsOptions {
     label?: React.CSSProperties;
+    caption1?: React.CSSProperties;
+    caption2?: React.CSSProperties;
   }
 }
 
@@ -103,10 +112,13 @@ declare module "@mui/material/styles" {
 declare module "@mui/material/Typography" {
   interface TypographyPropsVariantOverrides {
     label: true;
+    caption1: true;
+    caption2: true;
     h3: false;
     h4: false;
     h5: false;
     h6: false;
+    caption: false;
     body2: false;
   }
 }
