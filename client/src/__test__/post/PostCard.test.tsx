@@ -11,6 +11,7 @@ const mockData = {
   content:
     "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eos ullam aut minus aliquam quis officia, non dolore omnis, magnam totam tenetur ad harum? Mollitia omnis odit atque blanditiis exercitationem! Voluptatum.",
   image: ["https://source.unsplash.com/random?wallpapers"],
+  tags: [],
 };
 
 describe("버튼 컴포넌트 스펙", () => {
