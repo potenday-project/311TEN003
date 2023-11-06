@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/test")
-public class TestControoler {
+public class TestController {
   private final TestService testService;
 
   @GetMapping
   public String test() {
-    return "test";
+    return "test success";
   }
 }

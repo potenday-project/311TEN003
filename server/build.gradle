@@ -22,6 +22,8 @@ repositories {
 	mavenCentral()
 }
 
+//ext.profile = (!project.hasProperty('profile') || !profile) ? 'local' : profile
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
@@ -29,8 +31,15 @@ dependencies {
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.2'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	runtimeOnly 'com.h2database:h2'
+//	if (profile == "localh2") {
+//		runtimeOnly 'com.h2database:h2'
+//	}else {
+//		runtimeOnly 'com.mysql:mysql-connector-j'
+//	}
 	runtimeOnly 'com.mysql:mysql-connector-j'
+
+	runtimeOnly 'com.mysql:mysql-connector-j'
+
 	annotationProcessor 'org.projectlombok:lombok'
 
 	// spring boot 3.0 query dsl setting.
