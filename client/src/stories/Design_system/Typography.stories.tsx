@@ -14,7 +14,8 @@ const meta = {
         "body",
         "button",
         "label",
-        "caption",
+        "caption1",
+        "caption2",
       ],
       default: "body",
       control: { type: "select" },
@@ -81,9 +82,15 @@ export const Label: Story = {
     variant: "label",
   },
 };
-export const Caption: Story = {
+export const Caption1: Story = {
   args: {
     ...Heading1.args,
-    variant: "caption",
+    variant: "caption1",
+  },
+};
+export const Caption2: Story = {
+  args: {
+    ...Heading1.args,
+    variant: "caption2",
   },
 };
