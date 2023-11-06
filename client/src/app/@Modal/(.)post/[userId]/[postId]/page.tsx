@@ -1,3 +1,4 @@
+import ModalWrapper from "@/components/ModalWrapper";
 import PostDetail from "@/components/post/PostDetail";
 
 const mockData = {
@@ -12,22 +13,12 @@ const mockData = {
   tags: ["해시태그1", "해시태그2"],
 };
 
-const PostDetailPage = ({
-  params,
-}: {
-  params: { userId: string; postId: string };
-}) => {
-  // FIXME @로 시작되는 경우만 슬라이스 하도록 추후에 고치고, 함수화 해야함
-  const parsedUserId = params.userId.slice(1, params.userId.length);
-  const parsedPostId = params.postId;
+const page = () => {
   return (
-    <div>
-      userId:{parsedUserId}
-      postId:{parsedPostId}
-      <br />
-      <PostDetail {...{ ...mockData, id: params.userId }} />
-    </div>
+    <ModalWrapper>
+      <PostDetail {...mockData} />
+    </ModalWrapper>
   );
 };
 
-export default PostDetailPage;
+export default page;
