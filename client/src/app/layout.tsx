@@ -17,13 +17,16 @@ export const viewport: Viewport = {
 
 export default function RootLayout({
   children,
+  Modal,
 }: {
   children: React.ReactNode;
+  Modal: React.ReactNode;
 }) {
   return (
     <html lang="kr" className={Pretendard.className}>
       <body>
         <ThemeRegistry options={{ key: "mui" }}>
+          {Modal}
           <GlobalStyles styles={OverrideCSS} />
           <Box
             sx={{
