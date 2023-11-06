@@ -1,19 +1,15 @@
 "use client";
 import { PostInterface } from "@/types/post/PostInterface";
-import {
-  FavoriteOutlined,
-  MoreVertOutlined,
-  ShareOutlined,
-} from "@mui/icons-material";
+import { MoreVertOutlined } from "@mui/icons-material";
 import {
   Avatar,
+  Box,
   Card,
   CardActions,
   CardContent,
-  CardHeader,
   CardMedia,
-  IconButton,
   Typography,
+  ButtonBase,
 } from "@mui/material";
 
 const PostCard = ({
@@ -23,54 +19,98 @@ const PostCard = ({
   nickname,
   content,
   userImage,
+  tags,
 }: PostInterface) => {
   return (
-    <Card>
-      {/* Header */}
-      <CardHeader
-        data-testid="mui-header"
-        avatar={
-          <Avatar
-            sx={{ bgcolor: "secondary.main" }}
-            src={userImage}
-            data-testid="avatar"
+    <Card sx={{ display: "flex", gap: 2, p: 2 }}>
+      <Avatar
+        sx={{ bgcolor: "secondary.main" }}
+        sizes="40"
+        src={userImage}
+        data-testid="avatar"
+      >
+        {userImage || userId[0].toUpperCase()}
+      </Avatar>
+      <Box>
+        {/* Header */}
+        <Box
+          data-testid="mui-header"
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            px: 0,
+            width: "100%",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              gap: 1,
+              alighItems: "center",
+            }}
           >
-            {userImage || userId[0].toUpperCase()}
-          </Avatar>
-        }
-        action={
-          <IconButton aria-label="settings">
+            <Typography sx={{ fontWeight: "bold" }}>{nickname}</Typography>
+            <Typography>{`@${userId}`}</Typography>
+            <Typography>{createdAt}</Typography>
+          </Box>
+
+          <ButtonBase aria-label="settings" sx={{ p: 0 }}>
             <MoreVertOutlined />
-          </IconButton>
-        }
-        title={`@${userId}`}
-        subheader={nickname}
-      />
-      {/* image */}
-      {image.length !== 0 && (
-        <CardMedia
-          data-testid="postImg"
-          component="img"
-          height="360"
-          image={image[0]}
-          alt={`${userId}의 포스트`}
-        />
-      )}
-      {/* Contents */}
-      <CardContent>
-        <Typography variant="body1" color="text.secondary">
-          {content}
-        </Typography>
-      </CardContent>
-      {/* CTA */}
-      <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
-          <FavoriteOutlined data-testid="likeBtn" />
-        </IconButton>
-        <IconButton data-testid="shareBtn" aria-label="share">
-          <ShareOutlined />
-        </IconButton>
-      </CardActions>
+          </ButtonBase>
+        </Box>
+
+        {/* Contents */}
+        <CardContent sx={{ px: 0 }}>
+          <Typography variant="body1">{content}</Typography>
+          {/* Hash tags */}
+          {tags?.length > 0 && (
+            <Box
+              data-testid="tags"
+              sx={{
+                pt: 2,
+                display: "flex",
+                flexDirection: "row",
+                gap: "8px",
+              }}
+            >
+              {tags.map((tag, i) => (
+                <Typography
+                  component={"span"}
+                  variant={"label"}
+                  color="text.secondary"
+                >
+                  {`#${tag}`}
+                </Typography>
+              ))}
+            </Box>
+          )}
+        </CardContent>
+        {/* image */}
+        {image.length !== 0 && (
+          <CardMedia
+            data-testid="postImg"
+            component="img"
+            height="142"
+            image={image[0]}
+            alt={`${userId}의 포스트`}
+            sx={{ borderRadius: 2 }}
+          />
+        )}
+        {/* CTA */}
+        <CardActions sx={{ px: 0, justifyContent: "end", gap: 2 }}>
+          <ButtonBase data-testid="commentBtn" aria-label="share">
+            <Typography>댓글</Typography>
+          </ButtonBase>
+          <ButtonBase data-testid="likeBtn" aria-label="add to favorites">
+            <Typography>좋아요</Typography>
+          </ButtonBase>
+          <ButtonBase data-testid="shareBtn" aria-label="share">
+            <Typography>공유하기</Typography>
+          </ButtonBase>
+        </CardActions>
+      </Box>
     </Card>
   );
 };

@@ -1,5 +1,5 @@
 import PostCard from "@/components/post/PostCard";
-import { Container, Paper } from "@mui/material";
+import { Container } from "@mui/material";
 import { Meta, StoryObj } from "@storybook/react";
 
 const mockData = {
@@ -7,10 +7,11 @@ const mockData = {
   createdAt: "Mon Nov 06 2023 00:13:07",
   nickname: "testNick",
   userId: "userID",
-  userImage: "",
+  userImage: "https://source.unsplash.com/random?wallpapers",
   content:
     "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eos ullam aut minus aliquam quis officia, non dolore omnis, magnam totam tenetur ad harum? Mollitia omnis odit atque blanditiis exercitationem! Voluptatum.",
   image: ["https://source.unsplash.com/random?wallpapers"],
+  tags: ["해시태그1", "해시태그2"],
 };
 
 const meta = {
@@ -46,5 +47,11 @@ export const withoutUserImage: Story = {
   args: {
     ...mockData,
     userImage: undefined,
+  },
+};
+export const withoutTags: Story = {
+  args: {
+    ...mockData,
+    tags: [],
   },
 };
