@@ -21,12 +21,11 @@ const PostHashTagList = ({ tags, ...others }: TagListInterface) => {
           {...others}
         >
           {tags.map((tag) => (
-            <Link href={SEARCH_BY_KEYWORD(tag)}>
+            <Link href={SEARCH_BY_KEYWORD(tag)} key={tag}>
               <Typography
                 component={"span"}
                 variant={"label"}
                 color="text.secondary"
-                key={tag}
               >
                 {`#${tag}`}
               </Typography>
