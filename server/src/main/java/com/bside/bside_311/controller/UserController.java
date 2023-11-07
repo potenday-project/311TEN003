@@ -1,13 +1,17 @@
 package com.bside.bside_311.controller;
 
+import com.bside.bside_311.dto.ChangePasswordRequestDto;
 import com.bside.bside_311.dto.LoginResponseDto;
+import com.bside.bside_311.dto.MyInfoResponseDto;
 import com.bside.bside_311.dto.UserLoginRequestDto;
 import com.bside.bside_311.dto.UserSignupRequestDto;
+import com.bside.bside_311.dto.UserUpdateRequestDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,7 +43,7 @@ public class UserController {
   }
 
   @Operation(summary = "유저 로그인", description = "유저 로그인 API")
-  @PostMapping()
+  @PostMapping("/login")
   public LoginResponseDto login(@RequestBody @Valid UserLoginRequestDto userLoginRequestDto) {
     log.info(">>> UserController.login");
 //    return userService.login(userLoginRequestDto);
@@ -72,20 +76,21 @@ public class UserController {
 
   @Operation(summary = "유저 정보 변경")
   @PatchMapping()
-  public void updateUser(){
+  public void updateUser(@RequestBody @Valid UserUpdateRequestDto userUpdateRequestDto){
     log.info(">>> UserController.updateUser");
   }
 
   @Operation
   @PatchMapping("/pwd/change")
-  public void changePassword(){
+  public void changePassword(@RequestBody @Valid ChangePasswordRequestDto changePasswordRequestDto){
     log.info(">>> UserController.changePassword");
   }
 
   @Operation
   @GetMapping("/me")
-  public void getMyInfo(){
+  public MyInfoResponseDto getMyInfo(Authentication me){
     log.info(">>> UserController.getUserInfo");
+    return null;
   }
 
   @Operation
