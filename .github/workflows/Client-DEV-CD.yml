@@ -14,7 +14,7 @@ jobs:
           fetch-depth: 0
 
       - name: Build Docker Image
-        run: docker build -f storybook.Dockerfile -t ${{ secrets.CLIENT_STORYBOOK_REPO }}/${{ secrets.CLIENT_STORYBOOK_NAME }}:latest .
+        run: docker build -f Dockerfile -t ${{ secrets.CLIENT_STORYBOOK_REPO }}/${{ secrets.CLIENT_DEV_SERVICE_NAME }}:latest .
         working-directory: ./client
 
       - name: Login to Docker Hub
@@ -24,7 +24,7 @@ jobs:
           password: ${{ secrets.CLIENT_DOCKER_PASSWORD }}
 
       - name: Push Image to Dockerhub
-        run: docker push ${{ secrets.CLIENT_STORYBOOK_REPO }}/${{ secrets.CLIENT_STORYBOOK_NAME }}:latest
+        run: docker push ${{ secrets.CLIENT_STORYBOOK_REPO }}/${{ secrets.CLIENT_DEV_SERVICE_NAME }}:latest
 
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@v0.1.4
@@ -34,7 +34,7 @@ jobs:
           password: ${{ secrets.STORYBOOK_CLOUD_PASSWORD }}
           port: ${{ secrets.STORYBOOK_CLOUD_PORT }}
           script: |
-            sudo docker pull ${{ secrets.CLIENT_STORYBOOK_REPO }}/${{ secrets.CLIENT_STORYBOOK_NAME }}:latest
-            sudo docker rm -f storybook-static
-            sudo docker run --name storybook-static -d -p 80:80  ${{ secrets.CLIENT_STORYBOOK_REPO }}/${{ secrets.CLIENT_STORYBOOK_NAME }}:latest
+            sudo docker pull ${{ secrets.CLIENT_STORYBOOK_REPO }}/${{ secrets.CLIENT_DEV_SERVICE_NAME }}:latest
+            sudo docker rm -f ${{ secrets.CLIENT_DEV_SERVICE_NAME }}
+            sudo docker run --name ${{ secrets.CLIENT_DEV_SERVICE_NAME }} -d --env PORT=${{secrets.CLIENT_DEV_PORT}} -p ${{ secrets.CLIENT_DEV_PORT }}:${{ secrets.CLIENT_DEV_PORT }}  ${{ secrets.CLIENT_STORYBOOK_REPO }}/${{ secrets.CLIENT_DEV_SERVICE_NAME }}:latest
             docker image prune -f
