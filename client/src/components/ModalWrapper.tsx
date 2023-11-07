@@ -32,6 +32,7 @@ const ModalWrapper = ({ children, disableBox }: ModalInterface) => {
     >
       {
         <Box
+          onClick={(e) => e.stopPropagation()}
           sx={{
             bgcolor: disableBox ? undefined : "background.paper",
             p: disableBox ? 0 : 4,

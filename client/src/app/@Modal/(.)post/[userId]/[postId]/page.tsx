@@ -15,7 +15,7 @@ const mockData = {
 
 const page = () => {
   return (
-    <ModalWrapper>
+    <ModalWrapper disableBox>
       <PostDetail {...mockData} />
     </ModalWrapper>
   );

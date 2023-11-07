@@ -14,6 +14,14 @@ const mockData = {
   tags: [],
 };
 
+jest.mock("next/navigation", () => ({
+  useRouter() {
+    return {
+      prefetch: () => null,
+    };
+  },
+}));
+
 describe("버튼 컴포넌트 스펙", () => {
   beforeEach(() => render(<PostCard {...mockData} />));
   it("@유저아이디 형태의 헤더가 존재하는지 체크", () => {

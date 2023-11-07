@@ -5,6 +5,7 @@ import OverrideCSS from "@/const/overrideCSS";
 import { Box, GlobalStyles } from "@mui/material";
 import Pretendard from "~/assets/font/Pretendard";
 import NavigationBar from "~/components/NavigationBar";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: `${nameOfApp} | ${oneLineMessage}`,
