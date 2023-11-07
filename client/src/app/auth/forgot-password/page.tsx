@@ -2,7 +2,7 @@ type Props = {};
 import { nameOfApp } from "@/const/brand";
 import { Metadata } from "next";
 
-export const metaData: Metadata = {
+export const metadata: Metadata = {
   title: `${nameOfApp} | 비밀번호 재설정`,
 };
 
