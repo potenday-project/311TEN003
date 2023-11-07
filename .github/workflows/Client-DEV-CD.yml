@@ -1,4 +1,4 @@
-name: Storybook CD
+name: Client-dev-CD
 on:
   push:
     branches: ["main"]
