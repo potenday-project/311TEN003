@@ -7,7 +7,10 @@ import com.bside.bside_311.dto.MyInfoResponseDto;
 import com.bside.bside_311.dto.UserAttachPictureResponseDto;
 import com.bside.bside_311.dto.UserLoginRequestDto;
 import com.bside.bside_311.dto.UserSignupRequestDto;
+import com.bside.bside_311.dto.UserSignupResponseDto;
 import com.bside.bside_311.dto.UserUpdateRequestDto;
+import com.bside.bside_311.entity.User;
+import com.bside.bside_311.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -36,6 +39,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/user")
 @Tag(name = "유저", description = "유저 API")
 public class UserController {
+  private final UserService userService;
   @Operation(summary = "유저 조회", description = "유저 조회 API")
   @GetMapping()
   public void getUser() {
@@ -44,9 +48,10 @@ public class UserController {
 
   @Operation(summary = "유저 등록", description = "유저 등록 API")
   @PostMapping("/signup")
-  public void signup(@RequestBody @Valid UserSignupRequestDto userSignupRequestDto) {
-
+  @ResponseStatus(HttpStatus.CREATED)
+  public UserSignupResponseDto signup(@RequestBody @Valid UserSignupRequestDto userSignupRequestDto) {
     log.info(">>> UserController.signup");
+    return userService.signUp(User.of(userSignupRequestDto));
   }
 
   @Operation(summary = "유저 로그인", description = "유저 로그인 API")
