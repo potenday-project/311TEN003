@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Validated
@@ -104,7 +105,7 @@ public class PostController {
 
   @Operation(summary = "게시글 사진 첨부", description = "게시글 사진 첨부 API")
   @PostMapping("/{post_no}/attach")
-  public void postAttachPicture() {
+  public void postAttachPicture(@ModelAttribute @Valid MultipartFile image) {
     log.info(">>> PostController.postAttachPicture");
   }
 
