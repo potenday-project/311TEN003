@@ -1,8 +1,10 @@
 package com.bside.bside_311.controller;
 
 import com.bside.bside_311.dto.ChangePasswordRequestDto;
+import com.bside.bside_311.dto.GetUserInfoResponseDto;
 import com.bside.bside_311.dto.LoginResponseDto;
 import com.bside.bside_311.dto.MyInfoResponseDto;
+import com.bside.bside_311.dto.UserAttachPictureResponseDto;
 import com.bside.bside_311.dto.UserLoginRequestDto;
 import com.bside.bside_311.dto.UserSignupRequestDto;
 import com.bside.bside_311.dto.UserUpdateRequestDto;
@@ -12,6 +14,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -80,26 +85,27 @@ public class UserController {
     log.info(">>> UserController.updateUser");
   }
 
-  @Operation
+  @Operation(summary = "비밀번호 변경", description = "비밀번호 변경 API")
   @PatchMapping("/pwd/change")
   public void changePassword(@RequestBody @Valid ChangePasswordRequestDto changePasswordRequestDto){
     log.info(">>> UserController.changePassword");
   }
 
-  @Operation
+  @Operation(summary = "내 정보 조회", description = "내 정보 조회 API")
   @GetMapping("/me")
   public MyInfoResponseDto getMyInfo(Authentication me){
     log.info(">>> UserController.getUserInfo");
     return null;
   }
 
-  @Operation
+  @Operation(summary = "유저 정보 조회", description = "유저 정보 조회 API")
   @GetMapping("/{userId}/summary")
-  public void getUserInfo(){
+  public GetUserInfoResponseDto getUserInfo(){
     log.info(">>> UserController.getUserInfo");
+    return null;
   }
 
-  @Operation
+  @Operation(summary = "회원 탈퇴", description = "회원 탈퇴 API")
   @DeleteMapping()
   public void withdrawl(){
     log.info(">>> UserController.withdrawl");
@@ -118,15 +124,18 @@ public class UserController {
   }
 
   @Operation(summary = "프로필 사진 첨부", description = "프로필 사진 첨부 API")
-  @PostMapping("/{user_no}/attach")
-  public void userAttachPicture() {
+  @PostMapping(value = "/{user_no}/attach", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @ResponseStatus(HttpStatus.CREATED)
+  public UserAttachPictureResponseDto userAttachPicture() {
     log.info(">>> PostController.userAttachPicture");
+    return null;
   }
 
   @Operation(summary = "프로필 사진 삭제", description = "프로필 사진 삭제 API")
-  @PostMapping("/{user_no}/attach/{attach_no}")
-  public void userDeletePicture() {
+  @DeleteMapping("/{user_no}/attach/{attach_no}")
+  public UserAttachPictureResponseDto userDeletePicture() {
     log.info(">>> PostController.userDeletePicture");
+    return null;
   }
 
 
