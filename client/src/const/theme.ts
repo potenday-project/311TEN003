@@ -28,7 +28,6 @@ const theme = createTheme({
     },
     button: {
       fontSize: "16px",
-      lineHeight: "16px",
     },
     label: {
       fontSize: "14px",
