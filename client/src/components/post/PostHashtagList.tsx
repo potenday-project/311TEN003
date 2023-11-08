@@ -4,7 +4,7 @@ import { Box, BoxProps, Typography } from "@mui/material";
 import Link from "next/link";
 
 interface TagListInterface extends BoxProps {
-  tags: PostInterface["tags"];
+  tags: PostInterface['tagList'];
 }
 const PostHashTagList = ({ tags, ...others }: TagListInterface) => {
   return (
