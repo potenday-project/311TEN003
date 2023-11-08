@@ -22,7 +22,7 @@ import org.hibernate.annotations.DynamicInsert;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseEntity{
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
   private Long userNo;
   private String email;
   private String password;
