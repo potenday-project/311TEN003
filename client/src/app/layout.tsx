@@ -6,6 +6,7 @@ import { Box, GlobalStyles } from "@mui/material";
 import Pretendard from "~/assets/font/Pretendard";
 import NavigationBar from "~/components/NavigationBar";
 import "./globals.css";
+import MSWInit from "@/components/mock/MSWInit";
 
 export const metadata: Metadata = {
   title: `${nameOfApp} | ${oneLineMessage}`,
@@ -26,19 +27,21 @@ export default function RootLayout({
   return (
     <html lang="kr" className={Pretendard.className}>
       <body>
-        <ThemeRegistry options={{ key: "mui" }}>
-          {Modal}
-          <GlobalStyles styles={OverrideCSS} />
-          <Box
-            sx={{
-              maxHeight: "calc(100vh - 56px)",
-              overflow: "auto",
-            }}
-          >
-            {children}
-          </Box>
-          <NavigationBar />
-        </ThemeRegistry>
+        <MSWInit>
+          <ThemeRegistry options={{ key: "mui" }}>
+            {Modal}
+            <GlobalStyles styles={OverrideCSS} />
+            <Box
+              sx={{
+                maxHeight: "calc(100vh - 56px)",
+                overflow: "auto",
+              }}
+            >
+              {children}
+            </Box>
+            <NavigationBar />
+          </ThemeRegistry>
+        </MSWInit>
       </body>
     </html>
   );

@@ -41,3 +41,6 @@ storybook-static
 # PWA
 public/sw.js
 public/workbox-*.js
+
+# Env
+.env
