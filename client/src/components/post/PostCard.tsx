@@ -17,7 +17,6 @@ import {
   CardMedia,
   Typography,
   ButtonBase,
-  Button,
 } from "@mui/material";
 import PostHashTagList from "./PostHashtagList";
 import { useOpenPostDetailPage } from "@/hooks/useOpenPostDetailPage";
@@ -32,10 +31,9 @@ const PostCard = ({
   tagList,
   postNo,
   likeCount,
+  profileImgUrls
 }: PostInterface) => {
   const openPostDetailPage = useOpenPostDetailPage();
-  // FIXME 유저이미지가 오지 않음
-  const userImage = undefined;
   const hasImage = useMemo(() => postAttachUrl.length !== 0, [postAttachUrl]);
 
   return (
@@ -43,10 +41,10 @@ const PostCard = ({
       <Avatar
         sx={{ bgcolor: "secondary.main" }}
         sizes="40"
-        src={userImage}
+        src={profileImgUrls}
         data-testid="avatar"
       >
-        {userImage || id[0].toUpperCase()}
+        {profileImgUrls || id[0].toUpperCase()}
       </Avatar>
       <Box>
         {/* Header */}

@@ -25,7 +25,7 @@ export interface PostInterface {
   /**
    * 게시글 내 위치 정보
    */
-  positionInfo:string;
+  positionInfo: string;
   /**
    * 마신 술 정보
    */
@@ -38,6 +38,10 @@ export interface PostInterface {
    * 유저가 설정한 닉네임
    */
   nickname: string;
+  /**
+   * 유저가 설정한 프로필 이미지
+   */
+  profileImgUrls: string;
   /**
    * 이미지 Href 배열
    */
@@ -62,6 +66,10 @@ export interface PostInterface {
    * 내가 팔로우 하는지 여부
    */
   followedByMe: boolean;
+  /**
+   * 내가 좋아요를 눌렀는지 여부
+   */
+  likedByme :boolean;
 }
 
 type QuoteInfoType = {

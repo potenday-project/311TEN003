@@ -7,6 +7,7 @@ import Pretendard from "~/assets/font/Pretendard";
 import NavigationBar from "~/components/NavigationBar";
 import "./globals.css";
 import MSWInit from "@/components/mock/MSWInit";
+import CustomQueryClientProvider from "@/components/queryClient/CustomQueryClientProvider";
 
 export const metadata: Metadata = {
   title: `${nameOfApp} | ${oneLineMessage}`,
@@ -27,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="kr" className={Pretendard.className}>
       <body>
-        <MSWInit>
+        <CustomQueryClientProvider>
           <ThemeRegistry options={{ key: "mui" }}>
             {Modal}
             <GlobalStyles styles={OverrideCSS} />
@@ -37,11 +38,11 @@ export default function RootLayout({
                 overflow: "auto",
               }}
             >
-              {children}
+              <MSWInit>{children}</MSWInit>
             </Box>
             <NavigationBar />
           </ThemeRegistry>
-        </MSWInit>
+        </CustomQueryClientProvider>
       </body>
     </html>
   );
