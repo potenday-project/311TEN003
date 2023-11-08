@@ -5,6 +5,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class AlcoholResponseDto {
@@ -13,6 +15,10 @@ public class AlcoholResponseDto {
   private Integer alcoholNo;
   @Schema(example = "톰슨 앳 스캇", description = "주류 이름.")
   private String alcoholName;
+  @Schema(example = "톰슨 앳 스캇은 와인의 일종입니다.", description = "주류 설명")
+  private String description;
+  @Schema(example = "[\"톰슨\", \"스캇\"]", description = "주류 별칭 리스트")
+  private List<String> nicknames;
   @Schema(example = "17.5", description = "알코올 도수")
   private float degreeOfAlcohol;
   @Schema(example = "20", description = "숙성 기간(년단위)")

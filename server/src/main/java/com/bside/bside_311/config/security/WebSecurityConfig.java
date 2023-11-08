@@ -43,8 +43,9 @@ public class WebSecurityConfig {
     return http.build();
   }
 
-//  @Bean
-//  public PasswordEncoder passwordEncoder() {
-//    return Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
-//  }
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
+//    return
+  }
 }

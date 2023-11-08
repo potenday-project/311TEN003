@@ -52,4 +52,32 @@ class UserControllerTest extends ControllerTest{
     String responseBody = mvcResult.getResponse().getContentAsString();
     System.out.println(responseBody);
   }
+
+  @Test
+  @DisplayName("회원가입 실패.")
+  void signupFail_emptynickname() throws Exception {
+    String email = "newbie@example.com";
+    String password = "password";
+    String id = "newbie";
+    String name = null;
+
+    String json = String.format(
+        """
+        {
+            "email": "%s",
+            "password": "%s",
+            "id": "%s"
+        }
+        """,
+        email, password, id, name
+    );
+
+    MvcResult mvcResult = mockMvc.perform(post("/user/signup")
+                                     .contentType(MediaType.APPLICATION_JSON)
+                                     .content(json))
+                                 .andExpect(status().is4xxClientError())
+                                 .andReturn();
+    String responseBody = mvcResult.getResponse().getContentAsString();
+    System.out.println(responseBody);
+  }
 }

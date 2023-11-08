@@ -15,7 +15,7 @@ public class UserSignupRequestDto {
   @NotBlank
   @Email
   String email;
-  @Schema(example = "efxfawef", description = "패스워드8~20자 대소문자, 숫자, 특수기호)")
+  @Schema(example = "1a2s3d4f1!", description = "패스워드8~20자 대소문자, 숫자, 특수기호)")
   @NotBlank
   String password;
   @Schema(example = "apple", description = "아이디(중복검사 필요)")

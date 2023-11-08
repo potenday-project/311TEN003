@@ -3,13 +3,12 @@ package com.bside.bside_311.controller;
 import com.bside.bside_311.dto.AddAlcoholRequestDto;
 import com.bside.bside_311.dto.AlcoholResponseDto;
 import com.bside.bside_311.dto.EditAlcoholRequestDto;
+import com.bside.bside_311.dto.GetAlcoholResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -52,7 +51,12 @@ public class AlcoholController {
 
   @Operation(summary = "술 목록 조회", description = "술 조회 API")
   @GetMapping
-  public Page<AlcoholResponseDto> getAlcohol(@RequestParam(required = false) String searchAlcoholKeyword, Pageable pageable) {
+  public GetAlcoholResponseDto getAlcohol(
+      @RequestParam Integer page,
+      @RequestParam Integer size,
+      @RequestParam(required = false) String orderColumn,
+      @RequestParam(required = false) String orderType,
+      @RequestParam(required = false) String searchAlcoholKeyword) {
     log.info(">>> AlcoholController.getAlcohol");
     return null;
   }

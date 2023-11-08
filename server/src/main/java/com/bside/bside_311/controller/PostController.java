@@ -1,8 +1,14 @@
 package com.bside.bside_311.controller;
 
+import com.bside.bside_311.dto.AddCommentRequestDto;
+import com.bside.bside_311.dto.AddCommentResponseDto;
 import com.bside.bside_311.dto.AddPostRequestDto;
 import com.bside.bside_311.dto.AddPostResponseDto;
+import com.bside.bside_311.dto.CommentResponseDto;
+import com.bside.bside_311.dto.EditCommentRequestDto;
 import com.bside.bside_311.dto.EditPostRequestDto;
+import com.bside.bside_311.dto.GetPostCommentsResponseDto;
+import com.bside.bside_311.dto.GetPostResponseDto;
 import com.bside.bside_311.dto.PostDetailResponseDto;
 import com.bside.bside_311.dto.PostResponseDto;
 import com.bside.bside_311.dto.QuoteInfoDto;
@@ -11,9 +17,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -58,18 +63,51 @@ public class PostController {
 
   @Operation(summary = "게시글 목록 조회", description = "게시글 조회 API")
   @GetMapping
-  public Page<PostResponseDto> getPost(Pageable pageable, @RequestParam(required = false) String keyWord) {
+  public GetPostResponseDto getPost(@RequestParam Integer page,
+                                    @RequestParam Integer size,
+                                    @RequestParam(required = false) String orderColumn,
+                                    @RequestParam(required = false) String orderType,
+                                    @RequestParam(required = false) String keyWord) {
     log.info(">>> PostController.getPost");
     return null;
   }
 
   @Operation(summary = "게시글 상세 조회", description = "게시글 상세 조회 API")
-  @GetMapping("/{post_no}")
-  public PostResponseDto getPostDetail() {
+  @GetMapping("/{postNo}")
+  public PostResponseDto getPostDetail(@PathVariable Long postNo) {
     log.info(">>> PostController.getPostDetail");
     return null;
   }
 
+  @Operation(summary = "게시글 댓글 등록", description = "게시글 댓글 등록 API")
+  @PostMapping("/{postNo}/comments")
+  @ResponseStatus(HttpStatus.CREATED)
+  public AddCommentResponseDto addComment(@PathVariable Long postNo, @Valid @RequestBody
+  AddCommentRequestDto addCommentRequestDto) {
+    log.info(">>> PostController.addComment");
+    return null;
+  }
+
+  @Operation(summary = "게시글 댓글 조회", description = "게시글 댓글 조회 API")
+  @GetMapping("/{postNo}/comments")
+  @ResponseStatus(HttpStatus.CREATED)
+  public GetPostCommentsResponseDto getPostComments(@PathVariable Long postNo) {
+    log.info(">>> PostController.getPostComments");
+    return null;
+  }
+
+  @Operation(summary = "게시글 댓글 수정", description = "게시글 댓글 수정 API")
+  @PatchMapping("/{postNo}/comments/{commentNo}")
+  public void editComment(@PathVariable Long postNo, @PathVariable Long commentNo, @Valid @RequestBody
+  EditCommentRequestDto EditCommentRequestDto) {
+    log.info(">>> PostController.editComment");
+  }
+
+  @Operation(summary = "게시글 댓글 삭제", description = "게시글 댓글 삭제 API")
+  @DeleteMapping("/{postNo}/comments/{commentNo}")
+  public void deleteComment(@PathVariable Long postNo, @PathVariable Long commentNo) {
+    log.info(">>> PostController.deleteComment");
+  }
 
   @Operation(summary = "인용 등록 ", description = "인용 등록 API")
   @PostMapping("/{postNo}/quotes/{quotedPostNo}")
@@ -104,7 +142,7 @@ public class PostController {
   }
 
   @Operation(summary = "게시글 사진 첨부", description = "게시글 사진 첨부 API")
-  @PostMapping("/{post_no}/attach")
+  @PostMapping(value = "/{post_no}/attach", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public void postAttachPicture(@ModelAttribute @Valid MultipartFile image) {
     log.info(">>> PostController.postAttachPicture");
   }

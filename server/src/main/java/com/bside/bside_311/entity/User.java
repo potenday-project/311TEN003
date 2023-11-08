@@ -13,12 +13,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicInsert;
 
 @Entity
 @Getter
 @Setter
+@DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
+public class User extends BaseEntity{
   @Id
   @GeneratedValue
   private Long userNo;
@@ -33,6 +35,7 @@ public class User {
 
   @Builder
   public User(Long userNo, String email, String password, String id, String nickname, Role role) {
+    super();
     this.userNo = userNo;
     this.email = email;
     this.password = password;

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bside.bside_311.repository.UserMybatisRepository">
+    <select id="getUsers" resultType="com.bside.bside_311.dto.FindUserMvo">
+        select * /* UserMybatisRepository.getUsers */
+        from user u;
+    </select>
+</mapper>

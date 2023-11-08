@@ -1,6 +1,7 @@
 package com.bside.bside_311.controller;
 
 import com.bside.bside_311.dto.ChangePasswordRequestDto;
+import com.bside.bside_311.dto.FindUserMvo;
 import com.bside.bside_311.dto.GetUserInfoResponseDto;
 import com.bside.bside_311.dto.LoginResponseDto;
 import com.bside.bside_311.dto.MyInfoResponseDto;
@@ -10,6 +11,7 @@ import com.bside.bside_311.dto.UserSignupRequestDto;
 import com.bside.bside_311.dto.UserSignupResponseDto;
 import com.bside.bside_311.dto.UserUpdateRequestDto;
 import com.bside.bside_311.entity.User;
+import com.bside.bside_311.repository.UserMybatisRepository;
 import com.bside.bside_311.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,24 +34,27 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Slf4j
-@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
 @Tag(name = "유저", description = "유저 API")
 public class UserController {
   private final UserService userService;
+  private final UserMybatisRepository userMybatisRepository;
   @Operation(summary = "유저 조회", description = "유저 조회 API")
   @GetMapping()
   public void getUser() {
+    List<FindUserMvo> users = userMybatisRepository.getUsers();
     log.info(">>> UserController.getUser");
   }
 
   @Operation(summary = "유저 등록", description = "유저 등록 API")
   @PostMapping("/signup")
   @ResponseStatus(HttpStatus.CREATED)
-  public UserSignupResponseDto signup(@RequestBody @Valid UserSignupRequestDto userSignupRequestDto) {
+  public UserSignupResponseDto signup( @Valid @RequestBody UserSignupRequestDto userSignupRequestDto) {
     log.info(">>> UserController.signup");
     return userService.signUp(User.of(userSignupRequestDto));
   }
@@ -58,8 +63,8 @@ public class UserController {
   @PostMapping("/login")
   public LoginResponseDto login(@RequestBody @Valid UserLoginRequestDto userLoginRequestDto) {
     log.info(">>> UserController.login");
-//    return userService.login(userLoginRequestDto);
-    return null;
+
+    return userService.login(userLoginRequestDto);
   }
 
   @Operation(summary = "성인 인증 API(추후)")
