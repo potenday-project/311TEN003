@@ -68,6 +68,10 @@ const theme = createTheme({
       disabled: "#B8B8B8",
     },
     divider: "#CDD4D4",
+    gray: {
+      primary: "#F5F5F5",
+      secondary: "#E6E6E6",
+    },
     background: {
       default: "#F5F5F5",
       paper: "#fefefe",
@@ -92,9 +96,9 @@ const theme = createTheme({
     MuiButtonBase: {
       styleOverrides: { root: { gap: 4 } },
     },
-    MuiSvgIcon:{
-      styleOverrides:{root:{color:'#8A8A8A'}}
-    }
+    MuiSvgIcon: {
+      styleOverrides: { root: { color: "#8A8A8A" } },
+    },
   },
 });
 
@@ -110,6 +114,13 @@ declare module "@mui/material/styles" {
     label?: React.CSSProperties;
     caption1?: React.CSSProperties;
     caption2?: React.CSSProperties;
+  }
+  interface Palette {
+    gray: { primary: string; secondary: string };
+  }
+
+  interface PaletteOptions {
+    gray?: { primary: string; secondary: string };
   }
 }
 
