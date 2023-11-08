@@ -1,13 +1,10 @@
+import PostDetailPage from "@/app/post/[userId]/[postId]/page";
 import ModalWrapper from "@/components/ModalWrapper";
-import PostDetail from "@/components/post/PostDetail";
-import { Suspense } from "react";
 
-const page = () => {
+const page = (props: { params: { userId: string; postId: string } }) => {
   return (
     <ModalWrapper disableBox>
-      <Suspense fallback={<>로딩</>}>
-        <PostDetail />
-      </Suspense>
+      <PostDetailPage {...props} />
     </ModalWrapper>
   );
 };
