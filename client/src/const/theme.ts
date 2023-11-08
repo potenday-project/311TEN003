@@ -89,6 +89,12 @@ const theme = createTheme({
         variant: "contained",
       },
     },
+    MuiButtonBase: {
+      styleOverrides: { root: { gap: 4 } },
+    },
+    MuiSvgIcon:{
+      styleOverrides:{root:{color:'#8A8A8A'}}
+    }
   },
 });
 
