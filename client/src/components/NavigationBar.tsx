@@ -1,4 +1,4 @@
-// FIXME "use client";
+"use client";
 import { BottomNavigation, BottomNavigationAction, Paper } from "@mui/material";
 
 import HomeIcon from "~/assets/icons/HomeIcon.svg";
@@ -6,54 +6,70 @@ import SearchIcon from "~/assets/icons/SearchIcon.svg";
 import PostIcon from "~/assets/icons/PostIcon.svg";
 import BeverageIcon from "~/assets/icons/BeverageIcon.svg";
 import MyIcon from "~/assets/icons/MyIcon.svg";
-import HOME, { MY_PROFILE, WIKI } from "@/const/clientPath";
+import HOME, { MY_PROFILE, SEARCH, WIKI } from "@/const/clientPath";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const NavbarData = [
   {
-    iconComponent: <img src={HomeIcon.src} />,
+    iconComponent: <HomeIcon />,
     label: "홈",
     href: HOME,
   },
   {
-    iconComponent: <img src={SearchIcon.src} />,
+    iconComponent: <SearchIcon />,
     label: "검색",
+    href:SEARCH
   },
   {
-    iconComponent: <img src={PostIcon.src} />,
-    label: "올리기",
+    iconComponent: <PostIcon />,
   },
   {
-    iconComponent: <img src={BeverageIcon.src} />,
+    iconComponent: <BeverageIcon />,
     label: "술과사전",
     href: WIKI,
   },
   {
-    iconComponent: <img src={MyIcon.src} />,
+    iconComponent: <MyIcon />,
     label: "내 정보",
     href: MY_PROFILE,
   },
 ];
 
 const NavigationBar = () => {
-  // FIXME const path = usePathname();
+  const path = usePathname();
   return (
     <Paper
-      sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }}
-      elevation={3}
+      sx={{
+        position: "fixed",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        borderRadius: 0,
+      }}
+      elevation={0}
     >
       <BottomNavigation
-      // FIXME value={path}
+        value={path}
+        showLabels
+        sx={{
+          borderRadius: "12px 12px 0 0",
+          border: "1px solid",
+          borderBottom:'none',
+          borderColor: "gray.secondary",
+          boxSizing: "border-box",
+        }}
       >
-        {NavbarData.map((buttonData) => {
+        {NavbarData.map(({ label, href, iconComponent, ...others }) => {
           return (
             <BottomNavigationAction
-              icon={buttonData.iconComponent as any}
-              key={buttonData.label}
-              component={buttonData.href ? Link : "button"}
-              href={buttonData.href}
-              // FIXME value={buttonData.href}
-              // FIXME label={buttonData.label}
+              icon={iconComponent as any}
+              key={String(label)}
+              component={href ? Link : "button"}
+              href={href}
+              value={href}
+              label={label}
+              {...others}
             />
           );
         })}
