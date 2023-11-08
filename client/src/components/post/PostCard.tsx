@@ -2,7 +2,12 @@
 
 import { PostInterface } from "@/types/post/PostInterface";
 
-import { MoreVertOutlined } from "@mui/icons-material";
+import {
+  FavoriteBorder,
+  ModeCommentOutlined,
+  MoreVertOutlined,
+  ShareOutlined,
+} from "@mui/icons-material";
 import {
   Avatar,
   Box,
@@ -12,23 +17,26 @@ import {
   CardMedia,
   Typography,
   ButtonBase,
+  Button,
 } from "@mui/material";
 import PostHashTagList from "./PostHashtagList";
 import { useOpenPostDetailPage } from "@/hooks/useOpenPostDetailPage";
 import { useMemo } from "react";
 
 const PostCard = ({
-  image,
+  postAttachUrl,
   createdAt,
-  userId,
-  nickname,
-  content,
-  userImage,
-  tags,
   id,
+  nickname,
+  postContent,
+  tagList,
+  postNo,
+  likeCount,
 }: PostInterface) => {
   const openPostDetailPage = useOpenPostDetailPage();
-  const hasImage = useMemo(() => image.length !== 0, [image]);
+  // FIXME 유저이미지가 오지 않음
+  const userImage = undefined;
+  const hasImage = useMemo(() => postAttachUrl.length !== 0, [postAttachUrl]);
 
   return (
     <Card sx={{ display: "flex", gap: 2, p: 2 }}>
@@ -38,7 +46,7 @@ const PostCard = ({
         src={userImage}
         data-testid="avatar"
       >
-        {userImage || userId[0].toUpperCase()}
+        {userImage || id[0].toUpperCase()}
       </Avatar>
       <Box>
         {/* Header */}
@@ -62,7 +70,7 @@ const PostCard = ({
           >
             {/* 타이틀 */}
             <Typography sx={{ fontWeight: "bold" }}>{nickname}</Typography>
-            <Typography>{`@${userId}`}</Typography>
+            <Typography>{`@${id}`}</Typography>
             <Typography>{createdAt}</Typography>
           </Box>
 
@@ -76,13 +84,13 @@ const PostCard = ({
           <Typography
             variant="body1"
             className={hasImage ? "line-clamp-2" : "line-clamp-5"}
-            onClick={() => openPostDetailPage(userId, id)}
+            onClick={() => openPostDetailPage(id, String(postNo))}
           >
-            {content}
+            {postContent}
           </Typography>
 
           {/* Hash tags */}
-          <PostHashTagList tags={tags} />
+          <PostHashTagList tags={tagList} />
         </CardContent>
 
         {/* image */}
@@ -91,23 +99,26 @@ const PostCard = ({
             data-testid="postImg"
             component="img"
             height="142"
-            onClick={() => openPostDetailPage(userId, id)}
-            image={image[0]}
-            alt={`${userId}의 포스트`}
+            onClick={() => openPostDetailPage(id, id)}
+            image={postAttachUrl[0]}
+            alt={`${id}의 포스트`}
             sx={{ borderRadius: 2, bgcolor: "background.default" }}
           />
         )}
         {/* CTA */}
         <CardActions sx={{ px: 0, justifyContent: "end", gap: 2 }}>
           <ButtonBase data-testid="commentBtn" aria-label="share">
-            <Typography onClick={() => openPostDetailPage(userId, id)}>
-              댓글
+            <ModeCommentOutlined />
+            <Typography onClick={() => openPostDetailPage(id, String(postNo))}>
+              댓글수
             </Typography>
           </ButtonBase>
           <ButtonBase data-testid="likeBtn" aria-label="add to favorites">
-            <Typography>좋아요</Typography>
+            <FavoriteBorder />
+            <Typography>{likeCount}</Typography>
           </ButtonBase>
           <ButtonBase data-testid="shareBtn" aria-label="share">
+            <ShareOutlined />
             <Typography>공유하기</Typography>
           </ButtonBase>
         </CardActions>
