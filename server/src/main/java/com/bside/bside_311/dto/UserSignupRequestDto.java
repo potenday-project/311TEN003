@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -24,4 +25,12 @@ public class UserSignupRequestDto {
   @Schema(example = "bside", description = "닉네임(중복검사 불필요)")
   @NotBlank
   String nickname;
+
+  @Builder
+  public UserSignupRequestDto(String email, String password, String id, String nickname) {
+    this.email = email;
+    this.password = password;
+    this.id = id;
+    this.nickname = nickname;
+  }
 }

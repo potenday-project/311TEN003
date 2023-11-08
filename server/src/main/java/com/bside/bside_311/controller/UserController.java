@@ -13,6 +13,7 @@ import com.bside.bside_311.dto.UserUpdateRequestDto;
 import com.bside.bside_311.entity.User;
 import com.bside.bside_311.repository.UserMybatisRepository;
 import com.bside.bside_311.service.UserService;
+import com.bside.bside_311.util.AuthUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -21,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,7 +53,7 @@ public class UserController {
     log.info(">>> UserController.getUser");
   }
 
-  @Operation(summary = "유저 등록", description = "유저 등록 API")
+  @Operation(summary = "[o]유저 등록", description = "유저 등록 API")
   @PostMapping("/signup")
   @ResponseStatus(HttpStatus.CREATED)
   public UserSignupResponseDto signup( @Valid @RequestBody UserSignupRequestDto userSignupRequestDto) {
@@ -59,7 +61,7 @@ public class UserController {
     return userService.signUp(User.of(userSignupRequestDto));
   }
 
-  @Operation(summary = "유저 로그인", description = "유저 로그인 API")
+  @Operation(summary = "[o]유저 로그인", description = "유저 로그인 API")
   @PostMapping("/login")
   public LoginResponseDto login(@RequestBody @Valid UserLoginRequestDto userLoginRequestDto) {
     log.info(">>> UserController.login");
@@ -91,9 +93,12 @@ public class UserController {
     log.info(">>> UserController.passwordTempSend");
   }
 
-  @Operation(summary = "유저 정보 변경")
+  @Operation(summary = "[o]유저 정보 변경")
   @PatchMapping()
+  @PreAuthorize("hasAnyRole('ROLE_USER')")
   public void updateUser(@RequestBody @Valid UserUpdateRequestDto userUpdateRequestDto){
+    Long userNo = AuthUtil.getUserNoFromAuthentication();
+    userService.updateUser(userNo, userUpdateRequestDto);
     log.info(">>> UserController.updateUser");
   }
 
@@ -110,22 +115,24 @@ public class UserController {
     return null;
   }
 
-  @Operation(summary = "유저 정보 조회", description = "유저 정보 조회 API")
-  @GetMapping("/{userId}/summary")
-  public GetUserInfoResponseDto getUserInfo(){
+  @Operation(summary = "[~]유저 정보 조회", description = "유저 정보 조회 API")
+  @GetMapping("/{userNo}/summary")
+  public GetUserInfoResponseDto getUserInfo(@PathVariable("userNo") Long userNo){
     log.info(">>> UserController.getUserInfo");
-    return null;
+    return userService.getUserInfo(userNo);
   }
 
-  @Operation(summary = "회원 탈퇴", description = "회원 탈퇴 API")
+  @Operation(summary = "[o]회원 탈퇴", description = "회원 탈퇴 API")
   @DeleteMapping()
-  public void withdrawl(){
+  public void withdraw(){
+    Long myUserNo = AuthUtil.getUserNoFromAuthentication();
+    userService.withdraw(myUserNo);
     log.info(">>> UserController.withdrawl");
   }
 
   @Operation(summary = "유저 팔로우하기", description = "유저 팔로우하기 API")
-  @PostMapping("/follow/{user_no}")
-  void followUser(@PathVariable("user_no") Long userNo){
+  @PostMapping("/follow/{userNo}")
+  void followUser(@PathVariable("userNo") Long userNo){
     log.info(">>> UserController.followUser");
   }
 

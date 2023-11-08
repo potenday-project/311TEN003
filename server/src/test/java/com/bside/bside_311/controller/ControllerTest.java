@@ -1,7 +1,6 @@
 package com.bside.bside_311.controller;
 
 import com.bside.bside_311.Bside311Application;
-import com.bside.bside_311.config.security.AccessTokenService;
 import com.bside.bside_311.config.security.WebSecurityConfig;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ContextConfiguration;
@@ -19,8 +18,8 @@ public abstract class ControllerTest {
 //  protected AuthUserDao authUserDao;
   protected String userAccessToken;
   protected String adminAccessToken;
-  @SpyBean
-  private AccessTokenService accessTokenService;
+//  @SpyBean
+//  private AccessTokenService accessTokenService;
 //
 //  @BeforeEach
 //  void setUpAccessTokenAndUserDetailsDaoForAuthentication() {

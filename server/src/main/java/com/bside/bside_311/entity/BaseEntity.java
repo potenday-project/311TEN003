@@ -7,6 +7,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.annotation.CreatedBy;
@@ -29,6 +30,7 @@ public class BaseEntity extends BaseTimeEntity {
   @Column(name = "del_yn")
   @ColumnDefault("'N'")
   @Enumerated(EnumType.STRING)
+  @Setter
   private YesOrNo delYn;
 
 }

@@ -29,12 +29,14 @@ public class User extends BaseEntity{
   private String id;
   private String nickname;
 
+  private String introduction;
+
   @Column(name = "role")
   @Enumerated(EnumType.STRING)
   private Role role;
 
   @Builder
-  public User(Long userNo, String email, String password, String id, String nickname, Role role) {
+  public User(Long userNo, String email, String password, String id, String nickname, Role role, String introduction) {
     super();
     this.userNo = userNo;
     this.email = email;
@@ -42,7 +44,7 @@ public class User extends BaseEntity{
     this.id = id;
     this.nickname = nickname;
     this.role = role;
-
+    this.introduction = introduction;
   }
 
   public static User of(UserSignupRequestDto userSignupRequestDto){

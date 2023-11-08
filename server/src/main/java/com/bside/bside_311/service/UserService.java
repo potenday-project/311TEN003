@@ -1,8 +1,10 @@
 package com.bside.bside_311.service;
 
+import com.bside.bside_311.dto.GetUserInfoResponseDto;
 import com.bside.bside_311.dto.LoginResponseDto;
 import com.bside.bside_311.dto.UserLoginRequestDto;
 import com.bside.bside_311.dto.UserSignupResponseDto;
+import com.bside.bside_311.dto.UserUpdateRequestDto;
 import com.bside.bside_311.entity.User;
 import com.bside.bside_311.entity.YesOrNo;
 import com.bside.bside_311.repository.UserRepository;
@@ -46,7 +48,33 @@ public class UserService {
                                    .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
     if (!passwordEncoder.matches(userLoginRequestDto.getPassword(),foundUser.getPassword()))
         throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
-    Authentication authentication= new UsernamePasswordAuthenticationToken(userLoginRequestDto, null, AuthorityUtils.createAuthorityList(foundUser.getRole().toString()));
+    Authentication authentication= new UsernamePasswordAuthenticationToken(foundUser.getUserNo(), null, AuthorityUtils.createAuthorityList(foundUser.getRole().toString()));
     return LoginResponseDto.of(jwtUtil.createLocalToken(foundUser, NORMAL_TOKEN, normalValidity, authentication));
+  }
+
+  public void updateUser(Long userNo, UserUpdateRequestDto userUpdateRequestDto) {
+    User user = userRepository.findByUserNoAndDelYnIs(userNo, YesOrNo.N)
+                              .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+    if( userUpdateRequestDto != null) {
+      if (userUpdateRequestDto.getIntroduction() != null) {
+        user.setIntroduction(userUpdateRequestDto.getIntroduction());
+      }
+    }
+    userRepository.save(user);
+  }
+
+  public GetUserInfoResponseDto getUserInfo(Long userNo) {
+    User user = userRepository.findByUserNoAndDelYnIs(userNo, YesOrNo.N)
+                              .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+    //TODO 여기 다른값도 적절히 넣어서 구현 해야함.
+//    return GetUserInfoResponseDto.of(user, profileList, count, true);
+    return GetUserInfoResponseDto.of(user);
+  }
+
+  public void withdraw(Long myUserNo) {
+    User user = userRepository.findByUserNoAndDelYnIs(myUserNo, YesOrNo.N)
+                              .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+    user.setDelYn(YesOrNo.Y);
+    userRepository.save(user);
   }
 }
