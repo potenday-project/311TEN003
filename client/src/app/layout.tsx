@@ -8,6 +8,7 @@ import NavigationBar from "~/components/NavigationBar";
 import "./globals.css";
 import MSWInit from "@/components/mock/MSWInit";
 import CustomQueryClientProvider from "@/components/queryClient/CustomQueryClientProvider";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 export const metadata: Metadata = {
   title: `${nameOfApp} | ${oneLineMessage}`,
@@ -42,6 +43,7 @@ export default function RootLayout({
             </Box>
             <NavigationBar />
           </ThemeRegistry>
+          <ReactQueryDevtools initialIsOpen={false} />
         </CustomQueryClientProvider>
       </body>
     </html>
