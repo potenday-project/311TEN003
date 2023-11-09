@@ -36,5 +36,5 @@ jobs:
           script: |
             sudo docker pull ${{ secrets.CLIENT_STORYBOOK_REPO }}/${{ secrets.CLIENT_DEV_SERVICE_NAME }}:latest
             sudo docker rm -f ${{ secrets.CLIENT_DEV_SERVICE_NAME }}
-            sudo docker run --name ${{ secrets.CLIENT_DEV_SERVICE_NAME }} -d --env PORT=${{secrets.CLIENT_DEV_PORT}} -p ${{ secrets.CLIENT_DEV_PORT }}:${{ secrets.CLIENT_DEV_PORT }}  ${{ secrets.CLIENT_STORYBOOK_REPO }}/${{ secrets.CLIENT_DEV_SERVICE_NAME }}:latest
+            sudo docker run --name ${{ secrets.CLIENT_DEV_SERVICE_NAME }} -d -e PORT=${{secrets.CLIENT_DEV_PORT}} -p ${{ secrets.CLIENT_DEV_PORT }}:${{ secrets.CLIENT_DEV_PORT }}  ${{ secrets.CLIENT_STORYBOOK_REPO }}/${{ secrets.CLIENT_DEV_SERVICE_NAME }}:latest
             docker image prune -f
