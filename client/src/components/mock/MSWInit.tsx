@@ -1,6 +1,6 @@
 "use client";
 import { useState, type PropsWithChildren, useEffect } from "react";
-const isDev = process.env.NEXT_PUBLIC_API_MOCKING==='enable';
+const isDev = process.env.NEXT_PUBLIC_API_MOCKING === "enable";
 
 interface Props {}
 
@@ -12,6 +12,8 @@ export default function MSWInit({ children }: PropsWithChildren<Props>) {
       const initMock = await import("@/mocks/index");
       await initMock.initMSW();
       setReady(() => true);
+    } else {
+      setReady(() => true);
     }
   };
 
@@ -19,7 +21,7 @@ export default function MSWInit({ children }: PropsWithChildren<Props>) {
     if (ready) return;
     init();
   }, [ready]);
-  
+
   if (!ready) return null;
   return <>{children}</>;
 }
