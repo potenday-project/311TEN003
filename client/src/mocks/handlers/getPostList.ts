@@ -4,7 +4,7 @@ import { randomBoolean, randomNumber, randomSelect } from "../utils/random";
 /**
  * 포스트 리스트를 받아오는 핸들러
  */
-export default http.get(`${process.env.NEXT_PUBLIC_BASE_URL}/posts`, () => {
+export default http.get(`${process.env.NEXT_PUBLIC_DEV_BASE_URL}/posts`, () => {
     return HttpResponse.json({
       content: Array.from(new Array(5)).map((_data, i): PostInterface => {
         return {

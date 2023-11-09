@@ -12,7 +12,8 @@ const useGetPostDetailQuery = (postId: string) => {
 
 export const getPostListQueryFn = async (postId: string) => {
   const { data } = await axios.get<PostInterface>(
-    `/posts/${postId}`
+    //FIXME 수정해야함
+    `/posts/${postId}`,{'baseURL':process.env.NEXT_PUBLIC_DEV_BASE_URL}
   );
   return data;
 };

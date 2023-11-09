@@ -1,33 +1,46 @@
 "use client";
-import useLogin from "@/hooks/useLogin";
-import { Box, Button, TextField } from "@mui/material";
+import HOME from "@/const/clientPath";
+import useLoginMutation from "@/queries/auth/useLoginMutation";
+import errorHandler from "@/utils/errorHandler";
+import { Box, Button, TextField, Typography } from "@mui/material";
+import { useRouter } from "next/navigation";
 
 import { useState } from "react";
 
 const SigninForm = () => {
-  const [email, setEmail] = useState("");
+  const [id, setId] = useState("");
   const [password, setPassword] = useState("");
-  const handleSubmit = useLogin();
+
+  const router = useRouter();
+  const { mutate: loginHandler, isError } = useLoginMutation();
 
   return (
     <Box
       component="form"
       onSubmit={(event) => {
         event.preventDefault();
-        handleSubmit({ email, password });
+        if (!id || !password) {
+          return;
+        }
+        try {
+          loginHandler({ id, password });
+          router.push(HOME);
+        } catch {
+          errorHandler("로그인에 실패했습다다");
+        }
       }}
       sx={{ mt: 1 }}
     >
       <TextField
-        value={email}
-        onChange={({ target }) => setEmail(target.value)}
+        value={id}
+        onChange={({ target }) => setId(target.value)}
         margin="normal"
         required
         fullWidth
-        id="email"
-        label="이메일 / 아이디"
-        name="email"
-        autoComplete="email"
+        id="id"
+        label="아이디"
+        name="id"
+        autoComplete="id"
         autoFocus
       />
       <TextField
@@ -42,6 +55,11 @@ const SigninForm = () => {
         id="password"
         autoComplete="current-password"
       />
+      {isError && (
+        <Typography variant="caption1" color="error">
+          아이디 혹은 비밀번호를 확인해주세요
+        </Typography>
+      )}
       <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
         Sign In
       </Button>
