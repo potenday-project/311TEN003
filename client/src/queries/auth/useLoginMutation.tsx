@@ -21,6 +21,7 @@ const useLoginMutation = () => {
     onSuccess: async ({ token }) => {
       localStorage?.setItem("accessToken", token);
       queryClient.invalidateQueries({ queryKey: userInfoQueryKeys.all });
+      router.refresh();
       router.push(HOME);
     },
     onError: (error: AxiosError<{ detailMessage: string }>) =>
