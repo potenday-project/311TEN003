@@ -1,4 +1,4 @@
-"use client";
+
 import PostCardList from "@/components/post/PostCardList";
 // import { getPostListQueryFn } from "@/queries/post/useGetPostListQuery";
 import { Container } from "@mui/material";
