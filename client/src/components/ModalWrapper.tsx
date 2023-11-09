@@ -24,6 +24,7 @@ const ModalWrapper = ({ children, disableBox }: ModalInterface) => {
       open={true}
       onClick={() => back()}
       disablePortal
+      disableAutoFocus
       sx={{
         alignItems: "center",
         justifyContent: "center",
@@ -38,7 +39,7 @@ const ModalWrapper = ({ children, disableBox }: ModalInterface) => {
             p: disableBox ? 0 : 4,
             maxWidth: "90%",
             maxHeight: "90%",
-            overflowY: "scroll",
+            overflowY: "auto",
           }}
         >
           {children}

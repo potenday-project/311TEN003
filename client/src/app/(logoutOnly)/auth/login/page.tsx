@@ -36,39 +36,52 @@ const LoginPage = () => {
           }}
         >
           {/* heading */}
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h1">
-            {nameOfApp}
-          </Typography>
+          <Heading />
           {/* form */}
           <SigninForm />
-          <Grid container>
-            <Grid item xs>
-              <Link href={FORGOTPASSWORD}>
-                <Typography variant="label">비밀번호 재설정</Typography>
-              </Link>
-            </Grid>
-            <Grid item>
-              <Typography variant="label">
-                계정이 없으신가요?{" "}
-                <Link href={SIGNUP}>
-                  <Typography
-                    variant="label"
-                    color="primary"
-                    sx={{ fontWeight: "bold" }}
-                  >
-                    회원가입
-                  </Typography>
-                </Link>
-              </Typography>
-            </Grid>
-          </Grid>
+          {/* CTA 하단 비밀번호 재설정, 회원가입 */}
+          <CTA />
         </Box>
       </Grid>
     </Grid>
   );
 };
 
-export default LoginPage;
+const CTA = () => (
+  <Grid container>
+    <Grid item xs>
+      <Link href={FORGOTPASSWORD}>
+        <Typography variant="label">비밀번호 재설정</Typography>
+      </Link>
+    </Grid>
+    <Grid item>
+      <Typography variant="label">
+        계정이 없으신가요?{" "}
+        <Link href={SIGNUP}>
+          <Typography
+            variant="label"
+            color="primary"
+            sx={{ fontWeight: "bold" }}
+          >
+            회원가입
+          </Typography>
+        </Link>
+      </Typography>
+    </Grid>
+  </Grid>
+);
+
+const Heading = () => (
+  <>
+    <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+      <LockOutlinedIcon />
+    </Avatar>
+    <Typography component="h1" variant="h1">
+      {nameOfApp}
+    </Typography>
+  </>
+);
+
+
+
+export default Object.assign(LoginPage, { SigninForm, CTA, Heading });
