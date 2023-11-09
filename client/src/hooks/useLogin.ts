@@ -1,4 +1,4 @@
-import { LOGIN_API_PATH } from "@/const/serverPath";
+import { LOGIN_BFF } from "@/const/serverPath";
 import axios from "@/libs/axios";
 import { SigninRequirement } from "@/types/auth/signinRequirement";
 import { SigninResponseInterface } from "@/types/auth/signinResponse";
@@ -10,12 +10,16 @@ import { SigninResponseInterface } from "@/types/auth/signinResponse";
 export default function useLogin() {
   const loginHandler = async (props: SigninRequirement) => {
     const { id, password } = props;
-    const { data } = await axios.post<SigninResponseInterface>(LOGIN_API_PATH, {
-      id,
-      password,
-    });
+    const { data } = await axios.post<SigninResponseInterface>(
+      LOGIN_BFF,
+      {
+        id,
+        password,
+      },
+      { baseURL: process.env.NEXT_PUBLIC_CLIENT_BASE_URL }
+    );
     return data;
   };
 
-  return {loginHandler};
+  return { loginHandler };
 }

@@ -1,18 +1,13 @@
 "use client";
-import HOME from "@/const/clientPath";
 import useLoginMutation from "@/queries/auth/useLoginMutation";
-import errorHandler from "@/utils/errorHandler";
 import { Box, Button, TextField, Typography } from "@mui/material";
-import { useRouter } from "next/navigation";
 
 import { useState } from "react";
 
 const SigninForm = () => {
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
-
-  const router = useRouter();
-  const { mutate: loginHandler, isError } = useLoginMutation();
+  const { mutate: loginMutation, isError } = useLoginMutation();
 
   return (
     <Box
@@ -22,12 +17,7 @@ const SigninForm = () => {
         if (!id || !password) {
           return;
         }
-        try {
-          loginHandler({ id, password });
-          router.push(HOME);
-        } catch {
-          errorHandler("로그인에 실패했습다다");
-        }
+        loginMutation({ id, password });
       }}
       sx={{ mt: 1 }}
     >

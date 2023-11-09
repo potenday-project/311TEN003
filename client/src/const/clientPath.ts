@@ -43,6 +43,10 @@ export const POST_DETAIL = (userId: string, postId: string) => {
 
   return `/post/@${trimmedUserId}/${trimmedPostId}`;
 };
+/**
+ * 새로운 포스트를 작성하는 페이지
+ */
+export const NEW_POST = '/new-post'
 
 
 export default HOME;

@@ -6,7 +6,7 @@ import SearchIcon from "~/assets/icons/SearchIcon.svg";
 import PostIcon from "~/assets/icons/PostIcon.svg";
 import BeverageIcon from "~/assets/icons/BeverageIcon.svg";
 import MyIcon from "~/assets/icons/MyIcon.svg";
-import HOME, { MY_PROFILE, SEARCH, WIKI } from "@/const/clientPath";
+import HOME, { MY_PROFILE, NEW_POST, SEARCH, WIKI } from "@/const/clientPath";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -19,10 +19,11 @@ const NavbarData = [
   {
     iconComponent: <SearchIcon />,
     label: "검색",
-    href:SEARCH
+    href: SEARCH,
   },
   {
     iconComponent: <PostIcon />,
+    href: NEW_POST,
   },
   {
     iconComponent: <BeverageIcon />,
@@ -55,7 +56,7 @@ const NavigationBar = () => {
         sx={{
           borderRadius: "12px 12px 0 0",
           border: "1px solid",
-          borderBottom:'none',
+          borderBottom: "none",
           borderColor: "gray.secondary",
           boxSizing: "border-box",
         }}

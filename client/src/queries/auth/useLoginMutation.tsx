@@ -3,10 +3,15 @@ import useLogin from "@/hooks/useLogin";
 import { SigninRequirement } from "@/types/auth/signinRequirement";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { userInfoQueryKeys } from "./useUserInfoQuery";
+import { useRouter } from "next/navigation";
+import HOME from "@/const/clientPath";
+import errorHandler from "@/utils/errorHandler";
+import { AxiosError } from "axios";
 
 const useLoginMutation = () => {
   const { loginHandler } = useLogin();
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   return useMutation({
     mutationKey: LoginMuataionKey.all,
@@ -16,7 +21,10 @@ const useLoginMutation = () => {
     onSuccess: async ({ token }) => {
       localStorage?.setItem("accessToken", token);
       queryClient.invalidateQueries({ queryKey: userInfoQueryKeys.all });
+      router.push(HOME);
     },
+    onError: (error: AxiosError<{ detailMessage: string }>) =>
+      errorHandler(error.response?.data.detailMessage ?? "에러가 발생했니다"),
   });
 };
 
