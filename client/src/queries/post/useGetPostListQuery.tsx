@@ -11,7 +11,9 @@ const useGetPostListQuery = (initialData: { content: PostInterface[] }) => {
 };
 
 export const getPostListQueryFn = async () => {
-  const { data } = await axios.get<{ content: PostInterface[] }>("/posts");
+  const { data } = await axios.get<{ content: PostInterface[] }>("/posts", {
+    baseURL: process.env.NEXT_PUBLIC_DEV_BASE_URL,
+  });
   return data;
 };
 
