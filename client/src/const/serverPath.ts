@@ -2,6 +2,11 @@
  * 로그인 API Path
  */
 export const LOGIN_API_PATH = '/user/login' as const
+
+/**
+ * 회원가입 API Path
+ */
+export const SIGNUP_API_PATH = '/user/signup' as const
 /**
  * 내 정보를 받아오는 Path
  */

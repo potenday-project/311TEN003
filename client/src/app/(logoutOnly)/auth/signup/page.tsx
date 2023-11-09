@@ -13,8 +13,24 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { SIGNIN } from "@/const/clientPath";
 import Link from "next/link";
+import { ChangeEvent, useState } from "react";
+import { SignupRequirement } from "@/types/auth/signupRequirement";
+import useSignupMutation from "@/queries/auth/useSignupMutation";
 
 export default function SignUpPage() {
+  const [formData, setFormData] = useState<SignupRequirement>({
+    id: "",
+    email: "",
+    password: "",
+    nickname: "",
+  });
+  const changeHandler = ({
+    target,
+  }: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData((prev) => ({ ...prev, [target.name]: target.value }));
+  };
+  const { mutate: submitHandler } = useSignupMutation();
+
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -29,17 +45,27 @@ export default function SignUpPage() {
         <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
           <LockOutlinedIcon />
         </Avatar>
-        <Typography variant="h1">Sign up</Typography>
-        <Box component="form" noValidate sx={{ mt: 3 }}>
+        <Typography variant="h1">회원가입</Typography>
+        <Box
+          component="form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            submitHandler(formData);
+          }}
+          noValidate
+          sx={{ mt: 3 }}
+        >
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
                 required
+                autoFocus
                 fullWidth
                 id="email"
                 label="이메일"
                 name="email"
                 autoComplete="email"
+                onChange={(e) => changeHandler(e)}
               />
             </Grid>
             <Grid item xs={12}>
@@ -50,17 +76,18 @@ export default function SignUpPage() {
                 label="비밀번호"
                 type="password"
                 id="password"
+                onChange={(e) => changeHandler(e)}
                 autoComplete="new-password"
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
-                name="userId"
+                name="id"
                 required
                 fullWidth
-                id="userId"
+                id="id"
+                onChange={(e) => changeHandler(e)}
                 label="유저 아이디"
-                autoFocus
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -69,6 +96,7 @@ export default function SignUpPage() {
                 fullWidth
                 id="nickname"
                 label="닉네임"
+                onChange={(e) => changeHandler(e)}
                 name="nickname"
               />
             </Grid>
@@ -96,7 +124,7 @@ export default function SignUpPage() {
                     variant="label"
                     sx={{ color: "primary", fontWeight: "bold" }}
                   >
-                    Sign in
+                    로그인 하러가기
                   </Typography>
                 </Typography>
               </Link>
