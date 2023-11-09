@@ -1,8 +1,13 @@
 "use client";
 
+import { NEW_POST, SIGNIN } from "@/const/clientPath";
 import { usePathname } from "next/navigation";
 
 export default function Layout({ children }: any) {
   const pathname = usePathname();
-  return pathname.startsWith("/post/") ? children : null;
+  const allowedPath = ["/post/", NEW_POST, SIGNIN];
+
+  return allowedPath.some((path) => pathname.startsWith(path))
+    ? children
+    : null;
 }
