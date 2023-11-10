@@ -34,18 +34,18 @@ public class AlcoholResponseDto {
   private Float degree;
 
   @Schema(example = "20", description = "숙성 기간(년단위)")
-  private Integer period;
+  private Long period;
 
   @Schema(example = "2019", description = "제조 연도")
-  private Integer productionYear;
+  private Long productionYear;
 
   @Schema(example = "700", description = "용량(ml)")
-  private Integer volume;
+  private Long volume;
 
   @Builder
   public AlcoholResponseDto(Long alcoholNo, String alcoholName, List<String> nickNames,
-                            String manufacturer, String description, Float degree, Integer period,
-                            Integer productionYear, Integer volume) {
+                            String manufacturer, String description, Float degree, Long period,
+                            Long productionYear, Long volume) {
     this.alcoholNo = alcoholNo;
     this.alcoholName = alcoholName;
     this.nickNames = nickNames;

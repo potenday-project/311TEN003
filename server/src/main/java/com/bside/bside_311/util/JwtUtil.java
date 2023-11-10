@@ -75,7 +75,7 @@ public class JwtUtil {
     return AuthDto.builder()
                             .tokenType(String.valueOf(claims.get(TOKEN_TYPE, String.class)))
                             .userId(String.valueOf(claims.get(USER_ID, String.class)))
-                            .userNo(claims.get(USER_NO, Integer.class))
+                            .userNo(claims.get(USER_NO, Long.class))
                             .authorities(authorities)
                             .build();
   }

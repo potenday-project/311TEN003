@@ -28,11 +28,11 @@ public class MyInfoResponseDto {
   String introduction;
 
   @Schema(example = "24", description = "팔로워수")
-  Integer followerCount;
+  Long followerCount;
 
   @Builder
   public MyInfoResponseDto(String id, String nickname, List<AttachDto> profileImages,
-                           String introduction, Integer followerCount) {
+                           String introduction, Long followerCount) {
     this.id = id;
     this.nickname = nickname;
     this.profileImages = profileImages;

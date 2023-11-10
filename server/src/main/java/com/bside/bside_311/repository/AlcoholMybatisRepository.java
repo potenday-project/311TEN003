@@ -11,4 +11,6 @@ import java.util.List;
 @Repository
 public interface AlcoholMybatisRepository {
   List<GetAlcoholsMvo> getAlcohols(GetAlcoholsVo build);
+
+  Long getAlcoholsCount(GetAlcoholsVo build);
 }

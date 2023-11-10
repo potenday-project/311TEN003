@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @Getter
 public class AddCommentResponseDto {
   @Schema(example = "1", description = "댓글 번호")
-  private Integer commentNo;
+  private Long commentNo;
 }

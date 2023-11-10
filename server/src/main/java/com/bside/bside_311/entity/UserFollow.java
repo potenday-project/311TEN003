@@ -16,7 +16,7 @@ import org.hibernate.cache.spi.support.AbstractReadWriteAccess;
 @Table(name = "user_follow")
 @Getter
 @Setter
-public class UserFollow {
+public class UserFollow extends BaseEntity{
   @Id
   @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
   @Column(name = "user_follow_no")

@@ -33,21 +33,21 @@ public class AddAlcoholRequestDto {
 
   @Schema(example = "20", description = "숙성 기간(년단위)")
   @PositiveOrZero
-  private Integer period;
+  private Long period;
 
   @Schema(example = "2019", description = "제조 연도")
   @Digits(integer = 4, fraction = 0)
-  private Integer productionYear;
+  private Long productionYear;
 
   @Schema(example = "700", description = "용량(ml)")
   @Positive
-  private Integer volume;
+  private Long volume;
 
 
   @Builder
   public AddAlcoholRequestDto(String alcoholName, List<String> nickNames, String manufacturer,
-                              String description, Float degree, Integer period,
-                              Integer productionYear, Integer volume) {
+                              String description, Float degree, Long period,
+                              Long productionYear, Long volume) {
     this.alcoholName = alcoholName;
     this.nickNames = nickNames;
     this.manufacturer = manufacturer;

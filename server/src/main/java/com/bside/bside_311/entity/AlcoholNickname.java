@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,6 +48,8 @@ public class AlcoholNickname extends BaseEntity{
   }
 
   public static List<AlcoholNickname> of(List<String> names) {
+    if (names == null || names.isEmpty())
+      return Collections.EMPTY_LIST;
     return names.stream().map(name -> AlcoholNickname.of(name)).collect(Collectors.toList());
   }
 }

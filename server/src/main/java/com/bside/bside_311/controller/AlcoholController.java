@@ -8,6 +8,7 @@ import com.bside.bside_311.dto.GetAlcoholResponseDto;
 import com.bside.bside_311.entity.Alcohol;
 import com.bside.bside_311.service.AlcoholService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -59,11 +60,11 @@ public class AlcoholController {
   @Operation(summary = "[~]술 목록 조회", description = "술 조회 API")
   @GetMapping
   public GetAlcoholResponseDto getAlcohol(
-      @RequestParam Integer page,
-      @RequestParam Integer size,
-      @RequestParam(required = false) String orderColumn,
-      @RequestParam(required = false) String orderType,
-      @RequestParam(required = false) String searchAlcoholKeyword) {
+      @RequestParam(name = "page", defaultValue = "0") @Schema(description = "페이지번호(0부터), 기본값 0.", example = "0") Long page,
+      @RequestParam(name = "size", defaultValue = "10") @Schema(description = "사이즈, 기본값 10.", example = "10") Long size,
+      @RequestParam(required = false, name = "orderColumn") @Schema(description = "정렬 컬럼", example = "alcohol_no") String orderColumn,
+      @RequestParam(required = false, name = "orderType") @Schema(description = "정렬 타입",example = "DESC") String orderType,
+      @RequestParam(required = false, name = "searchAlcoholKeyword") @Schema(description = "알코올 키워드", example = "키워드") String searchAlcoholKeyword) {
     log.info(">>> AlcoholController.getAlcohol");
     return alcoholService.getAlcohol(page, size, orderColumn, orderType, searchAlcoholKeyword);
   }

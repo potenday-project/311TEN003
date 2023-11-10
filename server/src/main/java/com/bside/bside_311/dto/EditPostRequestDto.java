@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 public class EditPostRequestDto {
   @Schema(example = "1", description = "선택 주류 번호")
-  private Integer alcoholNo;
+  private Long alcoholNo;
   @Schema(example = "게시글 내용", description = "게시글 내용")
   private String postContent;
 

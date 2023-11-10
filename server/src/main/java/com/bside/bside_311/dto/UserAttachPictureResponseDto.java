@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @Getter
 public class UserAttachPictureResponseDto {
   @Schema(example = "1", description = "첨부 번호")
-  private Integer attachNo;
+  private Long attachNo;
 }

@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 public class AddPostRequestDto {
   @Schema(example = "1", description = "선택 주류 번호")
-  private Integer alcoholNo;
+  private Long alcoholNo;
   @Schema(example = "게시글 내용", description = "게시글 내용")
   private String postContent;
   @Schema(example = "위치 정보", description = "위치에 대한 정보")

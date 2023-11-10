@@ -3,7 +3,7 @@ spring:
     active: local
 
 mybatis:
-  type-aliases-package: com.bside.bside_311.entity;com.bside.bside_311.dto;
+  type-aliases-package: com.bside.bside_311.entity;com.bside.bside_311.dto;java.lang;
   mapper-locations: mybatis/mapper/**/*.xml
   configuration:
     map-underscore-to-camel-case: true

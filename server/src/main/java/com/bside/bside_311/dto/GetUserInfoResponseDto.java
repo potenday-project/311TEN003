@@ -16,7 +16,7 @@ import java.util.List;
 public class GetUserInfoResponseDto extends MyInfoResponseDto{
 
   public GetUserInfoResponseDto(String id, String nickname, List<AttachDto> profileImages,
-                                String introduction, Integer followerCount, Boolean isFollowing) {
+                                String introduction, Long followerCount, Boolean isFollowing) {
     super(id, nickname, profileImages, introduction, followerCount);
     this.isFollowing = isFollowing;
   }

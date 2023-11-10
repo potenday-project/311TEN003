@@ -22,10 +22,10 @@ public class BaseEntity extends BaseTimeEntity {
 
   @CreatedBy
   @Column(updatable = false)
-  private Integer createdBy;
+  private Long createdBy;
 
   @LastModifiedBy
-  private Integer lastModifiedBy;
+  private Long lastModifiedBy;
 
   @Column(name = "del_yn")
   @ColumnDefault("'N'")

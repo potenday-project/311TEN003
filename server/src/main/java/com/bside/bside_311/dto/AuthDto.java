@@ -13,12 +13,12 @@ import java.util.Collection;
 @Getter
 public class AuthDto {
   private String tokenType;
-  protected Integer userNo;
+  protected Long userNo;
   private String userId;
   private Collection<? extends GrantedAuthority> authorities = new ArrayList<>();
 
   @Builder
-  public AuthDto(String tokenType, Integer userNo, String userId,
+  public AuthDto(String tokenType, Long userNo, String userId,
                  Collection<? extends GrantedAuthority> authorities) {
     this.tokenType = tokenType;
     this.userNo = userNo;

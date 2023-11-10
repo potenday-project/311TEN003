@@ -10,12 +10,16 @@ import com.bside.bside_311.entity.Alcohol;
 import com.bside.bside_311.entity.AlcoholNickname;
 import com.bside.bside_311.entity.YesOrNo;
 import com.bside.bside_311.repository.AlcoholMybatisRepository;
+import com.bside.bside_311.repository.AlcoholNicknameRepository;
 import com.bside.bside_311.repository.AlcoholRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -23,6 +27,7 @@ import java.util.List;
 public class AlcoholService {
   private final AlcoholRepository alcoholRepository;
   private final AlcoholMybatisRepository alcoholMybatisRepository;
+  private final AlcoholNicknameRepository alcoholNicknameRepository;
   public AddAlcoholResponseDto addAlcohol(Alcohol alcohol) {
     // 이름으로 중복 검색.
     alcoholRepository.findByNameAndDelYnIs(alcohol.getName(), YesOrNo.N)
@@ -77,18 +82,33 @@ public class AlcoholService {
     return AlcoholResponseDto.of(alcohol);
   }
 
-  public GetAlcoholResponseDto getAlcohol(Integer page, Integer size, String orderColumn, String orderType, String searchAlcoholKeyword) {
-    List<GetAlcoholsMvo> alcohols = alcoholMybatisRepository.getAlcohols(GetAlcoholsVo.builder()
-                                                                                      .page(page)
-                                                                                      .size(size)
-                                                                                      .orderColumn(
-                                                                                          orderColumn)
-                                                                                      .orderType(
-                                                                                          orderType)
-                                                                                      .searchAlcoholKeyword(
-                                                                                          searchAlcoholKeyword)
-                                                                                      .build());
-//    alcohols.stream().map(GetAlcoholsMvo::get)
-    return null;
+  public GetAlcoholResponseDto getAlcohol(Long page, Long size, String orderColumn, String orderType, String searchAlcoholKeyword) {
+    GetAlcoholsVo getAlcoholsVo = GetAlcoholsVo.builder()
+                                       .page(page)
+                                       .offset(page * size)
+                                       .size(size)
+                                       .orderColumn(
+                                           orderColumn)
+                                       .orderType(
+                                           orderType)
+                                       .searchAlcoholKeyword(
+                                           searchAlcoholKeyword)
+                                       .build();
+    List<GetAlcoholsMvo> getAlcoholsMvos = alcoholMybatisRepository.getAlcohols(getAlcoholsVo);
+    List<Alcohol> alcohols = getAlcoholsMvos.stream().map(Alcohol::of).collect(Collectors.toList());
+
+    Long alcoholsCount = alcoholMybatisRepository.getAlcoholsCount(getAlcoholsVo);
+    List<Long> alcoholNoList =
+        alcohols.stream().map(Alcohol::getId).collect(Collectors.toList());
+    List<AlcoholNickname> alcoholNicknames =
+        alcoholNicknameRepository.findByAlcoholInAndDelYnIs(alcohols, YesOrNo.N);
+    Map<Long, List<AlcoholNickname>> alcoholNicknameMap =
+        alcoholNicknames.stream().collect(Collectors.groupingBy(alcoholNickname -> alcoholNickname.getAlcohol().getId()));
+    for (Alcohol alcohol : alcohols) {
+      List<AlcoholNickname> alcoholNicknamesByAlcoholNo =
+          alcoholNicknameMap.getOrDefault(alcohol.getId(), new ArrayList<>());
+      alcohol.setAlcoholNicknames(alcoholNicknamesByAlcoholNo);
+    }
+    return GetAlcoholResponseDto.of(alcohols, alcoholsCount);
   }
 }

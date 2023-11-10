@@ -63,8 +63,8 @@ public class PostController {
 
   @Operation(summary = "게시글 목록 조회", description = "게시글 조회 API")
   @GetMapping
-  public GetPostResponseDto getPost(@RequestParam Integer page,
-                                    @RequestParam Integer size,
+  public GetPostResponseDto getPost(@RequestParam Long page,
+                                    @RequestParam Long size,
                                     @RequestParam(required = false) String orderColumn,
                                     @RequestParam(required = false) String orderType,
                                     @RequestParam(required = false) String keyWord) {

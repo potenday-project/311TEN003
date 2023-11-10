@@ -36,9 +36,9 @@ public class Initializer {
                                          .manufacturer(String.format("testNmanufacturer%d", i))
                                          .description(String.format("testDescription%d", i))
                                          .degree((float) (i + 0.5))
-                                        .period(20 + i)
-                                        .productionYear(1990 + i)
-                                        .volume(700 + i).build());
+                                        .period(20L + i)
+                                        .productionYear(1990L + i)
+                                        .volume(700L + i).build());
     }
 
   }

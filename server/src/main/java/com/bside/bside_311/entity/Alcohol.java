@@ -1,6 +1,7 @@
 package com.bside.bside_311.entity;
 
 import com.bside.bside_311.dto.AddAlcoholRequestDto;
+import com.bside.bside_311.dto.GetAlcoholsMvo;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -37,9 +38,9 @@ public class Alcohol extends BaseEntity{
   private String manufacturer;
   private String description;
   private float degree;
-  private Integer period;
-  private Integer productionYear;
-  private Integer volume;
+  private Long period;
+  private Long productionYear;
+  private Long volume;
 
   public void setAlcoholNicknames(List<AlcoholNickname> alcoholNicknames) {
 
@@ -51,8 +52,8 @@ public class Alcohol extends BaseEntity{
 
   @Builder
   public Alcohol(Long id, String name, List<AlcoholNickname> alcoholNicknames, String manufacturer,
-                 String description, float degree, Integer period, Integer productionYear,
-                 Integer volume) {
+                 String description, float degree, Long period, Long productionYear,
+                 Long volume) {
     this.id = id;
     this.name = name;
     this.alcoholNicknames = alcoholNicknames;
@@ -76,6 +77,22 @@ public class Alcohol extends BaseEntity{
                            .volume(addAlcoholRequestDto.getVolume())
                            .build();
     AlcoholNickname.of(addAlcoholRequestDto.getNickNames()).forEach(alcohol::addAlcoholNickname);
+    return alcohol;
+  }
+
+  public static Alcohol of(GetAlcoholsMvo getAlcoholsMvo) {
+    Alcohol alcohol = Alcohol.builder()
+                             .id(getAlcoholsMvo.getAlcoholNo())
+                             .name(getAlcoholsMvo.getName())
+                             .alcoholNicknames(new ArrayList<>())
+                             .description(getAlcoholsMvo.getDescription())
+                             .manufacturer(getAlcoholsMvo.getManufacturer())
+                             .degree(getAlcoholsMvo.getDegree())
+                             .period(getAlcoholsMvo.getPeriod())
+                             .productionYear(getAlcoholsMvo.getProductionYear())
+                             .volume(getAlcoholsMvo.getVolume())
+                             .build();
+    AlcoholNickname.of(getAlcoholsMvo.getNicknames()).forEach(alcohol::addAlcoholNickname);
     return alcohol;
   }
 

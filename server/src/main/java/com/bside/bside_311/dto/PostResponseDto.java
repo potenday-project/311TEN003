@@ -20,13 +20,13 @@ public class PostResponseDto {
   private boolean isLikedByMe;
   private LocalDateTime updateDt;
   private boolean edited;
-  private Integer postNo;
+  private Long postNo;
   private String postContent;
   private String positionInfo;
   private String alcoholName;
   private List<String> postAttachUrls;
   private List<String> tagList;
   private List<QuoteInfoDto> quoteInfo;
-  private Integer likeCount;
-  private Integer quoteCount;
+  private Long likeCount;
+  private Long quoteCount;
 }
