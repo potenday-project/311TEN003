@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long>{
-  List<User> findByEmailOrIdAndDelYnIs(String email, String id, YesOrNo delYn);
-  Optional<User> findByIdAndDelYnIs(String id, YesOrNo delYn);
+  List<User> findByEmailOrUserIdAndDelYnIs(String email, String userId, YesOrNo delYn);
+  Optional<User> findByUserIdAndDelYnIs(String id, YesOrNo delYn);
 
-  Optional<User> findByUserNoAndDelYnIs(Long userNo, YesOrNo delYn);
+  Optional<User> findByIdAndDelYnIs(Long userNo, YesOrNo delYn);
 }

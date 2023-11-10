@@ -31,7 +31,7 @@ public class GetUserInfoResponseDto extends MyInfoResponseDto{
 
   public static GetUserInfoResponseDto of(User user) {
     MyInfoResponseDto myInfoResponseDto = MyInfoResponseDto.builder()
-                                               .id(user.getId())
+                                               .id(user.getUserId())
                                                .nickname(user.getNickname())
                                                .profileImages(new ArrayList<>())
                                                .introduction(user.getIntroduction())

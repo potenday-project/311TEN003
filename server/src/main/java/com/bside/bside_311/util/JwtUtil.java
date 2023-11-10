@@ -46,7 +46,7 @@ public class JwtUtil {
     Claims claims = Jwts.claims();
     claims.put(TOKEN_TYPE, tokenType);
 
-    claims.put(USER_NO, user.getUserNo());
+    claims.put(USER_NO, user.getId());
     claims.put(USER_ID, user.getId());
     claims.put(AUTHORITIES_KEY, authorities);
 
@@ -54,7 +54,7 @@ public class JwtUtil {
     Date expiration = new Date(now.getTime() + validity);
 
     return Jwts.builder()
-               .setSubject(String.format("%d_%s", user.getUserNo(), user.getId()))
+               .setSubject(String.format("%d_%s", user.getId(), user.getId()))
                .setIssuedAt(now)
                .setClaims(claims)
                .setExpiration(expiration)

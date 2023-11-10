@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @Getter
 public class AddPostResponseDto {
   @Schema(example = "1", description = "게시글 번호")
-  private Integer postNo;
+  private Long postNo;
 }

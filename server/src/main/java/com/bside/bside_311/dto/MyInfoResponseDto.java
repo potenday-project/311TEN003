@@ -1,5 +1,6 @@
 package com.bside.bside_311.dto;
 
+import com.bside.bside_311.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -7,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -44,5 +46,16 @@ public class MyInfoResponseDto {
     this.profileImages = myInfoResponseDto.getProfileImages();
     this.introduction = myInfoResponseDto.getIntroduction();
     this.followerCount = myInfoResponseDto.getFollowerCount();
+  }
+
+  public static MyInfoResponseDto of(User user) {
+    MyInfoResponseDto myInfoResponseDto = MyInfoResponseDto.builder()
+                                                           .id(user.getUserId())
+                                                           .nickname(user.getNickname())
+                                                           .profileImages(new ArrayList<>())
+                                                           .introduction(user.getIntroduction())
+                                                           .followerCount(null)
+                                                           .build();
+    return myInfoResponseDto;
   }
 }

@@ -1,5 +1,6 @@
 package com.bside.bside_311;
 
+import com.bside.bside_311.util.AuthUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -17,8 +18,14 @@ public class Bside311Application {
 	}
 
 	@Bean
-	public AuditorAware<Integer> auditorProvider() {
-		return () -> Optional.of(1);
+	public AuditorAware<Long> auditorProvider() {
+		return () -> {
+			Long userNoFromAuthentication = AuthUtil.getUserNoFromAuthentication();
+			if (userNoFromAuthentication == null) {
+				return Optional.empty();
+			}
+			return Optional.of(userNoFromAuthentication);
+		};
 	}
 
 }
