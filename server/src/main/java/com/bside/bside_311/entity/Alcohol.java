@@ -14,16 +14,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
+import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
+
 @Setter
 @DynamicInsert
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Alcohol extends BaseEntity{
+public class Alcohol extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
@@ -32,8 +35,13 @@ public class Alcohol extends BaseEntity{
 
   private String name;
 
+  @Builder.Default
   @OneToMany(mappedBy = "alcohol", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<AlcoholNickname> alcoholNicknames = new ArrayList<>();
+
+  @Builder.Default
+  @OneToMany(mappedBy = "alcohol", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<PostAlcohol> postAlcohols = new ArrayList<>();
 
   private String manufacturer;
   private String description;
@@ -42,21 +50,13 @@ public class Alcohol extends BaseEntity{
   private Long productionYear;
   private Long volume;
 
-  public void setAlcoholNicknames(List<AlcoholNickname> alcoholNicknames) {
-
-    this.alcoholNicknames.clear();
-    for (AlcoholNickname alcoholNickname : alcoholNicknames) {
-      this.addAlcoholNickname(alcoholNickname);
-    }
-  }
-
-  @Builder
-  public Alcohol(Long id, String name, List<AlcoholNickname> alcoholNicknames, String manufacturer,
-                 String description, float degree, Long period, Long productionYear,
-                 Long volume) {
+  public Alcohol(Long id, String name, List<AlcoholNickname> alcoholNicknames,
+                 List<PostAlcohol> postAlcohols, String manufacturer, String description,
+                 float degree, Long period, Long productionYear, Long volume) {
     this.id = id;
     this.name = name;
     this.alcoholNicknames = alcoholNicknames;
+    this.postAlcohols = postAlcohols;
     this.manufacturer = manufacturer;
     this.description = description;
     this.degree = degree;
@@ -67,15 +67,15 @@ public class Alcohol extends BaseEntity{
 
   public static Alcohol of(AddAlcoholRequestDto addAlcoholRequestDto) {
     Alcohol alcohol = Alcohol.builder()
-                           .name(addAlcoholRequestDto.getAlcoholName())
-                          .alcoholNicknames(new ArrayList<>())
-                           .description(addAlcoholRequestDto.getDescription())
-                           .manufacturer(addAlcoholRequestDto.getManufacturer())
-                           .degree(addAlcoholRequestDto.getDegree())
-                           .period(addAlcoholRequestDto.getPeriod())
-                           .productionYear(addAlcoholRequestDto.getProductionYear())
-                           .volume(addAlcoholRequestDto.getVolume())
-                           .build();
+                             .name(addAlcoholRequestDto.getAlcoholName())
+                             .alcoholNicknames(new ArrayList<>())
+                             .description(addAlcoholRequestDto.getDescription())
+                             .manufacturer(addAlcoholRequestDto.getManufacturer())
+                             .degree(addAlcoholRequestDto.getDegree())
+                             .period(addAlcoholRequestDto.getPeriod())
+                             .productionYear(addAlcoholRequestDto.getProductionYear())
+                             .volume(addAlcoholRequestDto.getVolume())
+                             .build();
     AlcoholNickname.of(addAlcoholRequestDto.getNickNames()).forEach(alcohol::addAlcoholNickname);
     return alcohol;
   }
@@ -96,9 +96,26 @@ public class Alcohol extends BaseEntity{
     return alcohol;
   }
 
+  public void setAlcoholNicknames(List<AlcoholNickname> alcoholNicknames) {
+
+    this.alcoholNicknames.clear();
+    for (AlcoholNickname alcoholNickname : alcoholNicknames) {
+      this.addAlcoholNickname(alcoholNickname);
+    }
+  }
+
   // 연관관계 편의 메서드.
-  public void addAlcoholNickname(AlcoholNickname alcoholNickname){
-    this.alcoholNicknames.add(alcoholNickname);
-    alcoholNickname.setAlcohol(this);
+  public void addAlcoholNickname(AlcoholNickname alcoholNickname) {
+    if (!ObjectUtils.isEmpty(alcoholNickname)) {
+      this.alcoholNicknames.add(alcoholNickname);
+      alcoholNickname.setAlcohol(this);
+    }
+  }
+
+  public void addPostAlcohol(PostAlcohol postAlcohol) {
+    if (!ObjectUtils.isEmpty(postAlcohol)) {
+      this.postAlcohols.add(postAlcohol);
+      postAlcohol.setAlcohol(this);
+    }
   }
 }

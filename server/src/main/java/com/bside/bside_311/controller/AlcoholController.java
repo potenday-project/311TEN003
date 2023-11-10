@@ -38,14 +38,16 @@ public class AlcoholController {
   @Operation(summary = "[o]술 등록 ", description = "술 등록 API")
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public AddAlcoholResponseDto addAlcohol(@RequestBody @Valid AddAlcoholRequestDto addAlcoholRequestDto){
+  public AddAlcoholResponseDto addAlcohol(
+      @RequestBody @Valid AddAlcoholRequestDto addAlcoholRequestDto) {
     log.info(">>> AlcoholController.addAlcohol");
     return alcoholService.addAlcohol(Alcohol.of(addAlcoholRequestDto));
   }
 
   @Operation(summary = "[o]술 수정", description = "술 수정 API")
   @PatchMapping("/{alcoholNo}")
-  public void editAlcohol(@PathVariable("alcoholNo") Long alcoholNo, @RequestBody @Valid EditAlcoholRequestDto editAlcoholRequestDto) {
+  public void editAlcohol(@PathVariable("alcoholNo") Long alcoholNo,
+                          @RequestBody @Valid EditAlcoholRequestDto editAlcoholRequestDto) {
     log.info(">>> AlcoholController.editAlcohol");
     alcoholService.editAlcohol(alcoholNo, editAlcoholRequestDto);
   }
@@ -60,13 +62,18 @@ public class AlcoholController {
   @Operation(summary = "[~]술 목록 조회", description = "술 조회 API")
   @GetMapping
   public GetAlcoholResponseDto getAlcohol(
-      @RequestParam(name = "page", defaultValue = "0") @Schema(description = "페이지번호(0부터), 기본값 0.", example = "0") Long page,
-      @RequestParam(name = "size", defaultValue = "10") @Schema(description = "사이즈, 기본값 10.", example = "10") Long size,
-      @RequestParam(required = false, name = "orderColumn") @Schema(description = "정렬 컬럼", example = "alcohol_no") String orderColumn,
-      @RequestParam(required = false, name = "orderType") @Schema(description = "정렬 타입",example = "DESC") String orderType,
-      @RequestParam(required = false, name = "searchAlcoholKeyword") @Schema(description = "알코올 키워드", example = "키워드") String searchAlcoholKeyword) {
+      @RequestParam(name = "page", defaultValue = "0")
+      @Schema(description = "페이지번호(0부터), 기본값 0.", example = "0") Long page,
+      @RequestParam(name = "size", defaultValue = "10")
+      @Schema(description = "사이즈, 기본값 10.", example = "10") Long size,
+      @RequestParam(required = false, name = "orderColumn")
+      @Schema(description = "정렬 컬럼", example = "alcohol_no") String orderColumn,
+      @RequestParam(required = false, name = "orderType")
+      @Schema(description = "정렬 타입", example = "DESC") String orderType,
+      @RequestParam(required = false, name = "searchKeyword")
+      @Schema(description = "알코올 키워드", example = "키워드") String searchKeyword) {
     log.info(">>> AlcoholController.getAlcohol");
-    return alcoholService.getAlcohol(page, size, orderColumn, orderType, searchAlcoholKeyword);
+    return alcoholService.getAlcohol(page, size, orderColumn, orderType, searchKeyword);
   }
 
   @Operation(summary = "[o]술 상세 조회", description = "술 상세 조회 API")

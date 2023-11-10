@@ -18,17 +18,17 @@ import org.hibernate.annotations.DynamicInsert;
 @Setter
 @DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserFollow extends BaseEntity {
+public class PostLike extends BaseEntity {
   @Id
   @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-  @Column(name = "user_follow_no")
+  @Column(name = "post_like_no")
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "following")
-  private User following;
+  @JoinColumn(name = "user_no")
+  private User user;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "followed")
-  private User followed;
+  @JoinColumn(name = "post_no")
+  private Post post;
 }

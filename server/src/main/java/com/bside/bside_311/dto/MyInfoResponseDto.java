@@ -3,10 +3,10 @@ package com.bside.bside_311.dto;
 import com.bside.bside_311.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Builder
+@AllArgsConstructor
 public class MyInfoResponseDto {
 
   @Schema(example = "apple", description = "아이디(중복검사 필요)")
@@ -22,7 +23,8 @@ public class MyInfoResponseDto {
   @Schema(example = "bside", description = "닉네임(중복검사 불필요)")
   String nickname;
 
-  List<AttachDto> profileImages;
+  @Builder.Default
+  List<AttachDto> profileImages = new ArrayList<>();
 
   @Schema(example = "안녕하세요.", description = "자기소개.")
   String introduction;
@@ -30,15 +32,6 @@ public class MyInfoResponseDto {
   @Schema(example = "24", description = "팔로워수")
   Long followerCount;
 
-  @Builder
-  public MyInfoResponseDto(String id, String nickname, List<AttachDto> profileImages,
-                           String introduction, Long followerCount) {
-    this.id = id;
-    this.nickname = nickname;
-    this.profileImages = profileImages;
-    this.introduction = introduction;
-    this.followerCount = followerCount;
-  }
 
   public MyInfoResponseDto(MyInfoResponseDto myInfoResponseDto) {
     this.id = myInfoResponseDto.getId();

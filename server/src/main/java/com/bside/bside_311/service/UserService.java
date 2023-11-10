@@ -18,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -27,15 +28,18 @@ import static com.bside.bside_311.util.JwtUtil.normalValidity;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class UserService {
   private final JwtUtil jwtUtil;
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
-  public UserSignupResponseDto signUp(User user) {
-    List<User> users = userRepository.findByEmailOrUserIdAndDelYnIs(user.getEmail(), user.getUserId(),
-        YesOrNo.N);
 
-    if(users.size() > 0){
+  public UserSignupResponseDto signUp(User user) {
+    List<User> users =
+        userRepository.findByEmailOrUserIdAndDelYnIs(user.getEmail(), user.getUserId(),
+            YesOrNo.N);
+
+    if (users.size() > 0) {
       log.info(">>> UserService.signUp: 중복된 이메일 또는 아이디가 존재합니다.");
       throw new IllegalArgumentException("중복된 이메일 또는 아이디가 존재합니다.");
     }
@@ -46,17 +50,21 @@ public class UserService {
 
   public LoginResponseDto login(UserLoginRequestDto userLoginRequestDto) {
     User foundUser = userRepository.findByUserIdAndDelYnIs(userLoginRequestDto.getId(), YesOrNo.N)
-                                   .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
-    if (!passwordEncoder.matches(userLoginRequestDto.getPassword(),foundUser.getPassword()))
-        throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
-    Authentication authentication= new UsernamePasswordAuthenticationToken(foundUser.getId(), null, AuthorityUtils.createAuthorityList(foundUser.getRole().toString()));
-    return LoginResponseDto.of(jwtUtil.createLocalToken(foundUser, NORMAL_TOKEN, normalValidity, authentication));
+                                   .orElseThrow(
+                                       () -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+    if (!passwordEncoder.matches(userLoginRequestDto.getPassword(), foundUser.getPassword())) {
+      throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
+    }
+    Authentication authentication = new UsernamePasswordAuthenticationToken(foundUser.getId(), null,
+        AuthorityUtils.createAuthorityList(foundUser.getRole().toString()));
+    return LoginResponseDto.of(
+        jwtUtil.createLocalToken(foundUser, NORMAL_TOKEN, normalValidity, authentication));
   }
 
   public void updateUser(Long userNo, UserUpdateRequestDto userUpdateRequestDto) {
     User user = userRepository.findByIdAndDelYnIs(userNo, YesOrNo.N)
                               .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
-    if( userUpdateRequestDto != null) {
+    if (userUpdateRequestDto != null) {
       if (userUpdateRequestDto.getIntroduction() != null) {
         user.setIntroduction(userUpdateRequestDto.getIntroduction());
       }

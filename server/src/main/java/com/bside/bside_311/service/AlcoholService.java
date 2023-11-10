@@ -15,6 +15,7 @@ import com.bside.bside_311.repository.AlcoholRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,28 +25,31 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class AlcoholService {
   private final AlcoholRepository alcoholRepository;
   private final AlcoholMybatisRepository alcoholMybatisRepository;
   private final AlcoholNicknameRepository alcoholNicknameRepository;
+
   public AddAlcoholResponseDto addAlcohol(Alcohol alcohol) {
     // 이름으로 중복 검색.
-    alcoholRepository.findByNameAndDelYnIs(alcohol.getName(), YesOrNo.N)
-                     .ifPresent(alcohol1 -> {
-                       log.info(">>> AlcoholService.addAlcohol: 중복된 술 이름이 존재합니다.");
-                       throw new IllegalArgumentException("중복된 술 이름이 존재합니다.");
-                     });
+    alcoholRepository.findByNameAndDelYnIs(alcohol.getName(), YesOrNo.N).ifPresent(alcohol1 -> {
+      log.info(">>> AlcoholService.addAlcohol: 중복된 술 이름이 존재합니다.");
+      throw new IllegalArgumentException("중복된 술 이름이 존재합니다.");
+    });
     alcoholRepository.save(alcohol);
     return AddAlcoholResponseDto.of(alcohol.getId());
   }
 
   public void editAlcohol(Long alcoholNo, EditAlcoholRequestDto editAlcoholRequestDto) {
-    Alcohol alcohol = alcoholRepository.findByIdAndDelYnIs(alcoholNo, YesOrNo.N).orElseThrow(() -> new IllegalArgumentException("술이 존재하지 않습니다."));
+    Alcohol alcohol = alcoholRepository.findByIdAndDelYnIs(alcoholNo, YesOrNo.N).orElseThrow(
+        () -> new IllegalArgumentException("술이 존재하지 않습니다."));
     if (editAlcoholRequestDto != null) {
       if (editAlcoholRequestDto.getAlcoholName() != null) {
         alcohol.setName(editAlcoholRequestDto.getAlcoholName());
       }
-      if (editAlcoholRequestDto.getNickNames() != null && editAlcoholRequestDto.getNickNames().size() > 0) {
+      if (editAlcoholRequestDto.getNickNames() != null &&
+              editAlcoholRequestDto.getNickNames().size() > 0) {
         alcohol.setAlcoholNicknames(AlcoholNickname.of(editAlcoholRequestDto.getNickNames()));
       }
       if (editAlcoholRequestDto.getManufacturer() != null) {
@@ -72,38 +76,37 @@ public class AlcoholService {
   }
 
   public void deleteAlcohol(Long alcoholNo) {
-    Alcohol alcohol = alcoholRepository.findByIdAndDelYnIs(alcoholNo, YesOrNo.N).orElseThrow(() -> new IllegalArgumentException("술이 존재하지 않습니다."));
+    Alcohol alcohol = alcoholRepository.findByIdAndDelYnIs(alcoholNo, YesOrNo.N).orElseThrow(
+        () -> new IllegalArgumentException("술이 존재하지 않습니다."));
     alcohol.setDelYn(YesOrNo.Y);
     alcoholRepository.save(alcohol);
   }
 
   public AlcoholResponseDto getAlcoholDetail(Long alcoholNo) {
-    Alcohol alcohol = alcoholRepository.findByIdAndDelYnIs(alcoholNo, YesOrNo.N).orElseThrow(() -> new IllegalArgumentException("술이 존재하지 않습니다."));
+    Alcohol alcohol = alcoholRepository.findByIdAndDelYnIs(alcoholNo, YesOrNo.N).orElseThrow(
+        () -> new IllegalArgumentException("술이 존재하지 않습니다."));
     return AlcoholResponseDto.of(alcohol);
   }
 
-  public GetAlcoholResponseDto getAlcohol(Long page, Long size, String orderColumn, String orderType, String searchAlcoholKeyword) {
-    GetAlcoholsVo getAlcoholsVo = GetAlcoholsVo.builder()
-                                       .page(page)
-                                       .offset(page * size)
-                                       .size(size)
-                                       .orderColumn(
-                                           orderColumn)
-                                       .orderType(
-                                           orderType)
-                                       .searchAlcoholKeyword(
-                                           searchAlcoholKeyword)
-                                       .build();
+  public GetAlcoholResponseDto getAlcohol(Long page, Long size, String orderColumn,
+                                          String orderType, String searchKeyword) {
+    // TODO 닉네임 검색 가능하도록 조치.
+    GetAlcoholsVo getAlcoholsVo =
+        GetAlcoholsVo.builder()
+                     .page(page)
+                     .offset(page * size)
+                     .size(size)
+                     .orderColumn(orderColumn)
+                     .orderType(orderType)
+                     .searchKeyword(searchKeyword)
+                     .build();
     List<GetAlcoholsMvo> getAlcoholsMvos = alcoholMybatisRepository.getAlcohols(getAlcoholsVo);
     List<Alcohol> alcohols = getAlcoholsMvos.stream().map(Alcohol::of).collect(Collectors.toList());
-
     Long alcoholsCount = alcoholMybatisRepository.getAlcoholsCount(getAlcoholsVo);
-    List<Long> alcoholNoList =
-        alcohols.stream().map(Alcohol::getId).collect(Collectors.toList());
     List<AlcoholNickname> alcoholNicknames =
         alcoholNicknameRepository.findByAlcoholInAndDelYnIs(alcohols, YesOrNo.N);
-    Map<Long, List<AlcoholNickname>> alcoholNicknameMap =
-        alcoholNicknames.stream().collect(Collectors.groupingBy(alcoholNickname -> alcoholNickname.getAlcohol().getId()));
+    Map<Long, List<AlcoholNickname>> alcoholNicknameMap = alcoholNicknames.stream().collect(
+        Collectors.groupingBy(alcoholNickname -> alcoholNickname.getAlcohol().getId()));
     for (Alcohol alcohol : alcohols) {
       List<AlcoholNickname> alcoholNicknamesByAlcoholNo =
           alcoholNicknameMap.getOrDefault(alcohol.getId(), new ArrayList<>());

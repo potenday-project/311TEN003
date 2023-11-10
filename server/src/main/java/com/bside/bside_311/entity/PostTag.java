@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,17 +19,31 @@ import org.hibernate.annotations.DynamicInsert;
 @Setter
 @DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserFollow extends BaseEntity {
+public class PostTag extends BaseEntity {
   @Id
   @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-  @Column(name = "user_follow_no")
+  @Column(name = "post_tag_no")
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "following")
-  private User following;
+  @JoinColumn(name = "post_no")
+  private Post post;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "followed")
-  private User followed;
+  @JoinColumn(name = "tag_no")
+  private Tag tag;
+
+  @Builder
+  public PostTag(Long id, Post post, Tag tag) {
+    this.id = id;
+    this.post = post;
+    this.tag = tag;
+  }
+
+  public static PostTag of(Post post, Tag tag) {
+    return PostTag.builder()
+                  .post(post)
+                  .tag(tag)
+                  .build();
+  }
 }

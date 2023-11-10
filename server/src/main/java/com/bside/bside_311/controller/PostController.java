@@ -4,15 +4,16 @@ import com.bside.bside_311.dto.AddCommentRequestDto;
 import com.bside.bside_311.dto.AddCommentResponseDto;
 import com.bside.bside_311.dto.AddPostRequestDto;
 import com.bside.bside_311.dto.AddPostResponseDto;
-import com.bside.bside_311.dto.CommentResponseDto;
 import com.bside.bside_311.dto.EditCommentRequestDto;
 import com.bside.bside_311.dto.EditPostRequestDto;
 import com.bside.bside_311.dto.GetPostCommentsResponseDto;
 import com.bside.bside_311.dto.GetPostResponseDto;
-import com.bside.bside_311.dto.PostDetailResponseDto;
 import com.bside.bside_311.dto.PostResponseDto;
 import com.bside.bside_311.dto.QuoteInfoDto;
+import com.bside.bside_311.entity.Post;
+import com.bside.bside_311.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -40,43 +41,59 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/posts")
 @Tag(name = "게시글", description = "게시글 API")
 public class PostController {
+  private final PostService postService;
 
-  @Operation(summary = "게시글 등록 ", description = "게시글 등록 API")
+  @Operation(summary = "[o]게시글 등록 ", description = "게시글 등록 API")
   @PostMapping
-  public AddPostResponseDto addPost(@ModelAttribute @Valid AddPostRequestDto addPostRequestDto) {
+  public AddPostResponseDto addPost(@RequestBody @Valid AddPostRequestDto addPostRequestDto) {
     log.info(">>> PostController.addPost");
-    return null;
+    return postService.addPost(Post.of(addPostRequestDto), addPostRequestDto.getAlcoholNo(),
+        addPostRequestDto.getAlcoholFeature(), addPostRequestDto.getTagList());
   }
 
-  @Operation(summary = "게시글 수정", description = "게시글 수정 API")
-  @PatchMapping
-  public void editPost(@RequestBody @Valid EditPostRequestDto editPostRequestDto) {
+  @Operation(summary = "[o]게시글 수정", description = "게시글 수정 API")
+  @PatchMapping("/{postNo}")
+  public void editPost(@PathVariable("postNo") Long postNo,
+                       @RequestBody @Valid EditPostRequestDto editPostRequestDto) {
     log.info(">>> PostController.editPost");
-    return ;
+
+    postService.editPost(postNo, editPostRequestDto);
+    return;
   }
 
-  @Operation(summary = "게시글 삭제", description = "게시글 삭제 API")
-  @DeleteMapping
-  public void deletePost() {
+  @Operation(summary = "[o]게시글 삭제", description = "게시글 삭제 API")
+  @DeleteMapping("/{postNo}")
+  public void deletePost(@PathVariable("postNo") Long postNo) {
     log.info(">>> PostController.deletePost");
+    postService.deletePost(postNo);
   }
 
-  @Operation(summary = "게시글 목록 조회", description = "게시글 조회 API")
+  @Operation(summary = "[~]게시글 목록 조회", description = "게시글 조회 API")
   @GetMapping
-  public GetPostResponseDto getPost(@RequestParam Long page,
-                                    @RequestParam Long size,
-                                    @RequestParam(required = false) String orderColumn,
-                                    @RequestParam(required = false) String orderType,
-                                    @RequestParam(required = false) String keyWord) {
+  public GetPostResponseDto getPosts(@RequestParam(name = "page", defaultValue = "0")
+                                     @Schema(description = "페이지번호(0부터), 기본값 0.", example = "0")
+                                     Long page,
+                                     @RequestParam(name = "size", defaultValue = "10")
+                                     @Schema(description = "사이즈, 기본값 10.", example = "10")
+                                     Long size,
+                                     @RequestParam(required = false, name = "orderColumn")
+                                     @Schema(description = "정렬 컬럼", example = "alcohol_no")
+                                     String orderColumn,
+                                     @RequestParam(required = false, name = "orderType")
+                                     @Schema(description = "정렬 타입", example = "DESC")
+                                     String orderType,
+                                     @RequestParam(required = false, name = "searchKeyword")
+                                     @Schema(description = "키워드", example = "키워드")
+                                     String searchKeyword) {
     log.info(">>> PostController.getPost");
-    return null;
+    return postService.getPosts(page, size, orderColumn, orderType, searchKeyword);
   }
 
-  @Operation(summary = "게시글 상세 조회", description = "게시글 상세 조회 API")
+  @Operation(summary = "[~]게시글 상세 조회", description = "게시글 상세 조회 API")
   @GetMapping("/{postNo}")
-  public PostResponseDto getPostDetail(@PathVariable Long postNo) {
+  public PostResponseDto getPostDetail(@PathVariable("postNo") Long postNo) {
     log.info(">>> PostController.getPostDetail");
-    return null;
+    return postService.getPostDetail(postNo);
   }
 
   @Operation(summary = "게시글 댓글 등록", description = "게시글 댓글 등록 API")
@@ -96,10 +113,11 @@ public class PostController {
     return null;
   }
 
-  @Operation(summary = "게시글 댓글 수정", description = "게시글 댓글 수정 API")
+  @Operation(summary = "[o]게시글 댓글 수정", description = "게시글 댓글 수정 API")
   @PatchMapping("/{postNo}/comments/{commentNo}")
-  public void editComment(@PathVariable Long postNo, @PathVariable Long commentNo, @Valid @RequestBody
-  EditCommentRequestDto EditCommentRequestDto) {
+  public void editComment(@PathVariable Long postNo, @PathVariable Long commentNo,
+                          @Valid @RequestBody
+                          EditCommentRequestDto EditCommentRequestDto) {
     log.info(">>> PostController.editComment");
   }
 

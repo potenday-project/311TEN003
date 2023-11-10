@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.bside.bside_311.repository.AlcoholMybatisRepository">
-    <sql id="getAlcoholsWhereSql">
-        a.del_yn = 'N'
+<mapper namespace="com.bside.bside_311.repository.PostMybatisRepository">
+    <sql id="getPostsWhereSql">
+        p.del_yn = 'N'
         <if test='searchKeyword != null and !searchKeyword.equalsIgnoreCase("")'>
-            and a.name like CONCAT('%', #{searchKeyword},'%')
+            and p.content like CONCAT('%', #{searchKeyword},'%')
         </if>
     </sql>
 
-    <select id="getAlcohols" resultType="GetAlcoholsMvo" parameterType="GetAlcoholsVo">
-        select * /* AlcoholMybatisRepository.getAlcohols */
-        from alcohol a
+    <select id="getPosts" resultType="GetPostsMvo" parameterType="GetPostVo">
+        select * /* PostMybatisRepository.getPosts */
+        from post p
         <where>
-            <include refid="getAlcoholsWhereSql"></include>
+            <include refid="getPostsWhereSql"></include>
 
         </where>
         <choose>
             <when test="orderColumn != null and orderType != null">
-                ORDER BY a.${orderColumn} ${orderType}
+                ORDER BY p.${orderColumn} ${orderType}
             </when>
             <otherwise>
-                ORDER BY a.alcohol_no DESC
+                ORDER BY p.post_no DESC
             </otherwise>
         </choose>
 
@@ -30,11 +30,11 @@
         </if>
     </select>
 
-    <select id="getAlcoholsCount" resultType="Long" parameterType="GetAlcoholsVo">
+    <select id="getPostsCount" resultType="Long" parameterType="GetAlcoholsVo">
         select count(*) /* AlcoholMybatisRepository.getAlcoholsCount */
-        from alcohol a
+        from post p
         <where>
-            <include refid="getAlcoholsWhereSql"/>
+            <include refid="getPostsWhereSql"/>
         </where>
     </select>
 </mapper>

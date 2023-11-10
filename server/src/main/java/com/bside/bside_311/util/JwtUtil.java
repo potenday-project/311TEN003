@@ -22,7 +22,6 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -39,15 +38,22 @@ public class JwtUtil {
   public final String USER_NO = "userNo";
   public final String USER_ID = "userId";
 
-  public String createLocalToken(User user, String tokenType, Long validity, Authentication authentication) {
-    String authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority)
-                                       .collect(Collectors.joining(","));
+  public static String getTokenFromRequest(HttpServletRequest request) {
+    String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+    return token == null ? null : token.substring(BEARER_PREFIX.length());
+  }
+
+  public String createLocalToken(User user, String tokenType, Long validity,
+                                 Authentication authentication) {
+    String authorities =
+        authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+                      .collect(Collectors.joining(","));
 
     Claims claims = Jwts.claims();
     claims.put(TOKEN_TYPE, tokenType);
 
     claims.put(USER_NO, user.getId());
-    claims.put(USER_ID, user.getId());
+    claims.put(USER_ID, user.getUserId());
     claims.put(AUTHORITIES_KEY, authorities);
 
     Date now = new Date();
@@ -64,25 +70,22 @@ public class JwtUtil {
 
   public Authentication getAuthentication(String token) {
     AuthDto authDto = getAuthToken(token);
-    return new UsernamePasswordAuthenticationToken(authDto.getUserNo(), "", authDto.getAuthorities());
+    return new UsernamePasswordAuthenticationToken(authDto.getUserNo(), "",
+        authDto.getAuthorities());
   }
 
   private AuthDto getAuthToken(String token) {
     Claims claims = getClaims(token);
     String[] roles = claims.get(AUTHORITIES_KEY).toString().split(",");
     List<SimpleGrantedAuthority>
-        authorities = Arrays.stream(roles).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        authorities =
+        Arrays.stream(roles).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     return AuthDto.builder()
-                            .tokenType(String.valueOf(claims.get(TOKEN_TYPE, String.class)))
-                            .userId(String.valueOf(claims.get(USER_ID, String.class)))
-                            .userNo(claims.get(USER_NO, Long.class))
-                            .authorities(authorities)
-                            .build();
-  }
-
-  public static String getTokenFromRequest(HttpServletRequest request) {
-    String token = request.getHeader(HttpHeaders.AUTHORIZATION);
-    return token == null ? null : token.substring(BEARER_PREFIX.length());
+                  .tokenType(String.valueOf(claims.get(TOKEN_TYPE, String.class)))
+                  .userId(String.valueOf(claims.get(USER_ID, String.class)))
+                  .userNo(claims.get(USER_NO, Long.class))
+                  .authorities(authorities)
+                  .build();
   }
 
   public boolean validateToken(String token) {
@@ -97,6 +100,7 @@ public class JwtUtil {
       throw new ExpiredJwtException(getHeader(token), getClaims(token), "이미 만료된 토큰입니다");
     }
   }
+
   private Header getHeader(String token) {
     return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getHeader();
   }
