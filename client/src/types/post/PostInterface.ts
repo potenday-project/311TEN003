@@ -7,10 +7,6 @@ export interface PostInterface {
    */
   postContent: string;
   /**
-   * 글 최초 생성일
-   */
-  createdAt: string;
-  /**
    * 업데이트 된 날짜
    */
   updateDt?: string;
@@ -31,6 +27,10 @@ export interface PostInterface {
    */
   alcoholName: string;
   /**
+   * 마신 술의 종류 (주종)
+   */
+  alcoholType: string;
+  /**
    * 유저의 ID (로그인용 Email 과는 다름)
    */
   id: string;
@@ -41,19 +41,19 @@ export interface PostInterface {
   /**
    * 유저가 설정한 프로필 이미지
    */
-  profileImgUrls: string;
+  profileImgUrls: string[];
   /**
    * 이미지 Href 배열
    */
-  postAttachUrl: [] | string[];
+  postAttachUrls: string[];
   /**
    * 사용자가 추가한 해시태그
    */
-  tagList: [] | string[];
+  tagList: string[];
   /**
    * 인용 정보
    */
-  quoteInfo: QuoteInfoType[] | [];
+  quoteInfo: QuoteInfoType[];
   /**
    * 좋아요 갯수
    */
@@ -63,13 +63,17 @@ export interface PostInterface {
    */
   quoteCount: number;
   /**
+   * 댓글 갯수
+   */
+  commentCount : number;
+  /**
    * 내가 팔로우 하는지 여부
    */
   followedByMe: boolean;
   /**
    * 내가 좋아요를 눌렀는지 여부
    */
-  likedByme :boolean;
+  likedByme: boolean;
 }
 
 type QuoteInfoType = {

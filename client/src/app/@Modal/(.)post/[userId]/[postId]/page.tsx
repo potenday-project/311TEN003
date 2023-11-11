@@ -1,10 +1,11 @@
 import PostDetailPage from "@/app/post/[userId]/[postId]/page";
 import ModalWrapper from "@/components/ModalWrapper";
 
-const page = (props: { params: { userId: string; postId: string } }) => {
+const page = async ({ ...context }) => {
+  const parsedPostId = context.params.postId
   return (
     <ModalWrapper disableBox>
-      <PostDetailPage {...props} />
+      <PostDetailPage {...context} postNo={parsedPostId} />
     </ModalWrapper>
   );
 };

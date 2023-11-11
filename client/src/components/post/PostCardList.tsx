@@ -1,23 +1,60 @@
 "use client";
 
 import PostCard from "@/components/post/PostCard";
-import { PostInterface } from "@/types/post/PostInterface";
-import useGetPostListQuery from "@/queries/post/useGetPostListQuery";
+import useGetPostListInfiniteQuery, {
+  UseGetPostListQueryInterface,
+} from "@/queries/post/useGetPostListInfiniteQuery";
+import { useInView } from "react-intersection-observer";
+import { useEffect } from "react";
+import { Box, CircularProgress } from "@mui/material";
+import { useMemo } from "react";
+import Image from "next/image";
+import NoResult from "@/assets/images/noResult.png";
 
-interface PostCardListProps {
-  initialData: { content: PostInterface[] };
-}
+function PostCardList(props: UseGetPostListQueryInterface) {
+  const { data, fetchNextPage, isFetchingNextPage, isSuccess, hasNextPage } =
+    useGetPostListInfiniteQuery({
+      ...props,
+    });
+  const { ref, inView } = useInView();
 
-const PostCardList = ({ initialData }: PostCardListProps) => {
-  const { data } = useGetPostListQuery(initialData);
+  useEffect(() => {
+    if (hasNextPage && inView) fetchNextPage();
+  }, [inView, hasNextPage]);
+
+  const hasResult = useMemo(() => data.pages[0].list.length > 0, [data]);
 
   return (
-    <>
-      {data.content.map((post) => (
-        <PostCard {...post} key={post.postNo} />
-      ))}
-    </>
+    <div>
+      {hasResult ? (
+        // 검색결과가 있을시
+        data.pages.map((page) =>
+          page.list.map((post) => <PostCard {...post} key={post.postNo} />)
+        )
+      ) : (
+        // 검색결과 없을 시
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            py: 8,
+          }}
+        >
+          <Image src={NoResult} alt="no result alert" />
+        </Box>
+      )}
+      {/* 로딩창 */}
+      {isFetchingNextPage ? (
+        <Box sx={{ width: "100%", textAlign: "center", py: 1 }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        // 인터섹션옵저버
+        <div style={{ height: 50 }} ref={ref}></div>
+      )}
+    </div>
   );
-};
+}
 
 export default PostCardList;

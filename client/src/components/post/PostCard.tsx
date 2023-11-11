@@ -1,13 +1,7 @@
 "use client";
 
 import { PostInterface } from "@/types/post/PostInterface";
-
-import {
-  FavoriteBorder,
-  ModeCommentOutlined,
-  MoreVertOutlined,
-  ShareOutlined,
-} from "@mui/icons-material";
+import { MoreVertOutlined } from "@mui/icons-material";
 import {
   Avatar,
   Box,
@@ -21,32 +15,41 @@ import {
 import PostHashTagList from "./PostHashtagList";
 import { useOpenPostDetailPage } from "@/hooks/useOpenPostDetailPage";
 import { useMemo } from "react";
+import ShareIcon from "@/assets/icons/ShareIcon.svg";
+import LikeIcon from "@/assets/icons/LikeIcon.svg";
+import CommentIcon from "@/assets/icons/CommentIcon.svg";
+import QuoteIcon from "@/assets/icons/QuoteIcon.svg";
+import AlcoleNameTag from "./AlcoleNameTag";
+import dayjs from "dayjs";
 
 const PostCard = ({
-  postAttachUrl,
-  createdAt,
+  postAttachUrls,
   id,
   nickname,
   postContent,
+  updateDt,
   tagList,
   postNo,
   likeCount,
-  profileImgUrls
+  profileImgUrls,
+  alcoholName,
+  alcoholType,
+  commentCount,
 }: PostInterface) => {
   const openPostDetailPage = useOpenPostDetailPage();
-  const hasImage = useMemo(() => postAttachUrl.length !== 0, [postAttachUrl]);
+  const hasImage = useMemo(() => postAttachUrls.length !== 0, [postAttachUrls]);
 
   return (
     <Card sx={{ display: "flex", gap: 2, p: 2 }}>
       <Avatar
         sx={{ bgcolor: "secondary.main" }}
         sizes="40"
-        src={profileImgUrls}
+        src={profileImgUrls[0]}
         data-testid="avatar"
       >
-        {profileImgUrls || id[0].toUpperCase()}
+        {profileImgUrls[0] || String(id)[0].toUpperCase()}
       </Avatar>
-      <Box>
+      <Box sx={{ width: "100%" }}>
         {/* Header */}
         <Box
           data-testid="mui-header"
@@ -55,7 +58,6 @@ const PostCard = ({
             flexDirection: "row",
             justifyContent: "space-between",
             px: 0,
-            width: "100%",
           }}
         >
           <Box
@@ -63,19 +65,24 @@ const PostCard = ({
               display: "flex",
               flexDirection: "row",
               gap: 1,
-              alighItems: "center",
             }}
           >
             {/* 타이틀 */}
-            <Typography sx={{ fontWeight: "bold" }}>{nickname}</Typography>
-            <Typography>{`@${id}`}</Typography>
-            <Typography>{createdAt}</Typography>
+            <Typography color="primary.main">{nickname}</Typography>
+            <Typography
+              variant="label"
+              color={"text.secondary"}
+            >{`@${id}`}</Typography>
+            <Typography variant="label" color={"text.secondary"}>
+              {dayjs(updateDt).format("MM.DD")}
+            </Typography>
           </Box>
 
           <ButtonBase aria-label="settings" sx={{ p: 0 }}>
             <MoreVertOutlined />
           </ButtonBase>
         </Box>
+        <AlcoleNameTag alcoholName={alcoholName} alcoholType={alcoholType} />
 
         <CardContent sx={{ px: 0 }}>
           {/* Contents */}
@@ -98,26 +105,33 @@ const PostCard = ({
             component="img"
             height="142"
             onClick={() => openPostDetailPage(id, id)}
-            image={postAttachUrl[0]}
+            image={postAttachUrls[0]}
             alt={`${id}의 포스트`}
             sx={{ borderRadius: 2, bgcolor: "background.default" }}
           />
         )}
         {/* CTA */}
         <CardActions sx={{ px: 0, justifyContent: "end", gap: 2 }}>
-          <ButtonBase data-testid="commentBtn" aria-label="share">
-            <ModeCommentOutlined />
-            <Typography onClick={() => openPostDetailPage(id, String(postNo))}>
-              댓글수
+          <ButtonBase data-testid="commentBtn" aria-label="comment">
+            <CommentIcon />
+            <Typography
+              variant="label"
+              onClick={() => openPostDetailPage(id, String(postNo))}
+            >
+              {commentCount ?? 0}
             </Typography>
           </ButtonBase>
-          <ButtonBase data-testid="likeBtn" aria-label="add to favorites">
-            <FavoriteBorder />
-            <Typography>{likeCount}</Typography>
+          <ButtonBase data-testid="likeBtn" aria-label="like">
+            <LikeIcon />
+            <Typography variant="label">{likeCount ?? 0}</Typography>
+          </ButtonBase>
+          <ButtonBase data-testid="QuoteBtn" aria-label="Quote">
+            <QuoteIcon />
+            <Typography variant="label">인용</Typography>
           </ButtonBase>
           <ButtonBase data-testid="shareBtn" aria-label="share">
-            <ShareOutlined />
-            <Typography>공유하기</Typography>
+            <ShareIcon />
+            <Typography variant="label">공유</Typography>
           </ButtonBase>
         </CardActions>
       </Box>

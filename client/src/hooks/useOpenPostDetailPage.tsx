@@ -9,7 +9,7 @@ import { useCallback } from "react";
 export const useOpenPostDetailPage = () => {
   const router = useRouter();
   const openPostDetailPage = useCallback((userId: string, id: string) => {
-    router.push(POST_DETAIL(userId, id));
+    router.push(POST_DETAIL(String(userId), String(id)));
   }, []);
   return openPostDetailPage;
 };
