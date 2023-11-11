@@ -25,6 +25,6 @@ git pull
 nohup java  -jar build/libs/bside_311-0.0.1-SNAPSHOT.jar --spring.profiles.active=prd &
 
 # 6. 로그 확인으로 프로세스 정상 동작 확인.
-
+tail -f nohup.out
 ```
 

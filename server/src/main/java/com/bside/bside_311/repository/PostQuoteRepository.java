@@ -14,4 +14,6 @@ public interface PostQuoteRepository extends JpaRepository<PostQuote, Long> {
   Optional<PostQuote> findByPostAndQuoteAndDelYnIs(Post post, Post quote, YesOrNo delYn);
 
   List<PostQuote> findByPostAndDelYnIs(Post post, YesOrNo delYn);
+
+  Long countByPostAndDelYnIs(Post post, YesOrNo n);
 }

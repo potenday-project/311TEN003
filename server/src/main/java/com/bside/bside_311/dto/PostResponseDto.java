@@ -2,6 +2,7 @@ package com.bside.bside_311.dto;
 
 
 import com.bside.bside_311.entity.Alcohol;
+import com.bside.bside_311.entity.Comment;
 import com.bside.bside_311.entity.Post;
 import com.bside.bside_311.entity.Tag;
 import com.bside.bside_311.entity.User;
@@ -12,6 +13,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -26,20 +28,22 @@ public class PostResponseDto {
   private String id;
   @Schema(example = "[\"www.naver.com\", \"www.daum.net\"]", description = "프로필 이미지 URL")
   @Builder.Default
-  private List<String> profileImgUrls = new ArrayList<>();
+  private List<AttachDto> profileImgUrls = new ArrayList<>();
   private boolean isFollowedByMe;
   private boolean isLikedByMe;
   private LocalDateTime updateDt;
   private boolean edited;
   private Long postNo;
   private String postContent;
+  @Schema(example = "10", description = "댓글 개수.")
+  private Long commentCount;
   private String positionInfo;
 
   private Long alcoholNo;
   private String alcoholType;
   private String alcoholName;
   @Builder.Default
-  private List<String> postAttachUrls = new ArrayList<>();
+  private List<AttachDto> postAttachUrls = new ArrayList<>();
   @Builder.Default
   private List<String> tagList = new ArrayList<>();
   @Builder.Default
@@ -49,7 +53,9 @@ public class PostResponseDto {
 
   private Long quoteCount;
 
-  public static PostResponseDto of(Post post, User user, Alcohol alcohol, List<Tag> tags) {
+  public static PostResponseDto of(Post post, User user, Alcohol alcohol, List<Tag> tags,
+                                   List<Comment> comments, List<AttachDto> attachDtos
+      , Boolean isLikedByMe, Boolean isFollowedByMe, Long likeCount, Long quoteCount) {
     PostResponseDtoBuilder postResponseDtoBuilder = PostResponseDto.builder();
     if (user != null) {
       postResponseDtoBuilder.nickname(user.getNickname()).id(user.getUserId());
@@ -63,9 +69,23 @@ public class PostResponseDto {
       List<String> tagList = tags.stream().map(Tag::getName).toList();
       postResponseDtoBuilder.tagList(tagList);
     }
-    // TODO
-    // profileImgUrls, isFollowedByMe, isLikedByMe, postAttachUrls, quoteInfo, likeCount, quoteCount
-    // 가 반환되지 않음. 유의할것. 해야함. 나중에. 언제?
+    // TODO quoteInfo는 나중에.
+    if (ObjectUtils.isNotEmpty(attachDtos)) {
+      postResponseDtoBuilder.postAttachUrls(attachDtos);
+    }
+
+    if (ObjectUtils.isNotEmpty(isFollowedByMe)) {
+      postResponseDtoBuilder.isFollowedByMe(isFollowedByMe);
+    }
+    if (ObjectUtils.isNotEmpty(isLikedByMe)) {
+      postResponseDtoBuilder.isLikedByMe(isLikedByMe);
+    }
+    if (ObjectUtils.isNotEmpty(likeCount)) {
+      postResponseDtoBuilder.likeCount(likeCount);
+    }
+    if (ObjectUtils.isNotEmpty(quoteCount)) {
+      postResponseDtoBuilder.quoteCount(quoteCount);
+    }
 
     // END
     return postResponseDtoBuilder
@@ -73,6 +93,7 @@ public class PostResponseDto {
                .edited(post.getLastModifiedBy() != null ? true : false)
                .postNo(post.getId())
                .postContent(post.getContent())
+               .commentCount((long) comments.size())
                .positionInfo(post.getPosition()).build();
 
 

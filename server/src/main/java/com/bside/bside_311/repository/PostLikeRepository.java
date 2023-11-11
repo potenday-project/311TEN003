@@ -10,4 +10,6 @@ import java.util.Optional;
 
 public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
   Optional<PostLike> findByUserAndPostAndDelYnIs(User user, Post post, YesOrNo delYn);
+
+  Long countByPostAndDelYnIs(Post post, YesOrNo delYn);
 }

@@ -3,6 +3,7 @@ package com.bside.bside_311.service;
 import com.bside.bside_311.dto.AddCommentRequestDto;
 import com.bside.bside_311.dto.AddCommentResponseDto;
 import com.bside.bside_311.dto.AddPostResponseDto;
+import com.bside.bside_311.dto.AttachDto;
 import com.bside.bside_311.dto.EditCommentRequestDto;
 import com.bside.bside_311.dto.EditPostRequestDto;
 import com.bside.bside_311.dto.GetPostCommentsResponseDto;
@@ -12,6 +13,7 @@ import com.bside.bside_311.dto.GetPostsMvo;
 import com.bside.bside_311.dto.GetQuotesByPostResponseDto;
 import com.bside.bside_311.dto.PostResponseDto;
 import com.bside.bside_311.entity.Alcohol;
+import com.bside.bside_311.entity.AttachType;
 import com.bside.bside_311.entity.Comment;
 import com.bside.bside_311.entity.Post;
 import com.bside.bside_311.entity.PostAlcohol;
@@ -22,13 +24,16 @@ import com.bside.bside_311.entity.Tag;
 import com.bside.bside_311.entity.User;
 import com.bside.bside_311.entity.YesOrNo;
 import com.bside.bside_311.repository.AlcoholRepository;
+import com.bside.bside_311.repository.AttachRepository;
 import com.bside.bside_311.repository.CommentRepository;
 import com.bside.bside_311.repository.PostLikeRepository;
 import com.bside.bside_311.repository.PostMybatisRepository;
 import com.bside.bside_311.repository.PostQuoteRepository;
 import com.bside.bside_311.repository.PostRepository;
 import com.bside.bside_311.repository.TagRepository;
+import com.bside.bside_311.repository.UserFollowRepository;
 import com.bside.bside_311.repository.UserRepository;
+import com.bside.bside_311.util.AuthUtil;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,10 +56,12 @@ public class PostService {
   private final PostRepository postRepository;
   private final PostMybatisRepository postMybatisRepository;
   private final TagRepository tagRepository;
+  private final AttachRepository attachRepository;
   private final AlcoholRepository alcoholRepository;
 
   private final CommentRepository commentRepository;
   private final PostQuoteRepository postQuoteRepository;
+  private final UserFollowRepository userFollowRepository;
 
   public AddPostResponseDto addPost(
       Post post, Long alcoholNo, String alcoholFeature,
@@ -127,7 +134,7 @@ public class PostService {
 //  }
 
 
-  public PostResponseDto getPostDetail(Long postNo) {
+  public PostResponseDto getPostDetail(Long postNo, List<AttachDto> attachDtos) {
     Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
     Long userNo = post.getCreatedBy();
@@ -147,8 +154,35 @@ public class PostService {
             Collectors.toList());
 
     List<Tag> tags = tagRepository.findByPostTagsInAndDelYnIs(nonDeletedPostTags, YesOrNo.N);
+    List<Comment> comments = commentRepository.findByPostAndDelYnIs(post, YesOrNo.N);
+    if (attachDtos == null) {
+      attachDtos =
+          AttachDto.of(
+              attachRepository.findByRefNoAndAttachTypeIsAndDelYnIs(post.getId(), AttachType.POST,
+                  YesOrNo.N));
+    }
+    // isFollowedByMe, isLikedByMe, quoteInfo, likeCount, quoteCount
+    Long myUserNo = AuthUtil.getUserNoFromAuthentication();
+    Boolean isLikedByMe = null;
+    Boolean isFollowdByMe = null;
+    if (myUserNo != null) {
+      isLikedByMe =
+          postLikeRepository.findByUserAndPostAndDelYnIs(User.of(myUserNo), post, YesOrNo.N)
+                            .isPresent();
+      if (post.getCreatedBy() != null) {
+        isFollowdByMe = userFollowRepository.findByFollowingAndFollowedAndDelYnIs(
+            User.of(myUserNo), User.of(post.getCreatedBy()), YesOrNo.N).isPresent();
+      }
+    }
+    Long likeCount = postLikeRepository.countByPostAndDelYnIs(post, YesOrNo.N);
+    Long quoteCount = postQuoteRepository.countByPostAndDelYnIs(post, YesOrNo.N);
 
-    return PostResponseDto.of(post, user, alcohol, tags);
+    return PostResponseDto.of(post, user, alcohol, tags, comments, attachDtos, isLikedByMe,
+        isFollowdByMe, likeCount, quoteCount);
+  }
+
+  public PostResponseDto getPostDetail(Long postNo) {
+    return getPostDetail(postNo, null);
   }
 
   public GetPostResponseDto getPosts(Long page, Long size, String orderColumn, String orderType,
@@ -166,6 +200,8 @@ public class PostService {
     List<Post> posts = getPostsMvos.stream().map(Post::of).collect(Collectors.toList());
     List<PostResponseDto> list =
         posts.stream().map(post -> getPostDetail(post.getId())).collect(Collectors.toList());
+    // FIXME
+    // 추구 여기서 첨부파일 개수 쿼리 최적화.
     return GetPostResponseDto.of(list, totalCount);
   }
 

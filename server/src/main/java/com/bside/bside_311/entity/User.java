@@ -83,6 +83,10 @@ public class User extends BaseEntity {
                .build();
   }
 
+  public static User of(Long userNo) {
+    return User.builder().id(userNo).build();
+  }
+
   // bi-directional convenience method
   private void addFollowing(UserFollow userFollow) {
     if (!ObjectUtils.isEmpty(userFollow)) {
