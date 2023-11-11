@@ -6,7 +6,6 @@ import { Box, GlobalStyles } from "@mui/material";
 import Pretendard from "~/assets/font/Pretendard";
 import NavigationBar from "~/components/NavigationBar";
 import "./globals.css";
-import MSWInit from "@/components/mock/MSWInit";
 import CustomQueryClientProvider from "@/components/queryClient/CustomQueryClientProvider";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
@@ -39,7 +38,6 @@ export default function RootLayout({
                 overflow: "auto",
               }}
             >
-              <MSWInit></MSWInit>
               {children}
             </Box>
             <NavigationBar />
