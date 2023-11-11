@@ -12,6 +12,7 @@ import com.bside.bside_311.dto.GetPostResponseDto;
 import com.bside.bside_311.dto.GetQuotesByPostResponseDto;
 import com.bside.bside_311.dto.PostResponseDto;
 import com.bside.bside_311.entity.Post;
+import com.bside.bside_311.service.AttachService;
 import com.bside.bside_311.service.PostService;
 import com.bside.bside_311.util.AuthUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,11 +22,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,7 +33,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Validated
@@ -44,6 +42,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Tag(name = "게시글", description = "게시글 API")
 public class PostController {
   private final PostService postService;
+  private final AttachService attachService;
 
   @Operation(summary = "[o]게시글 등록 ", description = "게시글 등록 API")
   @PostMapping
@@ -174,18 +173,5 @@ public class PostController {
     Long userNo = AuthUtil.getUserNoFromAuthentication();
     postService.likeCancelPost(userNo, postNo);
   }
-
-  @Operation(summary = "게시글 사진 첨부", description = "게시글 사진 첨부 API")
-  @PostMapping(value = "/{post_no}/attach", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public void postAttachPicture(@ModelAttribute @Valid MultipartFile image) {
-    log.info(">>> PostController.postAttachPicture");
-  }
-
-  @Operation(summary = "게시글 사진 삭제", description = "게시글 사진 삭제 API")
-  @PostMapping("/{post_no}/attach/{attach_no}")
-  public void postDeletePicture() {
-    log.info(">>> PostController.postDeletePicture");
-  }
-
 
 }

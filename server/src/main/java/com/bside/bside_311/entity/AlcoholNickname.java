@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.Collections;
 import java.util.List;
@@ -21,8 +22,9 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @DynamicInsert
+@DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AlcoholNickname extends BaseEntity{
+public class AlcoholNickname extends BaseEntity {
   @Id
   @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
   @Column(name = "alcohol_nickname_no")
@@ -43,13 +45,14 @@ public class AlcoholNickname extends BaseEntity{
 
   public static AlcoholNickname of(String name) {
     return AlcoholNickname.builder()
-            .nickname(name)
-            .build();
+                          .nickname(name)
+                          .build();
   }
 
   public static List<AlcoholNickname> of(List<String> names) {
-    if (names == null || names.isEmpty())
+    if (names == null || names.isEmpty()) {
       return Collections.EMPTY_LIST;
+    }
     return names.stream().map(name -> AlcoholNickname.of(name)).collect(Collectors.toList());
   }
 }

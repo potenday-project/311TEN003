@@ -41,6 +41,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
+// https://mvnrepository.com/artifact/com.cloudinary/cloudinary-http44
+    implementation group: 'com.cloudinary', name: 'cloudinary-http44', version: '1.35.0'
+
+    implementation 'io.hypersistence:tsid:1.1.0'
 
     // Bouncy Castle Provider → Argon2
     implementation 'org.bouncycastle:bcprov-jdk15on:1.70'

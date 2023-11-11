@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import java.util.List;
 @Getter
 @Setter
 @DynamicInsert
+@DynamicUpdate
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
