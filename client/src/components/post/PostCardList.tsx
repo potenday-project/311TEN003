@@ -12,7 +12,7 @@ import Image from "next/image";
 import NoResult from "@/assets/images/noResult.png";
 
 function PostCardList(props: UseGetPostListQueryInterface) {
-  const { data, fetchNextPage, isFetchingNextPage, isSuccess, hasNextPage } =
+  const { data, fetchNextPage, isFetchingNextPage, hasNextPage } =
     useGetPostListInfiniteQuery({
       ...props,
     });

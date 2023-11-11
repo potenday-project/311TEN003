@@ -21,6 +21,8 @@ import CommentIcon from "@/assets/icons/CommentIcon.svg";
 import QuoteIcon from "@/assets/icons/QuoteIcon.svg";
 import AlcoleNameTag from "./AlcoleNameTag";
 import dayjs from "dayjs";
+import useLikePostMutation from "@/queries/post/useLikePostMutation";
+import useUnLikePostMutation from "@/queries/post/useUnLikePostMutation";
 
 const PostCard = ({
   postAttachUrls,
@@ -35,9 +37,12 @@ const PostCard = ({
   alcoholName,
   alcoholType,
   commentCount,
+  likedByme,
 }: PostInterface) => {
   const openPostDetailPage = useOpenPostDetailPage();
   const hasImage = useMemo(() => postAttachUrls.length !== 0, [postAttachUrls]);
+  const { mutate: likeHandler } = useLikePostMutation();
+  const { mutate: unLikeHandler } = useUnLikePostMutation();
 
   return (
     <Card sx={{ display: "flex", gap: 2, p: 2 }}>
@@ -82,7 +87,9 @@ const PostCard = ({
             <MoreVertOutlined />
           </ButtonBase>
         </Box>
-        <AlcoleNameTag alcoholName={alcoholName} alcoholType={alcoholType} />
+        {alcoholName && (
+          <AlcoleNameTag alcoholName={alcoholName} alcoholType={alcoholType} />
+        )}
 
         <CardContent sx={{ px: 0 }}>
           {/* Contents */}
@@ -104,8 +111,8 @@ const PostCard = ({
             data-testid="postImg"
             component="img"
             height="142"
-            onClick={() => openPostDetailPage(id, id)}
-            image={postAttachUrls[0]}
+            onClick={() => openPostDetailPage(id, String(postNo))}
+            image={postAttachUrls[0].attachUrl}
             alt={`${id}의 포스트`}
             sx={{ borderRadius: 2, bgcolor: "background.default" }}
           />
@@ -121,8 +128,16 @@ const PostCard = ({
               {commentCount ?? 0}
             </Typography>
           </ButtonBase>
-          <ButtonBase data-testid="likeBtn" aria-label="like">
-            <LikeIcon />
+          <ButtonBase
+            data-testid="likeBtn"
+            aria-label="like"
+            onClick={() => {
+              likedByme ? unLikeHandler(postNo) : likeHandler(postNo);
+            }}
+          >
+            <Box style={{ color: likedByme ? "primary.main" : "#d9d9d9" }}>
+              <LikeIcon />
+            </Box>
             <Typography variant="label">{likeCount ?? 0}</Typography>
           </ButtonBase>
           <ButtonBase data-testid="QuoteBtn" aria-label="Quote">
