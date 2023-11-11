@@ -1,7 +1,8 @@
+import DevelopingPage from "@/components/DevelopingPage";
 
 const MyPage = () => {
   return (
-    <div>page</div>
+    <DevelopingPage/>
   )
 }
 
