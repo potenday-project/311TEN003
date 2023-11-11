@@ -39,6 +39,10 @@ public class Tag extends BaseEntity {
   @OneToMany(mappedBy = "tag")
   private List<PostTag> postTags = new ArrayList<>();
 
+  @Builder.Default
+  @OneToMany(mappedBy = "tag")
+  private List<AlcoholTag> alcoholTags = new ArrayList<>();
+
 
   public static Tag of(String name) {
     return Tag.builder().name(name).build();
@@ -49,6 +53,13 @@ public class Tag extends BaseEntity {
     if (!ObjectUtils.isEmpty(postTag)) {
       postTags.add(postTag);
       postTag.setTag(this);
+    }
+  }
+
+  public void addAlcoholTag(AlcoholTag alcoholTag) {
+    if (!ObjectUtils.isEmpty(alcoholTag)) {
+      alcoholTags.add(alcoholTag);
+      alcoholTag.setTag(this);
     }
   }
 

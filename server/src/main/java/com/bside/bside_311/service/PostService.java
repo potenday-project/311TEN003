@@ -101,6 +101,8 @@ public class PostService {
       List<Tag> tags = tagService.addOrSetTags(tagStrList);
       post.removeAllPostTagsAndAddNewPostTags(tags);
     }
+    postRepository.save(post);
+
     if (alcoholNo != null && alcoholFeature != null) {
       Alcohol alcohol = alcoholRepository.findByIdAndDelYnIs(alcoholNo, YesOrNo.N).orElseThrow(
           () -> new IllegalArgumentException("술이 존재하지 않습니다."));

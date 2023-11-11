@@ -8,7 +8,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,27 +20,35 @@ import org.hibernate.annotations.DynamicUpdate;
 @Setter
 @DynamicInsert
 @DynamicUpdate
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserFollow extends BaseEntity {
+public class AlcoholTag extends BaseEntity {
   @Id
   @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-  @Column(name = "user_follow_no")
+  @Column(name = "post_tag_no")
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "following")
-  private User following;
+  @JoinColumn(name = "alcohol_no")
+  private Alcohol alcohol;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "followed")
-  private User followed;
+  @JoinColumn(name = "tag_no")
+  private Tag tag;
 
-  public static UserFollow of(User me, User followingUser) {
-    return UserFollow.builder()
-                     .following(me)
-                     .followed(followingUser)
+  @Builder
+  public AlcoholTag(Long id, Alcohol alcohol, Tag tag) {
+    this.id = id;
+    this.alcohol = alcohol;
+    this.tag = tag;
+  }
+
+  public static AlcoholTag of(Alcohol alcohol, Tag tag) {
+    if (alcohol == null || tag == null) {
+      return null;
+    }
+    return AlcoholTag.builder()
+                     .alcohol(alcohol)
+                     .tag(tag)
                      .build();
   }
 }

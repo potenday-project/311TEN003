@@ -52,6 +52,10 @@ public class Alcohol extends BaseEntity {
   @OneToMany(mappedBy = "alcohol", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<PostAlcohol> postAlcohols = new ArrayList<>();
 
+  @Builder.Default
+  @OneToMany(mappedBy = "alcohol", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<AlcoholTag> alcoholTags = new ArrayList<>();
+
   private String manufacturer;
   private String description;
   private float degree;
@@ -112,5 +116,24 @@ public class Alcohol extends BaseEntity {
       this.postAlcohols.add(postAlcohol);
       postAlcohol.setAlcohol(this);
     }
+  }
+
+  public void addAlcoholTag(AlcoholTag alcoholTag) {
+    if (!ObjectUtils.isEmpty(alcoholTag)) {
+      this.alcoholTags.add(alcoholTag);
+      alcoholTag.setAlcohol(this);
+    }
+  }
+
+  public void removeAllAlcoholTagsAndAddNewAlcoholTags(List<Tag> tags) {
+    List<AlcoholTag> previousAlcoholTags = this.getAlcoholTags();
+    for (AlcoholTag alcoholTag : previousAlcoholTags) {
+      alcoholTag.setDelYn(YesOrNo.Y);
+    }
+    tags.forEach(tag -> {
+      AlcoholTag alcoholTag = AlcoholTag.of(this, tag);
+      this.addAlcoholTag(alcoholTag);
+      tag.addAlcoholTag(alcoholTag);
+    });
   }
 }

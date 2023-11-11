@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -49,5 +50,8 @@ public class AddAlcoholRequestDto {
   @Positive
   private Long volume;
 
+  @Builder.Default
+  @Schema(description = "태그 리스트. 해당 문자열 없을경우 데이터 생성.")
+  private List<String> tagList = new ArrayList<>();
 
 }

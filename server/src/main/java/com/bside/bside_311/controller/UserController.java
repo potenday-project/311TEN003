@@ -5,6 +5,7 @@ import com.bside.bside_311.dto.FindUserMvo;
 import com.bside.bside_311.dto.GetUserInfoResponseDto;
 import com.bside.bside_311.dto.LoginResponseDto;
 import com.bside.bside_311.dto.MyInfoResponseDto;
+import com.bside.bside_311.dto.UserFollowResponseDto;
 import com.bside.bside_311.dto.UserLoginRequestDto;
 import com.bside.bside_311.dto.UserSignupRequestDto;
 import com.bside.bside_311.dto.UserSignupResponseDto;
@@ -100,9 +101,11 @@ public class UserController {
 
   @Operation(summary = "비밀번호 변경", description = "비밀번호 변경 API")
   @PatchMapping("/pwd/change")
+  @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
   public void changePassword(
       @RequestBody @Valid ChangePasswordRequestDto changePasswordRequestDto) {
     log.info(">>> UserController.changePassword");
+    userService.chagePoassword(changePasswordRequestDto);
   }
 
   @Operation(summary = "[~]내 정보 조회", description = "내 정보 조회 API")
@@ -131,14 +134,19 @@ public class UserController {
 
   @Operation(summary = "유저 팔로우하기", description = "유저 팔로우하기 API")
   @PostMapping("/follow/{userNo}")
-  void followUser(@PathVariable("userNo") Long userNo) {
+  @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+  UserFollowResponseDto followUser(@PathVariable("userNo") Long userNo) {
     log.info(">>> UserController.followUser");
+    Long myUserNo = AuthUtil.getUserNoFromAuthentication();
+    return UserFollowResponseDto.of(userService.followUser(myUserNo, userNo));
   }
 
   @Operation(summary = "유저 언팔로우하기", description = "유저 언팔로우하기 API")
-  @PostMapping("/unfollow/{user_no}")
-  void unfollowUser(@PathVariable("user_no") Long userNo) {
-    log.info(">>> UserController.followUser");
+  @PostMapping("/unfollow/{userNo}")
+  void unfollowUser(@PathVariable("userNo") Long userNo) {
+    log.info(">>> UserController.unfollowUser");
+    Long myUserNo = AuthUtil.getUserNoFromAuthentication();
+    userService.unfollowUser(myUserNo, userNo);
   }
 
 }

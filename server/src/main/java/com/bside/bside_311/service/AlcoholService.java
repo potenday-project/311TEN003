@@ -3,6 +3,7 @@ package com.bside.bside_311.service;
 import com.bside.bside_311.dto.AddAlcoholRequestDto;
 import com.bside.bside_311.dto.AddAlcoholResponseDto;
 import com.bside.bside_311.dto.AlcoholResponseDto;
+import com.bside.bside_311.dto.AttachDto;
 import com.bside.bside_311.dto.EditAlcoholRequestDto;
 import com.bside.bside_311.dto.GetAlcoholResponseDto;
 import com.bside.bside_311.dto.GetAlcoholTypesResponseDto;
@@ -10,14 +11,21 @@ import com.bside.bside_311.dto.GetAlcoholsMvo;
 import com.bside.bside_311.dto.GetAlcoholsVo;
 import com.bside.bside_311.entity.Alcohol;
 import com.bside.bside_311.entity.AlcoholNickname;
+import com.bside.bside_311.entity.AlcoholTag;
 import com.bside.bside_311.entity.AlcoholType;
+import com.bside.bside_311.entity.AttachType;
+import com.bside.bside_311.entity.Tag;
 import com.bside.bside_311.entity.YesOrNo;
 import com.bside.bside_311.repository.AlcoholMybatisRepository;
 import com.bside.bside_311.repository.AlcoholNicknameRepository;
 import com.bside.bside_311.repository.AlcoholRepository;
+import com.bside.bside_311.repository.AlcoholTagRepository;
 import com.bside.bside_311.repository.AlcoholTypeRepository;
+import com.bside.bside_311.repository.AttachRepository;
+import com.bside.bside_311.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,9 +40,13 @@ import java.util.stream.Collectors;
 @Transactional
 public class AlcoholService {
   private final AlcoholRepository alcoholRepository;
+  private final TagService tagService;
+  private final TagRepository tagRepository;
   private final AlcoholTypeRepository alcoholTypeRepository;
   private final AlcoholMybatisRepository alcoholMybatisRepository;
   private final AlcoholNicknameRepository alcoholNicknameRepository;
+  private final AttachRepository attachRepository;
+  private final AlcoholTagRepository alcoholTagRepository;
 
   public AddAlcoholResponseDto addAlcohol(AddAlcoholRequestDto addAlcoholRequestDto) {
     Long alcoholTypeNo = addAlcoholRequestDto.getAlcoholTypeNo();
@@ -49,7 +61,16 @@ public class AlcoholService {
       log.info(">>> AlcoholService.addAlcohol: 중복된 술 이름이 존재합니다.");
       throw new IllegalArgumentException("중복된 술 이름이 존재합니다.");
     });
+
     alcoholRepository.save(alcohol);
+
+    List<String> tagStrList = addAlcoholRequestDto.getTagList();
+    if (CollectionUtils.isNotEmpty(tagStrList)) {
+      List<Tag> tags = tagService.addOrSetTags(tagStrList);
+      alcohol.removeAllAlcoholTagsAndAddNewAlcoholTags(tags);
+    }
+    alcoholRepository.save(alcohol);
+
     return AddAlcoholResponseDto.of(alcohol.getId());
   }
 
@@ -88,6 +109,13 @@ public class AlcoholService {
       if (editAlcoholRequestDto.getVolume() != null) {
         alcohol.setVolume(editAlcoholRequestDto.getVolume());
       }
+      List<String> tagStrList = editAlcoholRequestDto.getTagList();
+      if (CollectionUtils.isNotEmpty(tagStrList)) {
+        List<Tag> tags = tagService.addOrSetTags(tagStrList);
+        alcohol.removeAllAlcoholTagsAndAddNewAlcoholTags(tags);
+      }
+      alcoholRepository.save(alcohol);
+
     }
 
     alcoholRepository.save(alcohol);
@@ -101,9 +129,25 @@ public class AlcoholService {
   }
 
   public AlcoholResponseDto getAlcoholDetail(Long alcoholNo) {
+    return getAlcoholDetail(alcoholNo, null);
+  }
+
+  public AlcoholResponseDto getAlcoholDetail(Long alcoholNo, List<AttachDto> attachDtos) {
     Alcohol alcohol = alcoholRepository.findByIdAndDelYnIs(alcoholNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException("술이 존재하지 않습니다."));
-    return AlcoholResponseDto.of(alcohol);
+
+    if (CollectionUtils.isEmpty(attachDtos)) {
+      attachDtos =
+          attachRepository.findByRefNoAndAttachTypeIsAndDelYnIs(alcohol.getId(), AttachType.ALCOHOL,
+                              YesOrNo.N)
+                          .stream()
+                          .map(AttachDto::of).collect(Collectors.toList());
+    }
+    List<AlcoholTag> alcoholTags =
+        alcoholTagRepository.findByAlcoholAndDelYnIs(alcohol, YesOrNo.N);
+    List<Tag> tags = tagRepository.findByAlcoholTagsInAndDelYnIs(alcoholTags, YesOrNo.N);
+
+    return AlcoholResponseDto.of(alcohol, attachDtos, tags);
   }
 
   public GetAlcoholResponseDto getAlcohol(Long page, Long size, String orderColumn,
@@ -132,7 +176,10 @@ public class AlcoholService {
           alcoholNicknameMap.getOrDefault(alcohol.getId(), new ArrayList<>());
       alcohol.setAlcoholNicknames(alcoholNicknamesByAlcoholNo);
     }
-    return GetAlcoholResponseDto.of(alcohols, alcoholsCount);
+    List<AlcoholResponseDto> alcoholResponseDtos =
+        alcohols.stream().map(alcohol -> getAlcoholDetail(alcohol.getId(), null))
+                .collect(Collectors.toList());
+    return GetAlcoholResponseDto.of(alcoholResponseDtos, alcoholsCount);
   }
 
   public GetAlcoholTypesResponseDto getAlcoholTypes() {

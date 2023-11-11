@@ -1,5 +1,6 @@
 package com.bside.bside_311.service;
 
+import com.bside.bside_311.dto.ChangePasswordRequestDto;
 import com.bside.bside_311.dto.GetUserInfoResponseDto;
 import com.bside.bside_311.dto.LoginResponseDto;
 import com.bside.bside_311.dto.MyInfoResponseDto;
@@ -7,11 +8,15 @@ import com.bside.bside_311.dto.UserLoginRequestDto;
 import com.bside.bside_311.dto.UserSignupResponseDto;
 import com.bside.bside_311.dto.UserUpdateRequestDto;
 import com.bside.bside_311.entity.User;
+import com.bside.bside_311.entity.UserFollow;
 import com.bside.bside_311.entity.YesOrNo;
+import com.bside.bside_311.repository.UserFollowRepository;
 import com.bside.bside_311.repository.UserRepository;
+import com.bside.bside_311.util.AuthUtil;
 import com.bside.bside_311.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -33,6 +38,7 @@ public class UserService {
   private final JwtUtil jwtUtil;
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
+  private final UserFollowRepository userFollowRepository;
 
   public UserSignupResponseDto signUp(User user) {
     List<User> users =
@@ -96,4 +102,44 @@ public class UserService {
   }
 
 
+  public void chagePoassword(ChangePasswordRequestDto changePasswordRequestDto) {
+    Long myUserNo = AuthUtil.getUserNoFromAuthentication();
+    if (ObjectUtils.isEmpty(myUserNo)) {
+      throw new IllegalArgumentException("로그인이 유효하지 않습니다.");
+    }
+    User me = userRepository.findByIdAndDelYnIs(myUserNo, YesOrNo.N)
+                            .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+    if (!passwordEncoder.matches(changePasswordRequestDto.getPassword(), me.getPassword())) {
+      throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
+    }
+    me.setPassword(passwordEncoder.encode(changePasswordRequestDto.getNewPassword()));
+    return;
+  }
+
+  public UserFollow followUser(Long myUserNo, Long followingUserNo) {
+    User me = userRepository.findByIdAndDelYnIs(myUserNo, YesOrNo.N)
+                            .orElseThrow(() -> new IllegalArgumentException("로그인 유저가 존재하지 않습니다."));
+
+    User followingUser = userRepository.findByIdAndDelYnIs(followingUserNo, YesOrNo.N)
+                                       .orElseThrow(() -> new IllegalArgumentException(
+                                           "팔로워하는 유저가 존재하지 않습니다."));
+    UserFollow userFollow =
+        userFollowRepository.findByFollowingAndFollowedAndDelYnIs(me, followingUser, YesOrNo.N)
+                            .orElse(UserFollow.of(me, followingUser));
+    userFollowRepository.save(userFollow);
+    return userFollow;
+  }
+
+  public void unfollowUser(Long myUserNo, Long followingUserNo) {
+    User me = userRepository.findByIdAndDelYnIs(myUserNo, YesOrNo.N)
+                            .orElseThrow(() -> new IllegalArgumentException("로그인 유저가 존재하지 않습니다."));
+
+    User followingUser = userRepository.findByIdAndDelYnIs(followingUserNo, YesOrNo.N)
+                                       .orElseThrow(() -> new IllegalArgumentException(
+                                           "팔로워하는 유저가 존재하지 않습니다."));
+    UserFollow userFollow =
+        userFollowRepository.findByFollowingAndFollowedAndDelYnIs(me, followingUser, YesOrNo.N)
+                            .orElseThrow(() -> new IllegalArgumentException("팔로우하지 않은 유저입니다."));
+    userFollow.setDelYn(YesOrNo.Y);
+  }
 }
