@@ -33,7 +33,7 @@ import java.io.IOException;
 public class AttachController {
   private final AttachService attachService;
 
-  @Operation(summary = "사진 첨부", description = "사진 첨부 API")
+  @Operation(summary = "[o]사진 첨부", description = "사진 첨부 API")
   @PostMapping(value = "/resources/{attachType}/{resourceNo}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @ResponseStatus(HttpStatus.CREATED)
   public UploadAttachResponseDto userAttachPicture(
@@ -49,7 +49,7 @@ public class AttachController {
         attachService.uploadAttach(imageRequestDto, resourceNo, AttachType.valueOf(attachType)));
   }
 
-  @Operation(summary = "사진 삭제", description = "사진 삭제 API")
+  @Operation(summary = "[o]사진 삭제", description = "사진 삭제 API")
   @DeleteMapping("/{attachNo}")
   public void userDeletePicture(@PathVariable("attachNo") Long attachNo) {
     // FIXME 자신이 소유하고 있는 자원만 접근이 가능하도록 조치.

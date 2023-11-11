@@ -69,7 +69,7 @@ public class PostController {
     postService.deletePost(postNo);
   }
 
-  @Operation(summary = "[~]게시글 목록 조회", description = "게시글 조회 API")
+  @Operation(summary = "[o]게시글 목록 조회", description = "게시글 조회 API")
   @GetMapping
   public GetPostResponseDto getPosts(@RequestParam(name = "page", defaultValue = "0")
                                      @Schema(description = "페이지번호(0부터), 기본값 0.", example = "0")
@@ -90,7 +90,7 @@ public class PostController {
     return postService.getPosts(page, size, orderColumn, orderType, searchKeyword);
   }
 
-  @Operation(summary = "[~]게시글 상세 조회", description = "게시글 상세 조회 API")
+  @Operation(summary = "[o]게시글 상세 조회", description = "게시글 상세 조회 API")
   @GetMapping("/{postNo}")
   public PostResponseDto getPostDetail(@PathVariable("postNo") Long postNo) {
     log.info(">>> PostController.getPostDetail");
