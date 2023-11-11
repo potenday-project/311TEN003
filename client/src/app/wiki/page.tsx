@@ -1,5 +1,7 @@
+import DevelopingPage from "@/components/DevelopingPage";
+
 const WikiPage = () => {
-  return <div>위키 메인페이지</div>;
+  return <DevelopingPage />;
 };
 
 export default WikiPage;
