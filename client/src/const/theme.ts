@@ -99,6 +99,17 @@ const theme = createTheme({
     MuiSvgIcon: {
       styleOverrides: { root: { color: "#8A8A8A" } },
     },
+    MuiAppBar:{
+      styleOverrides:{
+        root:{
+          color:"#1C1C1C",
+          backgroundColor:'#fefefe'
+        }
+      },
+      defaultProps:{
+        elevation:0
+      }
+    }
   },
 });
 

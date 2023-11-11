@@ -1,0 +1,70 @@
+import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
+import axios from "@/libs/axios";
+import { PostInterface } from "@/types/post/PostInterface";
+
+export interface UseGetPostListQueryInterface extends GetPostListOptions {
+  initialData?: AugmentedGetPostListResponse;
+}
+
+export const useGetPostListInfiniteQuery = ({
+  initialData,
+  size,
+  searchKeyword,
+}: UseGetPostListQueryInterface) => {
+  return useSuspenseInfiniteQuery({
+    queryKey: ["posts", searchKeyword ?? ""],
+    queryFn: async ({ pageParam = 0 }) =>
+      await getPostListQueryFn({ page: pageParam, size, searchKeyword }),
+    getNextPageParam: ({
+      currentPage,
+      hasNextPage,
+    }: AugmentedGetPostListResponse) =>
+      hasNextPage ? currentPage + 1 : undefined,
+    getPreviousPageParam: ({ currentPage }: AugmentedGetPostListResponse) =>
+      currentPage > 0 ? currentPage - 1 : undefined,
+    initialPageParam: 0,
+    initialData: initialData
+      ? { pages: [initialData], pageParams: [0] }
+      : undefined,
+  });
+};
+/**
+ * 포스트리스트를 받아올 때 Query string으로 사용되는 값
+ */
+export interface GetPostListOptions {
+  page?: number;
+  size?: number;
+  searchKeyword?: string;
+}
+/**
+ * 실제 서버에서 응답해주는 값
+ */
+export interface GetPostListResponse {
+  list: PostInterface[];
+  totalCount: number;
+}
+/**
+ * 서버응답값 + 무한스크롤을 위해 증강된 값
+ */
+export interface AugmentedGetPostListResponse extends GetPostListResponse {
+  currentPage: number;
+  hasNextPage: boolean;
+}
+
+export const getPostListQueryFn = async ({
+  page = 0,
+  size = 10,
+  searchKeyword,
+}: GetPostListOptions): Promise<AugmentedGetPostListResponse> => {
+  const { data } = await axios.get<GetPostListResponse>("/posts", {
+    baseURL: process.env.NEXT_PUBLIC_BASE_URL,
+    params: { page, size, searchKeyword },
+  });
+  return {
+    ...data,
+    currentPage: page,
+    hasNextPage: data.totalCount / (page + 1 * size) > 1,
+  };
+};
+
+export default useGetPostListInfiniteQuery;

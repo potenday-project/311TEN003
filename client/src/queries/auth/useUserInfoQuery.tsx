@@ -1,6 +1,6 @@
 "use client";
 import { MY_INFO } from "@/const/serverPath";
-import axios from "@/libs/axios";
+import {axiosPrivate} from "@/libs/axios";
 import { MyInfoInterface } from "@/types/auth/myInfo";
 import { SigninRequirement } from "@/types/auth/signinRequirement";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -12,9 +12,9 @@ export const useUserInfoQuery = () =>
   });
 
 export const getMyInfoByLocalStorage = async () => {
-  const accessToken = localStorage.get("accessToken");
-  const { data } = await axios.get<MyInfoInterface>(MY_INFO, {
-    headers: { Authorization: accessToken }
+  // const accessToken = localStorage.get("accessToken");
+  const { data } = await axiosPrivate.get<MyInfoInterface>(MY_INFO, {
+    // headers: { Authorization: accessToken },
   });
   return data;
 };
