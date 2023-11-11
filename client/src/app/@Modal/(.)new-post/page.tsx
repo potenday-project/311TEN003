@@ -1,10 +1,13 @@
 import AuthProtectorlayout from "@/app/(protectedRoute)/layout";
+import NewpostPage from "@/app/(protectedRoute)/new-post/page";
 import ModalWrapper from "@/components/ModalWrapper";
 
 const NewPostPage = () => {
   return (
     <AuthProtectorlayout>
-      <ModalWrapper>{"페이지"}</ModalWrapper>
+      <ModalWrapper disableBox>
+        <NewpostPage />
+      </ModalWrapper>
     </AuthProtectorlayout>
   );
 };
