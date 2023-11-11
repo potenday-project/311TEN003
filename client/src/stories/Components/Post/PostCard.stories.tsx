@@ -3,26 +3,33 @@
 // import { Meta, StoryObj } from "@storybook/react";
 
 // const mockData = {
-//   nickname: "testNick",
-//   id: "userID",
-//   updateDt: "2023-11-08T13:05:09.531Z",
-//   createdAt: "2023-11-08T13:05:09.531Z",
+//   nickname: "테스트아이디입니다",
+//   id: "jungujungu",
+//   profileImgUrls: [],
+//   updateDt: "2023-11-12T03:48:49.44238",
 //   edited: true,
-//   postNo: 135,
-//   postContent:
-//     "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eos ullam aut minus aliquam quis officia, non dolore omnis, magnam totam tenetur ad harum? Mollitia omnis odit atque blanditiis exercitationem! Voluptatum.",
+//   postNo: 34,
+//   postContent: "포스트 글입니다",
+//   commentCount: 0,
 //   positionInfo: "울릉도 동남쪽 뱃길따라 200리",
-//   alcoholName: "Lorem Ipsum4",
-//   alcoholType: "와인",
-//   postAttachUrls: ["https://source.unsplash.com/random?wallpapers"],
-//   tagList: ["tag1", "tag2"],
+//   alcoholNo: 1,
+//   alcoholType: '와인',
+//   alcoholName: 'Lorem Ipsum.14',
+//   postAttachUrls: [
+//     {
+//       attachNo: 1,
+//       attachUrl:
+//         "https://res.cloudinary.com/drezugbxz/image/upload/v1699728531/test/0E62M1GGZJEH4.jpg",
+//       attachType: "POST",
+//     },
+//   ],
+//   tagList: [],
 //   quoteInfo: [],
-//   likeCount: 6,
-//   commentCount: 3,
-//   quoteCount: 4,
-//   followedByMe: true,
-//   likedByme: false,
-//   profileImgUrls: ["https://source.unsplash.com/random?wallpapers"],
+//   likeCount: 1,
+//   quoteCount: 0,
+//   likedByMe: false,
+//   followedByMe: false,
+
 // };
 
 // const meta = {

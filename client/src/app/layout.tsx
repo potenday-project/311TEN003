@@ -12,6 +12,9 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 export const metadata: Metadata = {
   title: `${nameOfApp} | ${oneLineMessage}`,
   manifest: "/manifest.json",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export const viewport: Viewport = {
