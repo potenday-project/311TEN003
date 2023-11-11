@@ -39,7 +39,8 @@ export default function RootLayout({
                 overflow: "auto",
               }}
             >
-              <MSWInit>{children}</MSWInit>
+              <MSWInit></MSWInit>
+              {children}
             </Box>
             <NavigationBar />
           </ThemeRegistry>
