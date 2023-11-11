@@ -15,10 +15,11 @@ import GoBackIcon from "@/assets/icons/GoBackIcon.svg";
 import InputSearchIcon from "@/assets/icons/InputSearchIcon.svg";
 import AlcholeSearchIcon from "@/assets/icons/AlcholeSearchIcon.svg";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, useEffect, useState } from "react";
-import { useUserInfoQuery } from "@/queries/auth/useUserInfoQuery";
+import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import axios from "@/libs/axios";
 import HOME from "@/const/clientPath";
+import CameraIcon from "@/assets/icons/CameraIcon.svg";
+import PinIcon from "@/assets/icons/PinIcon.svg";
 
 export default function NewpostPage() {
   const [formValue, setFormValue] = useState({
@@ -77,11 +78,21 @@ export default function NewpostPage() {
           });
       });
   };
-  const [userTypedTag, setUserTypedTag] = useState<string>();
+  const [userTypedTag, setUserTypedTag] = useState<string>("");
   const [file, setFile] = useState<File>();
+  const [fileUrl, setFileUrl] = useState<string | ArrayBuffer | null>();
+
+  useEffect(() => {
+    if (!file) {
+      return;
+    }
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => setFileUrl(reader.result);
+  }, [file]);
 
   return (
-    <>
+    <Paper>
       <AppBar position={"static"}>
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <ButtonBase onClick={() => router.back()}>
@@ -90,7 +101,11 @@ export default function NewpostPage() {
           <Typography variant="subtitle2" fontWeight={"bold"}>
             포스팅
           </Typography>
-          <Typography variant="subtitle2" color={"primary.main"}>
+          <Typography
+            onClick={submitHandler}
+            variant="subtitle2"
+            color={"primary.main"}
+          >
             공유
           </Typography>
         </Toolbar>
@@ -103,11 +118,6 @@ export default function NewpostPage() {
             flexDirection: "column",
             gap: 2,
             p: 2,
-          }}
-          component="form"
-          onSubmit={(e) => {
-            e.preventDefault();
-            submitHandler();
           }}
         >
           <TextField
@@ -128,7 +138,9 @@ export default function NewpostPage() {
             placeholder="입력해주세요"
             multiline
             name={"postContent"}
-            onChange={changeHadler}
+            onChange={(e) => {
+              e.target.value.length <= 200 && changeHadler(e);
+            }}
             value={formValue.postContent}
             rows={6}
           />
@@ -139,51 +151,93 @@ export default function NewpostPage() {
               200자
             </Typography>
           </Typography>
-          {formValue.tagList.map((tag) => {
-            return <Typography variant="label">{tag}</Typography>;
-          })}
-          <Box>
+          <Box sx={{ display: "flex", gap: 1 }}>
+            {formValue.tagList.map((tag) => {
+              return <Typography variant="label">#{tag}</Typography>;
+            })}
+          </Box>
+          <Box
+            component="form"
+            onSubmit={(e) => {
+              e.preventDefault();
+              setFormValue((prev) => {
+                if (!userTypedTag) return prev;
+                return { ...prev, tagList: [...prev.tagList, userTypedTag] };
+              });
+              setUserTypedTag("");
+            }}
+            sx={{ display: "flex", gap: 1 }}
+          >
             <TextField
               onChange={({ target }) => setUserTypedTag(target.value)}
               value={userTypedTag}
-            ></TextField>
-            <Button
-              onClick={(e) => {
-                e.preventDefault();
-                setFormValue((prev) => {
-                  if (!userTypedTag) return prev;
-                  return { ...prev, tagList: [...prev.tagList, userTypedTag] };
-                });
-                setUserTypedTag("");
-              }}
-            >
-              태그 추가
-            </Button>
+              size="small"
+              sx={{ flexShrink: 1 }}
+            />
+            <Button type="submit">태그 추가</Button>
           </Box>
-          <Button component="label" variant="contained">
-            Upload file
-            <input
-              id="image"
-              type="file"
-              accept="image/*"
-              name="image"
-              onChange={(e) => {
-                if (e.target.files) {
-                  setFile(e.target.files[0]);
-                  let reader = new FileReader();
-                  reader.readAsDataURL(e.target.files[0]);
-                  reader.onloadend = () => {
-                    // 2. 읽기가 완료되면 아래코드가 실행됩니다.
-                    const base64 = reader.result;
-                  };
-                  // setFile(e.target.files[0]);
-                }
+          {fileUrl && (
+            <Box
+              sx={{
+                backgroundImage: `url(${fileUrl})`,
+                width: "100%",
+                height: 142,
+                borderRadius: 4,
+                border: "1px solid",
+                borderColor: "gray.secondary",
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
               }}
             />
-          </Button>
-          <Button type="submit">작성하기</Button>
+          )}
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <Box
+              component={"label"}
+              sx={{
+                bgcolor: "#F5F5F5",
+                border: "1px solid",
+                borderColor: "#E6E6E6",
+                width: 72,
+                height: 72,
+                borderRadius: 1.5,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <CameraIcon />
+              <input
+                name="image"
+                style={{ display: "none" }}
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  if (e.target.files) {
+                    setFile(e.target.files[0]);
+                  }
+                }}
+              />
+            </Box>
+            <Box
+              component={"label"}
+              sx={{
+                bgcolor: "#F5F5F5",
+                border: "1px solid",
+                borderColor: "#E6E6E6",
+                width: 72,
+                height: 72,
+                borderRadius: 1.5,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <PinIcon />
+            </Box>
+          </Box>
         </Paper>
       </Container>
-    </>
+    </Paper>
   );
 }
