@@ -270,3 +270,4 @@ gradle-app.setting
 src/main/generated/**
 
 src/main/resources/application-prd.yml
+src/main/resources/application.properties
