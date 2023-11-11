@@ -2,11 +2,8 @@ package com.bside.bside_311.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,24 +19,13 @@ import org.hibernate.annotations.DynamicInsert;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostLike extends BaseEntity {
+public class AlcoholType extends BaseEntity {
   @Id
   @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-  @Column(name = "post_like_no")
+  @Column(name = "alcohol_type_no")
   private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_no")
-  private User user;
+  private String description;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "post_no")
-  private Post post;
-
-  public static PostLike of(User user, Post post) {
-    return PostLike.builder()
-                   .user(user)
-                   .post(post)
-                   .build();
-  }
+  private String name;
 }

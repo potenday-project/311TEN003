@@ -1,17 +1,21 @@
 package com.bside.bside_311.service;
 
+import com.bside.bside_311.dto.AddAlcoholRequestDto;
 import com.bside.bside_311.dto.AddAlcoholResponseDto;
 import com.bside.bside_311.dto.AlcoholResponseDto;
 import com.bside.bside_311.dto.EditAlcoholRequestDto;
 import com.bside.bside_311.dto.GetAlcoholResponseDto;
+import com.bside.bside_311.dto.GetAlcoholTypesResponseDto;
 import com.bside.bside_311.dto.GetAlcoholsMvo;
 import com.bside.bside_311.dto.GetAlcoholsVo;
 import com.bside.bside_311.entity.Alcohol;
 import com.bside.bside_311.entity.AlcoholNickname;
+import com.bside.bside_311.entity.AlcoholType;
 import com.bside.bside_311.entity.YesOrNo;
 import com.bside.bside_311.repository.AlcoholMybatisRepository;
 import com.bside.bside_311.repository.AlcoholNicknameRepository;
 import com.bside.bside_311.repository.AlcoholRepository;
+import com.bside.bside_311.repository.AlcoholTypeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,10 +32,18 @@ import java.util.stream.Collectors;
 @Transactional
 public class AlcoholService {
   private final AlcoholRepository alcoholRepository;
+  private final AlcoholTypeRepository alcoholTypeRepository;
   private final AlcoholMybatisRepository alcoholMybatisRepository;
   private final AlcoholNicknameRepository alcoholNicknameRepository;
 
-  public AddAlcoholResponseDto addAlcohol(Alcohol alcohol) {
+  public AddAlcoholResponseDto addAlcohol(AddAlcoholRequestDto addAlcoholRequestDto) {
+    Long alcoholTypeNo = addAlcoholRequestDto.getAlcoholTypeNo();
+    AlcoholType alcoholType = alcoholTypeRepository.findByIdAndDelYnIs(alcoholTypeNo, YesOrNo.N)
+                                                   .orElseThrow(
+                                                       () -> new IllegalArgumentException(
+                                                           "술 종류가 존재하지 않습니다."));
+    Alcohol alcohol = Alcohol.of(addAlcoholRequestDto, alcoholType);
+
     // 이름으로 중복 검색.
     alcoholRepository.findByNameAndDelYnIs(alcohol.getName(), YesOrNo.N).ifPresent(alcohol1 -> {
       log.info(">>> AlcoholService.addAlcohol: 중복된 술 이름이 존재합니다.");
@@ -47,6 +59,12 @@ public class AlcoholService {
     if (editAlcoholRequestDto != null) {
       if (editAlcoholRequestDto.getAlcoholName() != null) {
         alcohol.setName(editAlcoholRequestDto.getAlcoholName());
+      }
+      if (editAlcoholRequestDto.getAlcoholTypeNo() != null) {
+        AlcoholType alcoholType = alcoholTypeRepository.findByIdAndDelYnIs(
+            editAlcoholRequestDto.getAlcoholTypeNo(), YesOrNo.N).orElseThrow(
+            () -> new IllegalArgumentException("술 종류가 존재하지 않습니다."));
+        alcohol.setAlcoholType(alcoholType);
       }
       if (editAlcoholRequestDto.getNickNames() != null &&
               editAlcoholRequestDto.getNickNames().size() > 0) {
@@ -91,6 +109,8 @@ public class AlcoholService {
   public GetAlcoholResponseDto getAlcohol(Long page, Long size, String orderColumn,
                                           String orderType, String searchKeyword) {
     // TODO 닉네임 검색 가능하도록 조치.
+
+    // TODO 성능 이슈 조치.
     GetAlcoholsVo getAlcoholsVo =
         GetAlcoholsVo.builder()
                      .page(page)
@@ -113,5 +133,10 @@ public class AlcoholService {
       alcohol.setAlcoholNicknames(alcoholNicknamesByAlcoholNo);
     }
     return GetAlcoholResponseDto.of(alcohols, alcoholsCount);
+  }
+
+  public GetAlcoholTypesResponseDto getAlcoholTypes() {
+    List<AlcoholType> alcoholTypes = alcoholTypeRepository.findAll();
+    return GetAlcoholTypesResponseDto.of(alcoholTypes);
   }
 }

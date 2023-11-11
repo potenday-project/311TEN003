@@ -2,10 +2,8 @@ package com.bside.bside_311.dto;
 
 import com.bside.bside_311.entity.Alcohol;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Digits;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,11 +11,19 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@AllArgsConstructor
 @Getter
 public class AlcoholResponseDto {
 
   @Schema(example = "1", description = "주류 번호.")
   private Long alcoholNo;
+
+  @Schema(example = "1", description = "주류 종류 번호.(DB에 등록된것만 가능. - 와인, 맥주, 소주)")
+  private Long alcoholTypeNo;
+
+  @Schema(example = "와인", description = "주류 종류 이름.(DB에 등록된것만 가능. - 와인, 맥주, 소주)")
+  private String alcoholType;
 
   @Schema(example = "톰슨 앳 스캇", description = "주류 이름.")
   private String alcoholName;
@@ -42,31 +48,19 @@ public class AlcoholResponseDto {
   @Schema(example = "700", description = "용량(ml)")
   private Long volume;
 
-  @Builder
-  public AlcoholResponseDto(Long alcoholNo, String alcoholName, List<String> nickNames,
-                            String manufacturer, String description, Float degree, Long period,
-                            Long productionYear, Long volume) {
-    this.alcoholNo = alcoholNo;
-    this.alcoholName = alcoholName;
-    this.nickNames = nickNames;
-    this.manufacturer = manufacturer;
-    this.description = description;
-    this.degree = degree;
-    this.period = period;
-    this.productionYear = productionYear;
-    this.volume = volume;
-  }
-
   public static AlcoholResponseDto of(Alcohol alcohol) {
     return AlcoholResponseDto.builder().alcoholNo(alcohol.getId())
-        .alcoholName(alcohol.getName())
-        .nickNames(alcohol.getAlcoholNicknames().stream().map(alcoholNickname -> alcoholNickname.getNickname()).toList())
-        .manufacturer(alcohol.getManufacturer())
-        .description(alcohol.getDescription())
-        .degree(alcohol.getDegree())
-        .period(alcohol.getPeriod())
-        .productionYear(alcohol.getProductionYear())
-        .volume(alcohol.getVolume())
-        .build();
+                             .alcoholName(alcohol.getName())
+                             .alcoholTypeNo(alcohol.getAlcoholType().getId())
+                             .alcoholType(alcohol.getAlcoholType().getName())
+                             .nickNames(alcohol.getAlcoholNicknames().stream().map(
+                                 alcoholNickname -> alcoholNickname.getNickname()).toList())
+                             .manufacturer(alcohol.getManufacturer())
+                             .description(alcohol.getDescription())
+                             .degree(alcohol.getDegree())
+                             .period(alcohol.getPeriod())
+                             .productionYear(alcohol.getProductionYear())
+                             .volume(alcohol.getVolume())
+                             .build();
   }
 }

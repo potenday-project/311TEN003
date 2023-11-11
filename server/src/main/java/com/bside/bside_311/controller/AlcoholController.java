@@ -5,7 +5,7 @@ import com.bside.bside_311.dto.AddAlcoholResponseDto;
 import com.bside.bside_311.dto.AlcoholResponseDto;
 import com.bside.bside_311.dto.EditAlcoholRequestDto;
 import com.bside.bside_311.dto.GetAlcoholResponseDto;
-import com.bside.bside_311.entity.Alcohol;
+import com.bside.bside_311.dto.GetAlcoholTypesResponseDto;
 import com.bside.bside_311.service.AlcoholService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -35,13 +35,21 @@ import org.springframework.web.bind.annotation.RestController;
 public class AlcoholController {
   private final AlcoholService alcoholService;
 
+  @Operation(summary = "[o]술 종류 조회 ", description = "술 종류 조회 API")
+  @GetMapping("/types")
+  @ResponseStatus(HttpStatus.CREATED)
+  public GetAlcoholTypesResponseDto getAlcoholTypes() {
+    log.info(">>> AlcoholController.getAlcoholTypes");
+    return alcoholService.getAlcoholTypes();
+  }
+
   @Operation(summary = "[o]술 등록 ", description = "술 등록 API")
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public AddAlcoholResponseDto addAlcohol(
       @RequestBody @Valid AddAlcoholRequestDto addAlcoholRequestDto) {
     log.info(">>> AlcoholController.addAlcohol");
-    return alcoholService.addAlcohol(Alcohol.of(addAlcoholRequestDto));
+    return alcoholService.addAlcohol(addAlcoholRequestDto);
   }
 
   @Operation(summary = "[o]술 수정", description = "술 수정 API")
@@ -80,7 +88,6 @@ public class AlcoholController {
   @GetMapping("/{alcoholNo}")
   public AlcoholResponseDto getAlcoholDetail(@PathVariable("alcoholNo") Long alcoholNo) {
     log.info(">>> AlcoholController.getAlcoholDetail");
-
     return alcoholService.getAlcoholDetail(alcoholNo);
   }
 

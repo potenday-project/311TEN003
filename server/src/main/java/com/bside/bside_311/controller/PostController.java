@@ -4,14 +4,16 @@ import com.bside.bside_311.dto.AddCommentRequestDto;
 import com.bside.bside_311.dto.AddCommentResponseDto;
 import com.bside.bside_311.dto.AddPostRequestDto;
 import com.bside.bside_311.dto.AddPostResponseDto;
+import com.bside.bside_311.dto.AddQuoteResponseDto;
 import com.bside.bside_311.dto.EditCommentRequestDto;
 import com.bside.bside_311.dto.EditPostRequestDto;
 import com.bside.bside_311.dto.GetPostCommentsResponseDto;
 import com.bside.bside_311.dto.GetPostResponseDto;
+import com.bside.bside_311.dto.GetQuotesByPostResponseDto;
 import com.bside.bside_311.dto.PostResponseDto;
-import com.bside.bside_311.dto.QuoteInfoDto;
 import com.bside.bside_311.entity.Post;
 import com.bside.bside_311.service.PostService;
+import com.bside.bside_311.util.AuthUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -96,67 +98,81 @@ public class PostController {
     return postService.getPostDetail(postNo);
   }
 
-  @Operation(summary = "게시글 댓글 등록", description = "게시글 댓글 등록 API")
+  @Operation(summary = "[o]게시글 댓글 등록", description = "게시글 댓글 등록 API")
   @PostMapping("/{postNo}/comments")
   @ResponseStatus(HttpStatus.CREATED)
-  public AddCommentResponseDto addComment(@PathVariable Long postNo, @Valid @RequestBody
+  public AddCommentResponseDto addComment(@PathVariable("postNo") Long postNo, @Valid @RequestBody
   AddCommentRequestDto addCommentRequestDto) {
     log.info(">>> PostController.addComment");
-    return null;
+    return postService.addComment(postNo, addCommentRequestDto);
   }
 
-  @Operation(summary = "게시글 댓글 조회", description = "게시글 댓글 조회 API")
+  @Operation(summary = "[o]게시글 댓글 조회", description = "게시글 댓글 조회 API")
   @GetMapping("/{postNo}/comments")
   @ResponseStatus(HttpStatus.CREATED)
-  public GetPostCommentsResponseDto getPostComments(@PathVariable Long postNo) {
+  public GetPostCommentsResponseDto getPostComments(@PathVariable("postNo") Long postNo) {
     log.info(">>> PostController.getPostComments");
-    return null;
+    return postService.getPostComments(postNo);
   }
 
   @Operation(summary = "[o]게시글 댓글 수정", description = "게시글 댓글 수정 API")
   @PatchMapping("/{postNo}/comments/{commentNo}")
-  public void editComment(@PathVariable Long postNo, @PathVariable Long commentNo,
+  public void editComment(@PathVariable("postNo") Long postNo,
+                          @PathVariable("commentNo") Long commentNo,
                           @Valid @RequestBody
-                          EditCommentRequestDto EditCommentRequestDto) {
+                          EditCommentRequestDto editCommentRequestDto) {
     log.info(">>> PostController.editComment");
+    postService.editComment(postNo, commentNo, editCommentRequestDto);
   }
 
-  @Operation(summary = "게시글 댓글 삭제", description = "게시글 댓글 삭제 API")
+  @Operation(summary = "[o]게시글 댓글 삭제", description = "게시글 댓글 삭제 API")
   @DeleteMapping("/{postNo}/comments/{commentNo}")
-  public void deleteComment(@PathVariable Long postNo, @PathVariable Long commentNo) {
+  public void deleteComment(@PathVariable("postNo") Long postNo,
+                            @PathVariable("commentNo") Long commentNo) {
     log.info(">>> PostController.deleteComment");
+    postService.deleteComment(postNo, commentNo);
   }
 
-  @Operation(summary = "인용 등록 ", description = "인용 등록 API")
+  @Operation(summary = "[o]인용 등록 ", description = "인용 등록 API")
   @PostMapping("/{postNo}/quotes/{quotedPostNo}")
   @ResponseStatus(HttpStatus.CREATED)
-  public void addQuote(@PathVariable Long postNo, @PathVariable Long quotedPostNo) {
+  public AddQuoteResponseDto addQuote(@PathVariable("postNo")
+                                      @Schema(example = "1", description = "포스트 번호") Long postNo
+
+      , @PathVariable("quotedPostNo") @Schema(example = "2", description = "인용하는 포스트 번호")
+                                      Long quotedPostNo) {
     log.info(">>> PostController.addQuote");
+    return AddQuoteResponseDto.of(postService.addQuote(postNo, quotedPostNo));
   }
 
-  @Operation(summary = "인용 삭제", description = "인용 삭제 API")
-  @DeleteMapping("/quotes/{quote_no}")
-  public void deleteQuote() {
+  @Operation(summary = "[o]인용 삭제", description = "인용 삭제 API")
+  @DeleteMapping("/quotes/{quoteNo}")
+  public void deleteQuote(@PathVariable("quoteNo") Long quoteNo) {
     log.info(">>> PostController.deleteQuote");
+    postService.deleteQuote(quoteNo);
   }
 
-  @Operation(summary = "인용 단건 조회", description = "인용 단건 조회 API")
-  @GetMapping("/quotes/{quote_no}")
-  public QuoteInfoDto getQuoteDetail() {
+  @Operation(summary = "[o]인용 복수 조회", description = "인용 복수 조회 API")
+  @GetMapping("/post-quotes/{postNo}")
+  public GetQuotesByPostResponseDto getQuotesByPost(@PathVariable("postNo") Long postNo) {
     log.info(">>> PostController.getQuoteDetail");
-    return null;
+    return postService.getQuotesByPost(postNo);
   }
 
-  @Operation(summary = "게시글 좋아요", description = "게시글 좋아요 API")
-  @PostMapping("/like/{post_no}")
-  public void likePost() {
+  @Operation(summary = "[o]게시글 좋아요", description = "게시글 좋아요 API")
+  @PostMapping("/like/{postNo}")
+  public void likePost(@PathVariable("postNo") Long postNo) {
     log.info(">>> PostController.likePost");
+    Long userNo = AuthUtil.getUserNoFromAuthentication();
+    postService.likePost(userNo, postNo);
   }
 
-  @Operation(summary = "게시글 좋아요 취소", description = "게시글 좋아요 취소 API")
-  @PostMapping("/like-cancel/{post_no}")
-  public void likeCancelPost() {
+  @Operation(summary = "[o]게시글 좋아요 취소", description = "게시글 좋아요 취소 API")
+  @PostMapping("/like-cancel/{postNo}")
+  public void likeCancelPost(@PathVariable("postNo") Long postNo) {
     log.info(">>> PostController.likeCancelPost");
+    Long userNo = AuthUtil.getUserNoFromAuthentication();
+    postService.likeCancelPost(userNo, postNo);
   }
 
   @Operation(summary = "게시글 사진 첨부", description = "게시글 사진 첨부 API")

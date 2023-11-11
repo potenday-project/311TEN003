@@ -7,6 +7,7 @@ import com.bside.bside_311.entity.Tag;
 import com.bside.bside_311.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
+@AllArgsConstructor
 @Getter
 public class PostResponseDto {
   private String nickname;
@@ -34,6 +36,7 @@ public class PostResponseDto {
   private String positionInfo;
 
   private Long alcoholNo;
+  private String alcoholType;
   private String alcoholName;
   @Builder.Default
   private List<String> postAttachUrls = new ArrayList<>();
@@ -46,31 +49,6 @@ public class PostResponseDto {
 
   private Long quoteCount;
 
-  public PostResponseDto(String nickname, String id, List<String> profileImgUrls,
-                         boolean isFollowedByMe, boolean isLikedByMe, LocalDateTime updateDt,
-                         boolean edited, Long postNo, String postContent, String positionInfo,
-                         Long alcoholNo, String alcoholName, List<String> postAttachUrls,
-                         List<String> tagList, List<QuoteInfoDto> quoteInfo, Long likeCount,
-                         Long quoteCount) {
-    this.nickname = nickname;
-    this.id = id;
-    this.profileImgUrls = profileImgUrls;
-    this.isFollowedByMe = isFollowedByMe;
-    this.isLikedByMe = isLikedByMe;
-    this.updateDt = updateDt;
-    this.edited = edited;
-    this.postNo = postNo;
-    this.postContent = postContent;
-    this.positionInfo = positionInfo;
-    this.alcoholNo = alcoholNo;
-    this.alcoholName = alcoholName;
-    this.postAttachUrls = postAttachUrls;
-    this.tagList = tagList;
-    this.quoteInfo = quoteInfo;
-    this.likeCount = likeCount;
-    this.quoteCount = quoteCount;
-  }
-
   public static PostResponseDto of(Post post, User user, Alcohol alcohol, List<Tag> tags) {
     PostResponseDtoBuilder postResponseDtoBuilder = PostResponseDto.builder();
     if (user != null) {
@@ -78,7 +56,8 @@ public class PostResponseDto {
     }
     if (alcohol != null) {
       postResponseDtoBuilder.alcoholNo(alcohol.getId())
-                            .alcoholName(alcohol.getName());
+                            .alcoholName(alcohol.getName())
+                            .alcoholType(alcohol.getAlcoholType().getName());
     }
     if (CollectionUtils.isNotEmpty(tags)) {
       List<String> tagList = tags.stream().map(Tag::getName).toList();

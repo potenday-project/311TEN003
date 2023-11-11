@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,11 +14,16 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@AllArgsConstructor
 @Getter
 public class AddAlcoholRequestDto {
   @Schema(example = "톰슨 앳 스캇", description = "주류 이름.(중복 허용X)")
   @NotBlank
   private String alcoholName;
+
+  @Schema(example = "1", description = "주류 종류 번호.(DB에 등록된것만 가능. - 와인, 맥주, 소주)")
+  private Long alcoholTypeNo;
 
   private List<String> nickNames;
 
@@ -44,17 +50,4 @@ public class AddAlcoholRequestDto {
   private Long volume;
 
 
-  @Builder
-  public AddAlcoholRequestDto(String alcoholName, List<String> nickNames, String manufacturer,
-                              String description, Float degree, Long period,
-                              Long productionYear, Long volume) {
-    this.alcoholName = alcoholName;
-    this.nickNames = nickNames;
-    this.manufacturer = manufacturer;
-    this.description = description;
-    this.degree = degree;
-    this.period = period;
-    this.productionYear = productionYear;
-    this.volume = volume;
-  }
 }

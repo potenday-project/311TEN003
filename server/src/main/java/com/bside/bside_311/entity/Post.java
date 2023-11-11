@@ -11,6 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,6 +27,7 @@ import java.util.List;
 @Setter
 @DynamicInsert
 @Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post extends BaseEntity {
 
@@ -59,17 +61,14 @@ public class Post extends BaseEntity {
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<PostAlcohol> postAlcohols = new ArrayList<>();
 
-  public Post(Long id, String content, PostType postType, String position, List<Comment> comments,
-              List<PostLike> postLikes, List<PostTag> postTags, List<PostAlcohol> postAlcohols) {
-    this.id = id;
-    this.content = content;
-    this.postType = postType;
-    this.position = position;
-    this.comments = comments;
-    this.postLikes = postLikes;
-    this.postTags = postTags;
-    this.postAlcohols = postAlcohols;
-  }
+  @Builder.Default
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<PostQuote> postQuoteIngs = new ArrayList<>();
+
+  @Builder.Default
+  @OneToMany(mappedBy = "quote", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<PostQuote> postQuoteEds = new ArrayList<>();
+
 
   public static Post of(AddPostRequestDto addPostRequestDto) {
     Post post = Post.builder()
@@ -152,6 +151,20 @@ public class Post extends BaseEntity {
     if (postAlcohol != null) {
       this.postAlcohols.add(postAlcohol);
       postAlcohol.setPost(this);
+    }
+  }
+
+  public void addPostQuoteIng(PostQuote postQuote) {
+    if (postQuote != null) {
+      this.postQuoteIngs.add(postQuote);
+      postQuote.setPost(this);
+    }
+  }
+
+  public void addPostQuoteEds(PostQuote postQuote) {
+    if (postQuote != null) {
+      this.postQuoteEds.add(postQuote);
+      postQuote.setQuote(this);
     }
   }
 }

@@ -7,8 +7,11 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,10 +24,10 @@ import java.util.List;
 
 @Entity
 @Getter
-
 @Setter
 @DynamicInsert
 @Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Alcohol extends BaseEntity {
 
@@ -32,6 +35,10 @@ public class Alcohol extends BaseEntity {
   @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
   @Column(name = "alcohol_no")
   private Long id;
+
+  @ManyToOne(fetch = jakarta.persistence.FetchType.LAZY)
+  @JoinColumn(name = "alcohol_type_no")
+  private AlcoholType alcoholType;
 
   private String name;
 
@@ -50,22 +57,7 @@ public class Alcohol extends BaseEntity {
   private Long productionYear;
   private Long volume;
 
-  public Alcohol(Long id, String name, List<AlcoholNickname> alcoholNicknames,
-                 List<PostAlcohol> postAlcohols, String manufacturer, String description,
-                 float degree, Long period, Long productionYear, Long volume) {
-    this.id = id;
-    this.name = name;
-    this.alcoholNicknames = alcoholNicknames;
-    this.postAlcohols = postAlcohols;
-    this.manufacturer = manufacturer;
-    this.description = description;
-    this.degree = degree;
-    this.period = period;
-    this.productionYear = productionYear;
-    this.volume = volume;
-  }
-
-  public static Alcohol of(AddAlcoholRequestDto addAlcoholRequestDto) {
+  public static Alcohol of(AddAlcoholRequestDto addAlcoholRequestDto, AlcoholType alcoholType) {
     Alcohol alcohol = Alcohol.builder()
                              .name(addAlcoholRequestDto.getAlcoholName())
                              .alcoholNicknames(new ArrayList<>())
@@ -76,6 +68,7 @@ public class Alcohol extends BaseEntity {
                              .productionYear(addAlcoholRequestDto.getProductionYear())
                              .volume(addAlcoholRequestDto.getVolume())
                              .build();
+    alcohol.setAlcoholType(alcoholType);
     AlcoholNickname.of(addAlcoholRequestDto.getNickNames()).forEach(alcohol::addAlcoholNickname);
     return alcohol;
   }
