@@ -1,7 +1,7 @@
 /**
  * To let change the name of app
  */
-export const nameOfApp = "앱이름" as const;
+export const nameOfApp = "투파이아" as const;
 /**
  * One line brand message to change brand description
  */
