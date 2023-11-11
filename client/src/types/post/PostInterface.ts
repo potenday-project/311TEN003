@@ -45,7 +45,7 @@ export interface PostInterface {
   /**
    * 이미지 Href 배열
    */
-  postAttachUrls: string[];
+  postAttachUrls: postAttachUrlsType[];
   /**
    * 사용자가 추가한 해시태그
    */
@@ -80,3 +80,9 @@ type QuoteInfoType = {
   quoteNo: number;
   quoteContent: string;
 };
+
+type postAttachUrlsType = {
+  attachNo:string;
+  attachUrl:string;
+  attachType:string
+}

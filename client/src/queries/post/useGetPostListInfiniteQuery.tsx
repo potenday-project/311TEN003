@@ -12,14 +12,17 @@ export const useGetPostListInfiniteQuery = ({
   searchKeyword,
 }: UseGetPostListQueryInterface) => {
   return useSuspenseInfiniteQuery({
-    queryKey: ["posts", searchKeyword ?? ""],
+    queryKey: getPostListInfiniteQueryKey.byKeyword(searchKeyword),
+
     queryFn: async ({ pageParam = 0 }) =>
       await getPostListQueryFn({ page: pageParam, size, searchKeyword }),
+
     getNextPageParam: ({
       currentPage,
       hasNextPage,
     }: AugmentedGetPostListResponse) =>
       hasNextPage ? currentPage + 1 : undefined,
+
     getPreviousPageParam: ({ currentPage }: AugmentedGetPostListResponse) =>
       currentPage > 0 ? currentPage - 1 : undefined,
     initialPageParam: 0,
@@ -63,8 +66,13 @@ export const getPostListQueryFn = async ({
   return {
     ...data,
     currentPage: page,
-    hasNextPage: data.totalCount / (page + 1 * size) > 1,
+    hasNextPage: data.totalCount / ((page + 1) * size) > 1,
   };
+};
+
+export const getPostListInfiniteQueryKey = {
+  all: ["posts"] as const,
+  byKeyword: (keyword?: string) => ["posts", keyword ?? ""] as const,
 };
 
 export default useGetPostListInfiniteQuery;
