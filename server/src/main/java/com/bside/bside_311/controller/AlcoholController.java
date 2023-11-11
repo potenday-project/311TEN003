@@ -67,7 +67,7 @@ public class AlcoholController {
     alcoholService.deleteAlcohol(alcoholNo);
   }
 
-  @Operation(summary = "[~]술 목록 조회", description = "술 조회 API")
+  @Operation(summary = "[o]술 목록 조회", description = "술 조회 API")
   @GetMapping
   public GetAlcoholResponseDto getAlcohol(
       @RequestParam(name = "page", defaultValue = "0")

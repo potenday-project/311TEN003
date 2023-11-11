@@ -1,7 +1,6 @@
 package com.bside.bside_311.controller;
 
 import com.bside.bside_311.dto.ChangePasswordRequestDto;
-import com.bside.bside_311.dto.FindUserMvo;
 import com.bside.bside_311.dto.GetUserInfoResponseDto;
 import com.bside.bside_311.dto.LoginResponseDto;
 import com.bside.bside_311.dto.MyInfoResponseDto;
@@ -31,8 +30,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -41,13 +38,6 @@ import java.util.List;
 public class UserController {
   private final UserService userService;
   private final UserMybatisRepository userMybatisRepository;
-
-  @Operation(summary = "유저 조회", description = "유저 조회 API")
-  @GetMapping()
-  public void getUser() {
-    List<FindUserMvo> users = userMybatisRepository.getUsers();
-    log.info(">>> UserController.getUser");
-  }
 
   @Operation(summary = "[o]유저 등록", description = "유저 등록 API")
   @PostMapping("/signup")
@@ -99,7 +89,7 @@ public class UserController {
     log.info(">>> UserController.updateUser");
   }
 
-  @Operation(summary = "비밀번호 변경", description = "비밀번호 변경 API")
+  @Operation(summary = "[o]비밀번호 변경", description = "비밀번호 변경 API")
   @PatchMapping("/pwd/change")
   @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
   public void changePassword(
@@ -132,7 +122,7 @@ public class UserController {
     log.info(">>> UserController.withdrawl");
   }
 
-  @Operation(summary = "유저 팔로우하기", description = "유저 팔로우하기 API")
+  @Operation(summary = "[o]유저 팔로우하기", description = "유저 팔로우하기 API")
   @PostMapping("/follow/{userNo}")
   @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
   UserFollowResponseDto followUser(@PathVariable("userNo") Long userNo) {
@@ -141,7 +131,7 @@ public class UserController {
     return UserFollowResponseDto.of(userService.followUser(myUserNo, userNo));
   }
 
-  @Operation(summary = "유저 언팔로우하기", description = "유저 언팔로우하기 API")
+  @Operation(summary = "[o]유저 언팔로우하기", description = "유저 언팔로우하기 API")
   @PostMapping("/unfollow/{userNo}")
   void unfollowUser(@PathVariable("userNo") Long userNo) {
     log.info(">>> UserController.unfollowUser");
