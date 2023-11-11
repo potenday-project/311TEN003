@@ -3,14 +3,15 @@ import PostDetail from "@/components/post/PostDetail";
 import { getPostDetailQueryFn } from "@/queries/post/useGetPostDetailQuery";
 import { redirect } from "next/navigation";
 
-const PostDetailPage = async ({ ...context }) => {
-  const parsedPostId = context.params.postId;
+const PostDetailPage = async ({ params }: { params: { postId: string } }) => {
+  const parsedPostId = params.postId;
+  let initialData;
   try {
-    const initialData = await getPostDetailQueryFn(parsedPostId);
-    return <PostDetail postNo={parsedPostId} initialData={initialData} />;
+    initialData = await getPostDetailQueryFn(parsedPostId);
   } catch {
     redirect("/not-found");
   }
+  return <PostDetail postNo={parsedPostId} initialData={initialData} />;
 };
 
 export default PostDetailPage;
