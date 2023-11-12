@@ -3,6 +3,7 @@ import axios from "@/libs/axios";
 import { PostInterface } from "@/types/post/PostInterface";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getPostListInfiniteQueryKey } from "./useGetPostListInfiniteQuery";
+import getTokenFromLocalStorage from "@/utils/getTokenFromLocalStorage";
 /**
  * 좋아요를 취소하고, 게시글을 invalidation 하는 쿼리
  * @returns
@@ -24,7 +25,7 @@ const useLikePostMutation = () => {
  * @returns
  */
 export const useLikePostMutationFn = async (id: PostInterface["postNo"]) => {
-  const token = localStorage.getItem("accessToken");
+  const token = getTokenFromLocalStorage();
   // FIXME 리터럴제거
   const { data } = await axios.post(`/posts/like-cancel/${id}`, null, {
     headers: { Authorization: token },

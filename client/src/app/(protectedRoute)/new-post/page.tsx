@@ -20,6 +20,7 @@ import axios from "@/libs/axios";
 import HOME from "@/const/clientPath";
 import CameraIcon from "@/assets/icons/CameraIcon.svg";
 import PinIcon from "@/assets/icons/PinIcon.svg";
+import getTokenFromLocalStorage from "@/utils/getTokenFromLocalStorage";
 
 export default function NewpostPage() {
   const [formValue, setFormValue] = useState({
@@ -35,7 +36,7 @@ export default function NewpostPage() {
     setFormValue((prev) => ({ ...prev, [target.name]: target.value }));
   };
 
-  const token = localStorage.getItem("accessToken");
+  const token = getTokenFromLocalStorage();
 
   const router = useRouter();
 

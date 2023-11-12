@@ -10,11 +10,13 @@ import { Box, CircularProgress } from "@mui/material";
 import { useMemo } from "react";
 import Image from "next/image";
 import NoResult from "@/assets/images/noResult.png";
+import getTokenFromLocalStorage from "@/utils/getTokenFromLocalStorage";
 
 function PostCardList(props: UseGetPostListQueryInterface) {
   const { data, fetchNextPage, isFetchingNextPage, hasNextPage } =
     useGetPostListInfiniteQuery({
       ...props,
+      headers: { Authorization: getTokenFromLocalStorage() },
     });
   const { ref, inView } = useInView();
 
@@ -22,13 +24,16 @@ function PostCardList(props: UseGetPostListQueryInterface) {
     if (hasNextPage && inView) fetchNextPage();
   }, [inView, hasNextPage]);
 
-  const hasResult = useMemo(() => data.pages[0].list.length > 0, [data]);
+  const hasResult = useMemo(
+    () => data && data.pages[0].list.length > 0,
+    [data]
+  );
 
   return (
     <div>
       {hasResult ? (
         // 검색결과가 있을시
-        data.pages.map((page) =>
+        data?.pages.map((page) =>
           page.list.map((post) => <PostCard {...post} key={post.postNo} />)
         )
       ) : (
