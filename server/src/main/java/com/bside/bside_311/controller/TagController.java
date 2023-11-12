@@ -32,7 +32,7 @@ public class TagController {
   @GetMapping()
   @ResponseStatus(HttpStatus.OK)
   public SearchTagResponseDto searchTag(
-                    @RequestParam(name="page", defaultValue ="0")
+                    @RequestParam(name="searchKeyword", defaultValue ="")
                     @Schema(description = "검색 키워드 기본값 빈값", example = "")
                     String searchKeyword)
   {
