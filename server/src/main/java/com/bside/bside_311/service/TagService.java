@@ -30,6 +30,10 @@ public class TagService {
 
     return tags;
   }
+
+  public List<Tag> searchTag(String searchKeyword) {
+    return tagRepository.findByNameContainingAndDelYnIs(searchKeyword, YesOrNo.N);
+  }
 }
 
 

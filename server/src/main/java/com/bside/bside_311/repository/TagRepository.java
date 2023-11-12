@@ -18,4 +18,6 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
   List<Tag> findByPostTagsInAndDelYnIs(List<PostTag> postTags, YesOrNo delYn);
 
   List<Tag> findByAlcoholTagsInAndDelYnIs(List<AlcoholTag> alcoholTags, YesOrNo n);
+
+  List<Tag> findByNameContainingAndDelYnIs(String searchKeyword, YesOrNo n);
 }
