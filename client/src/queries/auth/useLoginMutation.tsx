@@ -7,16 +7,21 @@ import { useRouter } from "next/navigation";
 import HOME from "@/const/clientPath";
 import errorHandler from "@/utils/errorHandler";
 import { AxiosError } from "axios";
+import { useGlobalLoadingStore } from "@/store/useGlobalLoadingStore";
 
 const useLoginMutation = () => {
   const { loginHandler } = useLogin();
   const queryClient = useQueryClient();
   const router = useRouter();
+  const { setLoading } = useGlobalLoadingStore();
 
   return useMutation({
     mutationKey: LoginMuataionKey.all,
     mutationFn: async ({ id, password }: SigninRequirement) =>
       await loginHandler({ id, password }),
+    onMutate: () => {
+      setLoading(true);
+    },
     // 로그인에 성공한 경우, 토큰을 로컬스토리지에 저장, 이전 로그인 쿼리를 인벨리데이트
     onSuccess: async ({ token }) => {
       localStorage?.setItem("accessToken", token);
@@ -26,6 +31,9 @@ const useLoginMutation = () => {
     },
     onError: (error: AxiosError<{ detailMessage: string }>) =>
       errorHandler(error.response?.data.detailMessage ?? "에러가 발생했니다"),
+    onSettled: () => {
+      setLoading(false);
+    },
   });
 };
 
