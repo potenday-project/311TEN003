@@ -8,6 +8,7 @@ import NavigationBar from "~/components/NavigationBar";
 import "./globals.css";
 import CustomQueryClientProvider from "@/components/queryClient/CustomQueryClientProvider";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import GlobalLoadingPopup from "./../components/GlobalLoadingPopup";
 
 export const metadata: Metadata = {
   title: `${nameOfApp} | ${oneLineMessage}`,
@@ -21,20 +22,20 @@ export const viewport: Viewport = {
   themeColor: "black",
 };
 
-export default function RootLayout({
-  children,
-  Modal,
-}: {
+interface RootLayoutInterface {
   children: React.ReactNode;
   Modal: React.ReactNode;
-}) {
+}
+
+export default function RootLayout({ children, Modal }: RootLayoutInterface) {
   return (
     <html lang="kr" className={Pretendard.className}>
       <body>
         <CustomQueryClientProvider>
           <ThemeRegistry options={{ key: "mui" }}>
-            {Modal}
             <GlobalStyles styles={OverrideCSS} />
+            <GlobalLoadingPopup />
+            {Modal}
             <Box
               sx={{
                 maxHeight: "calc(100vh - 56px)",

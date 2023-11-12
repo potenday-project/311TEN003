@@ -6,9 +6,11 @@ import {
   Button,
   ButtonBase,
   Container,
+  IconButton,
   Paper,
   TextField,
   Toolbar,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import GoBackIcon from "@/assets/icons/GoBackIcon.svg";
@@ -21,6 +23,7 @@ import HOME from "@/const/clientPath";
 import CameraIcon from "@/assets/icons/CameraIcon.svg";
 import PinIcon from "@/assets/icons/PinIcon.svg";
 import getTokenFromLocalStorage from "@/utils/getTokenFromLocalStorage";
+import { useGlobalLoadingStore } from "@/store/useGlobalLoadingStore";
 
 export default function NewpostPage() {
   const [formValue, setFormValue] = useState({
@@ -35,7 +38,7 @@ export default function NewpostPage() {
   }: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormValue((prev) => ({ ...prev, [target.name]: target.value }));
   };
-
+  const { setLoading } = useGlobalLoadingStore();
   const token = getTokenFromLocalStorage();
 
   const router = useRouter();
@@ -43,6 +46,7 @@ export default function NewpostPage() {
   const submitHandler = () => {
     let userId;
     let pk;
+    setLoading(true);
     axios
       .get("/user/me", { headers: { Authorization: token } })
       .then((res) => {
@@ -60,9 +64,7 @@ export default function NewpostPage() {
             const formData = new FormData();
             if (file) {
               formData.append("image", file);
-            }
-            axios
-              .post(`/attach/resources/POST/${pk}`, formData, {
+              axios.post(`/attach/resources/POST/${pk}`, formData, {
                 headers: {
                   Authorization: token,
                   "Content-Type": "multipart/form-data",
@@ -72,10 +74,10 @@ export default function NewpostPage() {
                     return formData;
                   },
                 ],
-              })
-              .then(() => {
-                router.push(HOME);
               });
+            }
+            setLoading(false);
+            router.push(HOME);
           });
       });
   };
@@ -94,44 +96,42 @@ export default function NewpostPage() {
 
   return (
     <Paper>
+      {/* 최상단 앱바 */}
       <AppBar position={"static"}>
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-          <ButtonBase onClick={() => router.back()}>
+          <IconButton onClick={() => router.back()}>
             <GoBackIcon></GoBackIcon>
-          </ButtonBase>
+          </IconButton>
           <Typography variant="subtitle2" fontWeight={"bold"}>
             포스팅
           </Typography>
-          <Typography
-            onClick={submitHandler}
-            variant="subtitle2"
-            color={"primary.main"}
-          >
+          <Button onClick={submitHandler} variant="text" sx={{ minWidth: 40 }}>
             공유
-          </Typography>
+          </Button>
         </Toolbar>
       </AppBar>
-      <Container sx={{ px: { xs: 0, sm: 4 } }} maxWidth={"lg"}>
+
+      <Container sx={{ p: { xs: 0, sm: 4 } }} maxWidth={"lg"}>
         <Paper
           sx={{
-            minHeight: "calc(100vh - 112px)",
             display: "flex",
             flexDirection: "column",
             gap: 2,
             p: 2,
           }}
         >
+          {/* 검색창 */}
           <TextField
             placeholder="지금 어떤 술을 마시고 있나요?"
             autoFocus
             name="positionInfo"
+            size="small"
             InputProps={{
-              startAdornment: (
-                <AlcholeSearchIcon style={{ marginRight: "8px" }} />
-              ),
+              startAdornment: <AlcholeSearchIcon />,
               endAdornment: <InputSearchIcon />,
             }}
             onChange={changeHadler}
+            sx={{ px: 0 }}
           />
 
           <TextField
@@ -193,49 +193,53 @@ export default function NewpostPage() {
             />
           )}
           <Box sx={{ display: "flex", gap: 2 }}>
-            <Box
-              component={"label"}
-              sx={{
-                bgcolor: "#F5F5F5",
-                border: "1px solid",
-                borderColor: "#E6E6E6",
-                width: 72,
-                height: 72,
-                borderRadius: 1.5,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <CameraIcon />
-              <input
-                name="image"
-                style={{ display: "none" }}
-                type="file"
-                accept="image/*"
-                onChange={(e) => {
-                  if (e.target.files) {
-                    setFile(e.target.files[0]);
-                  }
+            <Tooltip title="사진 첨부">
+              <ButtonBase
+                component={"label"}
+                sx={{
+                  bgcolor: "#F5F5F5",
+                  border: "1px solid",
+                  borderColor: "#E6E6E6",
+                  width: 72,
+                  height: 72,
+                  borderRadius: 1.5,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
-              />
-            </Box>
-            <Box
-              component={"label"}
-              sx={{
-                bgcolor: "#F5F5F5",
-                border: "1px solid",
-                borderColor: "#E6E6E6",
-                width: 72,
-                height: 72,
-                borderRadius: 1.5,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <PinIcon />
-            </Box>
+              >
+                <CameraIcon />
+                <input
+                  name="image"
+                  style={{ display: "none" }}
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    if (e.target.files) {
+                      setFile(e.target.files[0]);
+                    }
+                  }}
+                />
+              </ButtonBase>
+            </Tooltip>
+            <Tooltip title="위치 추가">
+              <ButtonBase
+                component={"label"}
+                sx={{
+                  bgcolor: "#F5F5F5",
+                  border: "1px solid",
+                  borderColor: "#E6E6E6",
+                  width: 72,
+                  height: 72,
+                  borderRadius: 1.5,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <PinIcon />
+              </ButtonBase>
+            </Tooltip>
           </Box>
         </Paper>
       </Container>
