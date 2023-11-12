@@ -98,7 +98,7 @@ public class UserController {
     userService.chagePoassword(changePasswordRequestDto);
   }
 
-  @Operation(summary = "[~]내 정보 조회", description = "내 정보 조회 API")
+  @Operation(summary = "[o]내 정보 조회", description = "내 정보 조회 API")
   @GetMapping("/me")
   public MyInfoResponseDto getMyInfo() {
     Long myUserNo = AuthUtil.getUserNoFromAuthentication();
@@ -107,7 +107,7 @@ public class UserController {
     return userService.getMyInfo(myUserNo);
   }
 
-  @Operation(summary = "[~]유저 정보 조회", description = "유저 정보 조회 API")
+  @Operation(summary = "[o]유저 정보 조회", description = "유저 정보 조회 API")
   @GetMapping("/{userNo}/summary")
   public GetUserInfoResponseDto getUserInfo(@PathVariable("userNo") Long userNo) {
     log.info(">>> UserController.getUserInfo");

@@ -41,13 +41,13 @@ public class MyInfoResponseDto {
     this.followerCount = myInfoResponseDto.getFollowerCount();
   }
 
-  public static MyInfoResponseDto of(User user) {
+  public static MyInfoResponseDto of(User user, List<AttachDto> profileImages, Long followerCount) {
     MyInfoResponseDto myInfoResponseDto = MyInfoResponseDto.builder()
                                                            .id(user.getUserId())
                                                            .nickname(user.getNickname())
-                                                           .profileImages(new ArrayList<>())
+                                                           .profileImages(profileImages)
                                                            .introduction(user.getIntroduction())
-                                                           .followerCount(null)
+                                                           .followerCount(followerCount)
                                                            .build();
     return myInfoResponseDto;
   }

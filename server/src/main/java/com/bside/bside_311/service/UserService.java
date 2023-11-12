@@ -1,5 +1,6 @@
 package com.bside.bside_311.service;
 
+import com.bside.bside_311.dto.AttachDto;
 import com.bside.bside_311.dto.ChangePasswordRequestDto;
 import com.bside.bside_311.dto.GetUserInfoResponseDto;
 import com.bside.bside_311.dto.LoginResponseDto;
@@ -7,9 +8,12 @@ import com.bside.bside_311.dto.MyInfoResponseDto;
 import com.bside.bside_311.dto.UserLoginRequestDto;
 import com.bside.bside_311.dto.UserSignupResponseDto;
 import com.bside.bside_311.dto.UserUpdateRequestDto;
+import com.bside.bside_311.entity.Attach;
+import com.bside.bside_311.entity.AttachType;
 import com.bside.bside_311.entity.User;
 import com.bside.bside_311.entity.UserFollow;
 import com.bside.bside_311.entity.YesOrNo;
+import com.bside.bside_311.repository.AttachRepository;
 import com.bside.bside_311.repository.UserFollowRepository;
 import com.bside.bside_311.repository.UserRepository;
 import com.bside.bside_311.util.AuthUtil;
@@ -26,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.bside.bside_311.util.JwtUtil.NORMAL_TOKEN;
 import static com.bside.bside_311.util.JwtUtil.normalValidity;
@@ -39,6 +44,7 @@ public class UserService {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final UserFollowRepository userFollowRepository;
+  private final AttachRepository attachRepository;
 
   public UserSignupResponseDto signUp(User user) {
     List<User> users =
@@ -81,17 +87,31 @@ public class UserService {
   public GetUserInfoResponseDto getUserInfo(Long userNo) {
     User user = userRepository.findByIdAndDelYnIs(userNo, YesOrNo.N)
                               .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
-    //TODO 여기 다른값도 적절히 넣어서 구현 해야함.
-//    return GetUserInfoResponseDto.of(user, profileList, count, true);
-    return GetUserInfoResponseDto.of(user);
+    List<Attach> profileAttachList =
+        attachRepository.findByRefNoAndAttachTypeIsAndDelYnIs(userNo, AttachType.PROFILE,
+            YesOrNo.N);
+    Long followerCount =
+        userFollowRepository.countByFollowedAndDelYnIs(user.of(userNo), YesOrNo.N);
+    Boolean isFollowing = null;
+    Long myUserNo = AuthUtil.getUserNoFromAuthentication();
+    if (myUserNo != null) {
+      isFollowing = userFollowRepository.findByFollowingAndFollowedAndDelYnIs(user.of(myUserNo),
+                              user.of(userNo), YesOrNo.N)
+                          .isPresent();
+    }
+
+    return GetUserInfoResponseDto.of(MyInfoResponseDto.of(user, AttachDto.of(profileAttachList), followerCount), isFollowing);
   }
 
   public MyInfoResponseDto getMyInfo(Long myUserNo) {
     User user = userRepository.findByIdAndDelYnIs(myUserNo, YesOrNo.N)
                               .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
-    //TODO 여기 다른값도 적절히 넣어서 구현 해야함.
-//    return GetUserInfoResponseDto.of(user, profileList, count, true);
-    return MyInfoResponseDto.of(user);
+    List<Attach> profileAttachList =
+        attachRepository.findByRefNoAndAttachTypeIsAndDelYnIs(myUserNo, AttachType.PROFILE,
+            YesOrNo.N);
+    Long followerCount =
+        userFollowRepository.countByFollowedAndDelYnIs(user.of(myUserNo), YesOrNo.N);
+    return MyInfoResponseDto.of(user, AttachDto.of(profileAttachList), followerCount);
   }
 
   public void withdraw(Long myUserNo) {

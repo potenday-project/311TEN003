@@ -39,4 +39,8 @@ public class GetUserInfoResponseDto extends MyInfoResponseDto{
                                                .build();
     return new GetUserInfoResponseDto(myInfoResponseDto, null);
   }
+
+  public static GetUserInfoResponseDto of(MyInfoResponseDto userInfoResponseDto, Boolean isFollowing) {
+    return new GetUserInfoResponseDto(userInfoResponseDto, isFollowing);
+  }
 }

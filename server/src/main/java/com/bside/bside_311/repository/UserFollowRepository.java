@@ -5,9 +5,11 @@ import com.bside.bside_311.entity.UserFollow;
 import com.bside.bside_311.entity.YesOrNo;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserFollowRepository extends JpaRepository<UserFollow, Long> {
   Optional<UserFollow> findByFollowingAndFollowedAndDelYnIs(User following, User followed,
                                                             YesOrNo delYn);
+  Long countByFollowedAndDelYnIs(User followed, YesOrNo delYn);
 }
