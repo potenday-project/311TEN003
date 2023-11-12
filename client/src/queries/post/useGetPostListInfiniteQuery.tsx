@@ -1,21 +1,32 @@
-import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import axios from "@/libs/axios";
 import { PostInterface } from "@/types/post/PostInterface";
+import { AxiosRequestConfig } from "axios";
+import getTokenFromLocalStorage from "@/utils/getTokenFromLocalStorage";
 
 export interface UseGetPostListQueryInterface extends GetPostListOptions {
   initialData?: AugmentedGetPostListResponse;
+  headers?: AxiosRequestConfig["headers"];
 }
 
 export const useGetPostListInfiniteQuery = ({
   initialData,
   size,
   searchKeyword,
+  headers,
 }: UseGetPostListQueryInterface) => {
-  return useSuspenseInfiniteQuery({
+  return useInfiniteQuery({
     queryKey: getPostListInfiniteQueryKey.byKeyword(searchKeyword),
 
     queryFn: async ({ pageParam = 0 }) =>
-      await getPostListQueryFn({ page: pageParam, size, searchKeyword }),
+      await getPostListQueryFn({
+        page: pageParam,
+        size,
+        searchKeyword,
+        headers: headers?.Authorization
+          ? headers
+          : { Authorization: getTokenFromLocalStorage() },
+      }),
 
     getNextPageParam: ({
       currentPage,
@@ -58,10 +69,14 @@ export const getPostListQueryFn = async ({
   page = 0,
   size = 10,
   searchKeyword,
-}: GetPostListOptions): Promise<AugmentedGetPostListResponse> => {
+  headers,
+}: GetPostListOptions & {
+  headers?: AxiosRequestConfig<any>["headers"];
+}): Promise<AugmentedGetPostListResponse> => {
   const { data } = await axios.get<GetPostListResponse>("/posts", {
     baseURL: process.env.NEXT_PUBLIC_BASE_URL,
     params: { page, size, searchKeyword },
+    headers,
   });
   return {
     ...data,

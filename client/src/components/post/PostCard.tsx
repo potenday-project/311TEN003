@@ -37,8 +37,9 @@ const PostCard = ({
   alcoholName,
   alcoholType,
   commentCount,
-  likedByme,
+  likedByMe,
 }: PostInterface) => {
+
   const openPostDetailPage = useOpenPostDetailPage();
   const hasImage = useMemo(() => postAttachUrls.length !== 0, [postAttachUrls]);
   const { mutate: likeHandler } = useLikePostMutation();
@@ -132,10 +133,10 @@ const PostCard = ({
             data-testid="likeBtn"
             aria-label="like"
             onClick={() => {
-              likedByme ? unLikeHandler(postNo) : likeHandler(postNo);
+              likedByMe ? unLikeHandler(postNo) : likeHandler(postNo);
             }}
           >
-            <Box style={{ color: likedByme ? "primary.main" : "#d9d9d9" }}>
+            <Box sx={{ color: likedByMe ? "primary.main" : "#d9d9d9" }}>
               <LikeIcon />
             </Box>
             <Typography variant="label">{likeCount ?? 0}</Typography>

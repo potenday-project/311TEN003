@@ -73,7 +73,7 @@ export interface PostInterface {
   /**
    * 내가 좋아요를 눌렀는지 여부
    */
-  likedByme: boolean;
+  likedByMe: boolean;
 }
 
 type QuoteInfoType = {
