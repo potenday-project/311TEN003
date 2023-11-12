@@ -13,19 +13,26 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+
 import GoBackIcon from "@/assets/icons/GoBackIcon.svg";
 import InputSearchIcon from "@/assets/icons/InputSearchIcon.svg";
 import AlcholeSearchIcon from "@/assets/icons/AlcholeSearchIcon.svg";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
-import axios from "@/libs/axios";
+import { ChangeEvent, useEffect, useState } from "react";
 import HOME from "@/const/clientPath";
 import CameraIcon from "@/assets/icons/CameraIcon.svg";
 import PinIcon from "@/assets/icons/PinIcon.svg";
-import getTokenFromLocalStorage from "@/utils/getTokenFromLocalStorage";
 import { useGlobalLoadingStore } from "@/store/useGlobalLoadingStore";
+import useNewPostMutation from "@/queries/newPost/useNewPostMutation";
+import useNewAttachMutation from "@/queries/attach/useNewAttachMutation";
+import { useInvalidatePostList } from "@/queries/post/useGetPostListInfiniteQuery";
+import { useDeletePostMutation } from "@/queries/post/useDeletePostMutation";
 
 export default function NewpostPage() {
+  const { setLoading } = useGlobalLoadingStore();
+  const router = useRouter();
+  const invalidatePreviousPost = useInvalidatePostList();
+
   const [formValue, setFormValue] = useState({
     postContent: "",
     postType: "BASIC",
@@ -33,58 +40,10 @@ export default function NewpostPage() {
     tagList: [] as string[],
   });
 
-  const changeHadler = ({
-    target,
-  }: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormValue((prev) => ({ ...prev, [target.name]: target.value }));
-  };
-  const { setLoading } = useGlobalLoadingStore();
-  const token = getTokenFromLocalStorage();
-
-  const router = useRouter();
-
-  const submitHandler = () => {
-    let userId;
-    let pk;
-    setLoading(true);
-    axios
-      .get("/user/me", { headers: { Authorization: token } })
-      .then((res) => {
-        userId = res.data.id;
-      })
-      .then(() => {
-        axios
-          .post(
-            "/posts",
-            { ...formValue },
-            { headers: { Authorization: token } }
-          )
-          .then(({ data }) => {
-            pk = data.postNo;
-            const formData = new FormData();
-            if (file) {
-              formData.append("image", file);
-              axios.post(`/attach/resources/POST/${pk}`, formData, {
-                headers: {
-                  Authorization: token,
-                  "Content-Type": "multipart/form-data",
-                },
-                transformRequest: [
-                  function () {
-                    return formData;
-                  },
-                ],
-              });
-            }
-            setLoading(false);
-            router.push(HOME);
-          });
-      });
-  };
   const [userTypedTag, setUserTypedTag] = useState<string>("");
   const [file, setFile] = useState<File>();
   const [fileUrl, setFileUrl] = useState<string | ArrayBuffer | null>();
-
+  const [isSuccess, SetIsSuccess] = useState(false);
   useEffect(() => {
     if (!file) {
       return;
@@ -94,6 +53,42 @@ export default function NewpostPage() {
     reader.onloadend = () => setFileUrl(reader.result);
   }, [file]);
 
+  const changeHadler = ({
+    target,
+  }: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormValue((prev) => ({ ...prev, [target.name]: target.value }));
+  };
+
+  const { mutateAsync: newPostHandler } = useNewPostMutation();
+  const { mutateAsync: attachFileHandler } = useNewAttachMutation();
+  const { mutateAsync: deletePostHandler } = useDeletePostMutation();
+
+  const submitHandler = async () => {
+    setLoading(true);
+    let postNo;
+    try {
+      const { postNo: res } = await newPostHandler(formValue);
+      postNo = res;
+      if (file) {
+        try {
+          await attachFileHandler({
+            file,
+            url: { pk: postNo, type: "POST" },
+          });
+        } catch {
+          deletePostHandler(postNo);
+          return;
+        }
+      }
+      invalidatePreviousPost();
+      SetIsSuccess(true);
+      router.push(HOME);
+    } catch {
+      return;
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <Paper>
       {/* 최상단 앱바 */}
@@ -105,7 +100,12 @@ export default function NewpostPage() {
           <Typography variant="subtitle2" fontWeight={"bold"}>
             포스팅
           </Typography>
-          <Button onClick={submitHandler} variant="text" sx={{ minWidth: 40 }}>
+          <Button
+            disabled={isSuccess}
+            onClick={submitHandler}
+            variant="text"
+            sx={{ minWidth: 40 }}
+          >
             공유
           </Button>
         </Toolbar>
@@ -154,7 +154,11 @@ export default function NewpostPage() {
           </Typography>
           <Box sx={{ display: "flex", gap: 1 }}>
             {formValue.tagList.map((tag) => {
-              return <Typography variant="label">#{tag}</Typography>;
+              return (
+                <Typography variant="label" key={tag}>
+                  #{tag}
+                </Typography>
+              );
             })}
           </Box>
           <Box
@@ -162,7 +166,10 @@ export default function NewpostPage() {
             onSubmit={(e) => {
               e.preventDefault();
               setFormValue((prev) => {
-                if (!userTypedTag) return prev;
+                if (!userTypedTag || prev.tagList.includes(userTypedTag)) {
+                  setUserTypedTag("");
+                  return prev;
+                }
                 return { ...prev, tagList: [...prev.tagList, userTypedTag] };
               });
               setUserTypedTag("");
@@ -177,6 +184,7 @@ export default function NewpostPage() {
             />
             <Button type="submit">태그 추가</Button>
           </Box>
+          {/* 파일 미리보기 */}
           {fileUrl && (
             <Box
               sx={{
@@ -192,7 +200,9 @@ export default function NewpostPage() {
               }}
             />
           )}
+          {/* 버튼 그룹 */}
           <Box sx={{ display: "flex", gap: 2 }}>
+            {/* 사진 */}
             <Tooltip title="사진 첨부">
               <ButtonBase
                 component={"label"}
@@ -222,6 +232,7 @@ export default function NewpostPage() {
                 />
               </ButtonBase>
             </Tooltip>
+            {/* 위치 */}
             <Tooltip title="위치 추가">
               <ButtonBase
                 component={"label"}
