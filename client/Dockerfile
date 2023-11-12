@@ -18,6 +18,12 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+ARG NEXT_PUBLIC_BASE_URL
+ARG PORT=3000
+
+ENV NEXT_PUBLIC_BASE_URL ${NEXT_PUBLIC_BASE_URL}
+ENV NEXT_PUBLIC_CLIENT_BASE_URL host.docker.internal:${PORT}
+
 RUN yarn build
 
 FROM base AS runner
