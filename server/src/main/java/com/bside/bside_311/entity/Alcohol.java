@@ -95,6 +95,21 @@ public class Alcohol extends BaseEntity {
     return alcohol;
   }
 
+  public static Alcohol of(AddAlcoholRequestDto addAlcoholRequestDto) {
+    Alcohol alcohol = Alcohol.builder()
+                             .name(addAlcoholRequestDto.getAlcoholName())
+                             .alcoholNicknames(new ArrayList<>())
+                             .description(addAlcoholRequestDto.getDescription())
+                             .manufacturer(addAlcoholRequestDto.getManufacturer())
+                             .degree(addAlcoholRequestDto.getDegree())
+                             .period(addAlcoholRequestDto.getPeriod())
+                             .productionYear(addAlcoholRequestDto.getProductionYear())
+                             .volume(addAlcoholRequestDto.getVolume())
+                             .build();
+    AlcoholNickname.of(addAlcoholRequestDto.getNickNames()).forEach(alcohol::addAlcoholNickname);
+    return alcohol;
+  }
+
   public void setAlcoholNicknames(List<AlcoholNickname> alcoholNicknames) {
 
     this.alcoholNicknames.clear();

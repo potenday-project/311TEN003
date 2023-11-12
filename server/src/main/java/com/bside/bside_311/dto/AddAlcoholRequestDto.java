@@ -3,6 +3,7 @@ package com.bside.bside_311.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AccessLevel;
@@ -24,6 +25,8 @@ public class AddAlcoholRequestDto {
   private String alcoholName;
 
   @Schema(example = "1", description = "주류 종류 번호.(DB에 등록된것만 가능. - 와인, 맥주, 소주)")
+  @Positive
+  @NotNull
   private Long alcoholTypeNo;
 
   private List<String> nickNames;

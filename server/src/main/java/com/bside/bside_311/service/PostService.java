@@ -1,5 +1,7 @@
 package com.bside.bside_311.service;
 
+import com.bside.bside_311.dto.AddAlcoholRequestDto;
+import com.bside.bside_311.dto.AddAlcoholResponseDto;
 import com.bside.bside_311.dto.AddCommentRequestDto;
 import com.bside.bside_311.dto.AddCommentResponseDto;
 import com.bside.bside_311.dto.AddPostResponseDto;
@@ -50,6 +52,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional
 public class PostService {
+  private final AlcoholService alcoholService;
   private final TagService tagService;
   private final UserRepository userRepository;
   private final PostLikeRepository postLikeRepository;
@@ -65,7 +68,7 @@ public class PostService {
 
   public AddPostResponseDto addPost(
       Post post, Long alcoholNo, String alcoholFeature,
-      List<String> tagStrList) {
+      List<String> tagStrList, AddAlcoholRequestDto alcoholInfo) {
     log.info(">>> PostService.addPost");
 
     postRepository.save(post);
@@ -75,6 +78,14 @@ public class PostService {
     }
 
     postRepository.save(post);
+    if (alcoholInfo != null) {
+      if (StringUtils.isEmpty(alcoholInfo.getAlcoholName())) {
+        throw new IllegalArgumentException("술 이름은 필수입니다.");
+      }
+      AddAlcoholResponseDto addAlcoholResponseDto = alcoholService.addAlcohol(alcoholInfo);
+      alcoholNo = addAlcoholResponseDto.getAlcoholNo();
+    }
+
     if (alcoholNo != null && alcoholFeature != null) {
       Alcohol alcohol = alcoholRepository.findByIdAndDelYnIs(alcoholNo, YesOrNo.N).orElseThrow(
           () -> new IllegalArgumentException("술이 존재하지 않습니다."));
@@ -102,6 +113,15 @@ public class PostService {
       post.removeAllPostTagsAndAddNewPostTags(tags);
     }
     postRepository.save(post);
+
+    AddAlcoholRequestDto alcoholInfo = editPostRequestDto.getAlcoholInfo();
+    if (alcoholInfo != null) {
+      if (StringUtils.isEmpty(alcoholInfo.getAlcoholName())) {
+        throw new IllegalArgumentException("술 이름은 필수입니다.");
+      }
+      AddAlcoholResponseDto addAlcoholResponseDto = alcoholService.addAlcohol(alcoholInfo);
+      alcoholNo = addAlcoholResponseDto.getAlcoholNo();
+    }
 
     if (alcoholNo != null && alcoholFeature != null) {
       Alcohol alcohol = alcoholRepository.findByIdAndDelYnIs(alcoholNo, YesOrNo.N).orElseThrow(

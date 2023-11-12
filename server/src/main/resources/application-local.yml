@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/bside?serverTimezone=UTC&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3305/bside?serverTimezone=UTC&characterEncoding=UTF-8
     username: root
-    password: root
+    password: test
     minimum-idle: 10
     maximum-pool-size: 10
     idle-timeout: 30000
@@ -28,3 +28,5 @@ logging.level:
   org.hibernate.SQL: debug
 #  org.hibernate.orm.jdbc.bind: trace
 
+cloudinary:
+  url: cloudinary://884757229436341:Y9RC2dqN7SDMC3zOqs4qtDICMDo@drezugbxz

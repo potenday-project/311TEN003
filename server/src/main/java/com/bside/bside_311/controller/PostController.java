@@ -49,7 +49,7 @@ public class PostController {
   public AddPostResponseDto addPost(@RequestBody @Valid AddPostRequestDto addPostRequestDto) {
     log.info(">>> PostController.addPost");
     return postService.addPost(Post.of(addPostRequestDto), addPostRequestDto.getAlcoholNo(),
-        addPostRequestDto.getAlcoholFeature(), addPostRequestDto.getTagList());
+        addPostRequestDto.getAlcoholFeature(), addPostRequestDto.getTagList(), addPostRequestDto.getAlcoholInfo());
   }
 
   @Operation(summary = "[o]게시글 수정", description = "게시글 수정 API")
