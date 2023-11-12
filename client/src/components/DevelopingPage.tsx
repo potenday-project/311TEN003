@@ -13,7 +13,7 @@ const DevelopingPage = () => {
         height: "calc(100vh - 56px)",
       }}
     >
-      <Image src={DevelopingNoticeImgae} alt="개발중 알림" />
+      <Image priority src={DevelopingNoticeImgae} alt="개발중 알림" />
     </Paper>
   );
 };

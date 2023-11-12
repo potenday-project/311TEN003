@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "@/libs/axios";
 import { PostInterface } from "@/types/post/PostInterface";
 import { AxiosRequestConfig } from "axios";
@@ -88,6 +88,22 @@ export const getPostListQueryFn = async ({
 export const getPostListInfiniteQueryKey = {
   all: ["posts"] as const,
   byKeyword: (keyword?: string) => ["posts", keyword ?? ""] as const,
+};
+
+/**
+ * 모든 포스트리스트 쿼리를 Invalidate 하는 Hooks
+ * @returns Invalidate 함수
+ */
+export const useInvalidatePostList = () => {
+  /**
+   * 모든 포스트리스트 쿼리를 Invalidate 하는함수
+   */
+  const queryClinet = useQueryClient();
+  return () => {
+    queryClinet.invalidateQueries({
+      queryKey: getPostListInfiniteQueryKey.all,
+    });
+  };
 };
 
 export default useGetPostListInfiniteQuery;
