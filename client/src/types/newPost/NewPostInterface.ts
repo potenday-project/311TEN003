@@ -1,14 +1,16 @@
-export interface NewPostRequestInterface {
+export interface NewPostRequestInterface extends NewPostRequestAlCohol{
   /**
    * 술의 PK
    */
-  alcoholNo?: number;
-  alcoholInfo?: AlcoholInfoInterface;
-  alcoholFeature?: string;
   postContent?: string;
   postType?: string;
   positionInfo?: string;
   tagList?: string[];
+}
+export interface NewPostRequestAlCohol{
+  alcoholNo?: number;
+  alcoholInfo?: AlcoholInfoInterface;
+  alcoholFeature?: string;
 }
 
 interface AlcoholInfoInterface {

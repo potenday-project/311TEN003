@@ -16,11 +16,11 @@ import useGetAlcoholListQuery from "@/queries/alcohol/useGetAlcoholListQuery";
 import { AlcoholDetailInterface } from "@/types/alcohol/AlcoholInterface";
 import AlcoleNameTag from "./../post/AlcoleNameTag";
 import useDebounce from "@/hooks/useDebounce";
-import { NewPostRequest_AlCohol } from "@/types/newPost/NewPostInterface";
+import { NewPostRequestAlCohol } from "@/types/newPost/NewPostInterface";
 import React from "react";
 
 interface SearchAlcoholInputInterface {
-  setAlcoholInfo: Dispatch<SetStateAction<NewPostRequest_AlCohol | undefined>>;
+  setAlcoholInfo: Dispatch<SetStateAction<NewPostRequestAlCohol | undefined>>;
 }
 const SearchAlcoholInput = ({
   setAlcoholInfo,
@@ -34,7 +34,7 @@ const SearchAlcoholInput = ({
   const { data, isLoading, isSuccess } = useGetAlcoholListQuery(debouncedValue);
   const [isSearchingAlcohol, setIsSearchingAlCohol] = useState(false);
 
-  const parsedDTO = useMemo<NewPostRequest_AlCohol | undefined>(() => {
+  const parsedDTO = useMemo<NewPostRequestAlCohol | undefined>(() => {
     if (!selectedAlcohol) {
       return;
     }

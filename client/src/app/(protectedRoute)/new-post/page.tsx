@@ -28,7 +28,7 @@ import { useInvalidatePostList } from "@/queries/post/useGetPostListInfiniteQuer
 import { useDeletePostMutation } from "@/queries/post/useDeletePostMutation";
 import {
   NewPostRequestInterface,
-  NewPostRequest_AlCohol,
+  NewPostRequestAlCohol,
 } from "@/types/newPost/NewPostInterface";
 import SearchAlcoholInput from "@/components/newpost/SearchAlcoholInput";
 
@@ -44,7 +44,7 @@ export default function NewpostPage() {
     tagList: [] as string[],
   });
 
-  const [alcoholInfo, setAlcoholInfo] = useState<NewPostRequest_AlCohol>();
+  const [alcoholInfo, setAlcoholInfo] = useState<NewPostRequestAlCohol>();
   useEffect(() => {
     console.log(alcoholInfo);
   }, [alcoholInfo]);
