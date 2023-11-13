@@ -35,3 +35,8 @@ export const REMOVE_POST = (pk:number)=>`${POST_LIST}/${pk}` as const
 export type ATTACH_FILE_ResourceType = "POST" | "PROFILE" | "ALCOHOL";
 export const ATTACH_FILE = (type: ATTACH_FILE_ResourceType, resourcePk: number) =>
   `/attach/resources/${type}/${resourcePk}` as const;
+
+/**
+ * 알콜리스트를 받아오는 URL
+ */
+export const GET_ALCOHOL_LIST = '/alcohols' as const

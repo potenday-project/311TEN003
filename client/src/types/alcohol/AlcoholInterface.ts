@@ -1,4 +1,4 @@
-export interface AlcoholDetailResponseInterface {
+export interface AlcoholDetailInterface {
   alcoholNo: number;
   alcoholTypeNo: number;
   alcoholAttachUrls: AlcoholAttachUrlsInterface[];
