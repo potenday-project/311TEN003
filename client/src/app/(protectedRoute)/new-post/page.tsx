@@ -15,10 +15,9 @@ import {
 } from "@mui/material";
 
 import GoBackIcon from "@/assets/icons/GoBackIcon.svg";
-import InputSearchIcon from "@/assets/icons/InputSearchIcon.svg";
-import AlcholeSearchIcon from "@/assets/icons/AlcholeSearchIcon.svg";
+
 import { useRouter } from "next/navigation";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import HOME from "@/const/clientPath";
 import CameraIcon from "@/assets/icons/CameraIcon.svg";
 import PinIcon from "@/assets/icons/PinIcon.svg";
@@ -27,23 +26,33 @@ import useNewPostMutation from "@/queries/newPost/useNewPostMutation";
 import useNewAttachMutation from "@/queries/attach/useNewAttachMutation";
 import { useInvalidatePostList } from "@/queries/post/useGetPostListInfiniteQuery";
 import { useDeletePostMutation } from "@/queries/post/useDeletePostMutation";
+import {
+  NewPostRequestInterface,
+  NewPostRequest_AlCohol,
+} from "@/types/newPost/NewPostInterface";
+import SearchAlcoholInput from "@/components/newpost/SearchAlcoholInput";
 
 export default function NewpostPage() {
   const { setLoading } = useGlobalLoadingStore();
   const router = useRouter();
   const invalidatePreviousPost = useInvalidatePostList();
 
-  const [formValue, setFormValue] = useState({
+  const [formValue, setFormValue] = useState<NewPostRequestInterface>({
     postContent: "",
     postType: "BASIC",
     positionInfo: "",
     tagList: [] as string[],
   });
 
+  const [alcoholInfo, setAlcoholInfo] = useState<NewPostRequest_AlCohol>();
+  useEffect(() => {
+    console.log(alcoholInfo);
+  }, [alcoholInfo]);
   const [userTypedTag, setUserTypedTag] = useState<string>("");
   const [file, setFile] = useState<File>();
   const [fileUrl, setFileUrl] = useState<string | ArrayBuffer | null>();
   const [isSuccess, SetIsSuccess] = useState(false);
+
   useEffect(() => {
     if (!file) {
       return;
@@ -63,11 +72,14 @@ export default function NewpostPage() {
   const { mutateAsync: attachFileHandler } = useNewAttachMutation();
   const { mutateAsync: deletePostHandler } = useDeletePostMutation();
 
-  const submitHandler = async () => {
+  const submitHandler = useCallback(async () => {
     setLoading(true);
     let postNo;
     try {
-      const { postNo: res } = await newPostHandler(formValue);
+      const { postNo: res } = await newPostHandler({
+        ...formValue,
+        ...alcoholInfo,
+      });
       postNo = res;
       if (file) {
         try {
@@ -88,7 +100,8 @@ export default function NewpostPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [formValue, alcoholInfo, router, router, file]);
+
   return (
     <Paper>
       {/* 최상단 앱바 */}
@@ -115,25 +128,15 @@ export default function NewpostPage() {
         <Paper
           sx={{
             display: "flex",
+            position: "relative",
             flexDirection: "column",
             gap: 2,
             p: 2,
           }}
         >
           {/* 검색창 */}
-          <TextField
-            placeholder="지금 어떤 술을 마시고 있나요?"
-            autoFocus
-            name="positionInfo"
-            size="small"
-            InputProps={{
-              startAdornment: <AlcholeSearchIcon />,
-              endAdornment: <InputSearchIcon />,
-            }}
-            onChange={changeHadler}
-            sx={{ px: 0 }}
-          />
-
+          <SearchAlcoholInput setAlcoholInfo={setAlcoholInfo} />
+          {/* 내용 */}
           <TextField
             id="filled-multiline-flexible"
             placeholder="입력해주세요"
@@ -147,13 +150,13 @@ export default function NewpostPage() {
           />
 
           <Typography variant="label" sx={{ textAlign: "right" }}>
-            {formValue.postContent.length} /{" "}
+            {formValue.postContent!.length} /{" "}
             <Typography variant="label" color="primary.main" component="span">
               200자
             </Typography>
           </Typography>
-          <Box sx={{ display: "flex", gap: 1 }}>
-            {formValue.tagList.map((tag) => {
+          <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+            {formValue.tagList!.map((tag) => {
               return (
                 <Typography variant="label" key={tag}>
                   #{tag}
@@ -166,11 +169,14 @@ export default function NewpostPage() {
             onSubmit={(e) => {
               e.preventDefault();
               setFormValue((prev) => {
-                if (!userTypedTag || prev.tagList.includes(userTypedTag)) {
+                if (!userTypedTag || prev.tagList?.includes(userTypedTag)) {
                   setUserTypedTag("");
                   return prev;
                 }
-                return { ...prev, tagList: [...prev.tagList, userTypedTag] };
+                return {
+                  ...prev,
+                  tagList: [...(prev?.tagList ?? []), userTypedTag],
+                };
               });
               setUserTypedTag("");
             }}
