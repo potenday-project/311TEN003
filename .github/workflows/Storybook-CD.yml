@@ -2,7 +2,7 @@ name: Storybook CD
 on:
   push:
     branches: ["main"]
-    paths: client/**
+    paths: client/src/stories/**
 jobs:
   build:
     runs-on: ubuntu-latest
