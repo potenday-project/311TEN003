@@ -58,7 +58,7 @@ public class Alcohol extends BaseEntity {
 
   private String manufacturer;
   private String description;
-  private float degree;
+  private Float degree;
   private Long period;
   private Long productionYear;
   private Long volume;
