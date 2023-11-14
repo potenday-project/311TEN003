@@ -31,7 +31,7 @@ const CustomAppbar = ({
           disabled={disableButton}
           onClick={onClickButton}
           variant="text"
-          sx={{ minWidth: 40, fontWight: "medium" }}
+          sx={{ minWidth: 40, fontWeight: "medium" }}
         >
           {buttonTitle}
         </Button>
