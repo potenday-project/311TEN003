@@ -31,6 +31,9 @@ import {
   NewPostRequestAlCohol,
 } from "@/types/newPost/NewPostInterface";
 import SearchAlcoholInput from "@/components/newpost/SearchAlcoholInput";
+import CustomAppbar from "@/components/CustomAppbar";
+import SquareIconButton from "@/components/SquareIconButton";
+import PreviewImageByURL from "@/components/PreviewImageByURL";
 
 export default function NewpostPage() {
   const { setLoading } = useGlobalLoadingStore();
@@ -44,13 +47,13 @@ export default function NewpostPage() {
     tagList: [] as string[],
   });
 
-  const [alcoholInfo, setAlcoholInfo] = useState<NewPostRequestAlCohol>();
-  useEffect(() => {
-    console.log(alcoholInfo);
-  }, [alcoholInfo]);
+  const [alcoholNo, setAlcoholNo] =
+    useState<NewPostRequestAlCohol["alcoholNo"]>();
   const [userTypedTag, setUserTypedTag] = useState<string>("");
+
   const [file, setFile] = useState<File>();
   const [fileUrl, setFileUrl] = useState<string | ArrayBuffer | null>();
+
   const [isSuccess, SetIsSuccess] = useState(false);
 
   useEffect(() => {
@@ -78,7 +81,7 @@ export default function NewpostPage() {
     try {
       const { postNo: res } = await newPostHandler({
         ...formValue,
-        ...alcoholInfo,
+        alcoholNo,
       });
       postNo = res;
       if (file) {
@@ -100,29 +103,17 @@ export default function NewpostPage() {
     } finally {
       setLoading(false);
     }
-  }, [formValue, alcoholInfo, router, router, file]);
+  }, [formValue, alcoholNo, router, file]);
 
   return (
     <Paper>
       {/* 최상단 앱바 */}
-      <AppBar position={"static"}>
-        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-          <IconButton onClick={() => router.back()}>
-            <GoBackIcon></GoBackIcon>
-          </IconButton>
-          <Typography variant="subtitle2" fontWeight={"bold"}>
-            포스팅
-          </Typography>
-          <Button
-            disabled={isSuccess}
-            onClick={submitHandler}
-            variant="text"
-            sx={{ minWidth: 40 }}
-          >
-            공유
-          </Button>
-        </Toolbar>
-      </AppBar>
+      <CustomAppbar
+        title="포스팅"
+        buttonTitle="공유"
+        disableButton={isSuccess}
+        onClickButton={submitHandler}
+      />
 
       <Container sx={{ p: { xs: 0, sm: 4 } }} maxWidth={"lg"}>
         <Paper
@@ -135,7 +126,7 @@ export default function NewpostPage() {
           }}
         >
           {/* 검색창 */}
-          <SearchAlcoholInput setAlcoholInfo={setAlcoholInfo} />
+          <SearchAlcoholInput setAlcoholNo={setAlcoholNo} />
           {/* 내용 */}
           <TextField
             id="filled-multiline-flexible"
@@ -148,13 +139,14 @@ export default function NewpostPage() {
             value={formValue.postContent}
             rows={6}
           />
-
+          {/* 총길이 카운터 */}
           <Typography variant="label" sx={{ textAlign: "right" }}>
             {formValue.postContent!.length} /{" "}
             <Typography variant="label" color="primary.main" component="span">
               200자
             </Typography>
           </Typography>
+          {/* 태그폼 */}
           <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
             {formValue.tagList!.map((tag) => {
               return (
@@ -191,40 +183,15 @@ export default function NewpostPage() {
             <Button type="submit">태그 추가</Button>
           </Box>
           {/* 파일 미리보기 */}
-          {fileUrl && (
-            <Box
-              sx={{
-                backgroundImage: `url(${fileUrl})`,
-                width: "100%",
-                height: 142,
-                borderRadius: 4,
-                border: "1px solid",
-                borderColor: "gray.secondary",
-                backgroundRepeat: "no-repeat",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}
-            />
-          )}
+          {fileUrl && <PreviewImageByURL fileUrl={fileUrl} />}
           {/* 버튼 그룹 */}
           <Box sx={{ display: "flex", gap: 2 }}>
             {/* 사진 */}
             <Tooltip title="사진 첨부">
-              <ButtonBase
+              <SquareIconButton
                 component={"label"}
-                sx={{
-                  bgcolor: "#F5F5F5",
-                  border: "1px solid",
-                  borderColor: "#E6E6E6",
-                  width: 72,
-                  height: 72,
-                  borderRadius: 1.5,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
+                iconComponent={<CameraIcon />}
               >
-                <CameraIcon />
                 <input
                   name="image"
                   style={{ display: "none" }}
@@ -236,26 +203,11 @@ export default function NewpostPage() {
                     }
                   }}
                 />
-              </ButtonBase>
+              </SquareIconButton>
             </Tooltip>
             {/* 위치 */}
             <Tooltip title="위치 추가">
-              <ButtonBase
-                component={"label"}
-                sx={{
-                  bgcolor: "#F5F5F5",
-                  border: "1px solid",
-                  borderColor: "#E6E6E6",
-                  width: 72,
-                  height: 72,
-                  borderRadius: 1.5,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <PinIcon />
-              </ButtonBase>
+              <SquareIconButton iconComponent={<PinIcon />} />
             </Tooltip>
           </Box>
         </Paper>
