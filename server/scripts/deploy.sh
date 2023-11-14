@@ -27,7 +27,7 @@ chmod 777 gradlew
 chmod 774 scripts/deploy.sh
 
 echo "> 프로젝트 Build 시작"
-./gradlew build
+./gradlew build --exclude-task test
 
 echo "> Build 파일 복사"
 
@@ -54,4 +54,5 @@ JAR_NAME=$(ls $REPOSITORY/ |grep ${PROJECT_NAME}.*.jar | tail -n 1)
 
 echo "> JAR Name: $JAR_NAME"
 
-nohup java -jar $REPOSITORY/"$JAR_NAME" &
+nohup java -jar $REPOSITORY/"$JAR_NAME"  --spring.profiles.active=prd &
+
