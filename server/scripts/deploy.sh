@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # prd
-#REPOSITORY=/home/bside/311TEN003/server
+REPOSITORY=/home/bside/311TEN003/server
 
 # local
-REPOSITORY=/Users/dongseoklee/github/311TEN003
+#REPOSITORY=/Users/dongseoklee/github/311TEN003
 
 # common
 PROJECT_LOCATION_FOLDER_NAME=server
