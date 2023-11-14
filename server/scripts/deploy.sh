@@ -10,7 +10,7 @@ REPOSITORY=/Users/dongseoklee/github/311TEN003
 PROJECT_LOCATION_FOLDER_NAME=server
 PROJECT_NAME=bside_311
 
-cd $REPOSITORY/$PROJECT_NAME/
+cd $REPOSITORY/$PROJECT_LOCATION_FOLDER_NAME/
 
 echo "> Git reset --hard"
 git reset --hard
