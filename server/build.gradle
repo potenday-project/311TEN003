@@ -106,6 +106,6 @@ tasks.named('test') {
 //	options.annotationProcessorPath = configurations.querydsl
 //}
 jar {
-    enabled = true
-    archiveClassifier = '' // Classifier 제거
+    enabled = false
+//    archiveClassifier = '' // Classifier 제거
 }
