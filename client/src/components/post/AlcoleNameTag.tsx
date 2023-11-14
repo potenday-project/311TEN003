@@ -3,7 +3,7 @@ import PostSeeMoreIcon from "@/assets/icons/PostSeeMoreIcon.svg";
 import { PostInterface } from "@/types/post/PostInterface";
 import XIcon from "@/assets/icons/XIcon.svg";
 
-interface Props extends BoxProps {
+interface AlcoholNameTagInterface extends BoxProps {
   alcoholName: PostInterface["alcoholName"];
   alcoholType: PostInterface["alcoholType"];
   removable?: boolean;
@@ -16,7 +16,7 @@ const AlcoleNameTag = ({
   removable = false,
   onClickRemove,
   ...others
-}: Props) => {
+}: AlcoholNameTagInterface) => {
   return (
     <Box sx={WrapperStyle} {...others}>
       <Box
