@@ -22,10 +22,13 @@
     "axios": "^1.6.0",
     "dayjs": "^1.11.10",
     "framer-motion": "^10.16.4",
+    "isomorphic-dompurify": "^1.9.0",
     "next": "14.0.0",
+    "quill-mention": "^4.1.0",
     "react": "^18",
     "react-dom": "^18",
     "react-intersection-observer": "^9.5.3",
+    "react-quill": "^2.0.0",
     "sharp": "^0.32.6",
     "zustand": "^4.4.6"
   },
