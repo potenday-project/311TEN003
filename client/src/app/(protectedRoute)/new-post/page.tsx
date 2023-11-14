@@ -3,7 +3,7 @@
 import { Box, Container, Paper, Tooltip } from "@mui/material";
 
 import { useRouter } from "next/navigation";
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import HOME from "@/const/clientPath";
 import CameraIcon from "@/assets/icons/CameraIcon.svg";
 import PinIcon from "@/assets/icons/PinIcon.svg";
@@ -92,7 +92,6 @@ export default function NewpostPage() {
         title="포스팅"
         buttonTitle="공유"
         disableButton={isSuccess}
-
         onClickButton={submitHandler}
       />
 
@@ -110,8 +109,12 @@ export default function NewpostPage() {
           <SearchAlcoholInput setAlcoholNo={setAlcoholNo} />
           {/* 내용 */}
           <NewPostTextEditor
-            onContentChange={({content,tagList}) =>
-              setFormValue((prev) => ({ ...prev, postContent: content,tagList }))
+            onContentChange={({ content, tagList }) =>
+              setFormValue((prev) => ({
+                ...prev,
+                postContent: content,
+                tagList,
+              }))
             }
           />
           {/* 파일 미리보기 */}
