@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # prd
-REPOSITORY=/home/bside/311TEN003/server
+REPOSITORY=/home/bside/311TEN003
 
 # local
 #REPOSITORY=/Users/dongseoklee/github/311TEN003
