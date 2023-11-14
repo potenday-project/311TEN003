@@ -8,8 +8,9 @@ import {
   ListItemButton,
   TextField,
   Typography,
+  InputAdornment,
 } from "@mui/material";
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, memo, useEffect, useState } from "react";
 import AlcholeSearchIcon from "@/assets/icons/AlcholeSearchIcon.svg";
 import InputSearchIcon from "@/assets/icons/InputSearchIcon.svg";
 import useGetAlcoholListQuery from "@/queries/alcohol/useGetAlcoholListQuery";
@@ -17,38 +18,27 @@ import { AlcoholDetailInterface } from "@/types/alcohol/AlcoholInterface";
 import AlcoleNameTag from "./../post/AlcoleNameTag";
 import useDebounce from "@/hooks/useDebounce";
 import { NewPostRequestAlCohol } from "@/types/newPost/NewPostInterface";
-import React from "react";
 
 interface SearchAlcoholInputInterface {
-  setAlcoholInfo: Dispatch<SetStateAction<NewPostRequestAlCohol | undefined>>;
+  setAlcoholNo: Dispatch<SetStateAction<NewPostRequestAlCohol["alcoholNo"]>>;
 }
-const SearchAlcoholInput = ({
-  setAlcoholInfo,
-}: SearchAlcoholInputInterface) => {
+const SearchAlcoholInput = ({ setAlcoholNo }: SearchAlcoholInputInterface) => {
+  // 유저가 검색한 키워드
   const [searchKeyword, setSearchKeyword] = useState("");
+  // 검색한 키워드의 Debounced 값
   const debouncedValue = useDebounce(searchKeyword, 300);
+  const [isSearchingAlcohol, setIsSearchingAlCohol] = useState(false);
 
+  // 검색결과
+  const { data, isLoading, isSuccess } = useGetAlcoholListQuery(debouncedValue);
+  // 유저가 검색후 최종적으로 선택한 값
   const [selectedAlcohol, setSelectedAlcohol] =
     useState<AlcoholDetailInterface>();
 
-  const { data, isLoading, isSuccess } = useGetAlcoholListQuery(debouncedValue);
-  const [isSearchingAlcohol, setIsSearchingAlCohol] = useState(false);
-
-  const parsedDTO = useMemo<NewPostRequestAlCohol | undefined>(() => {
-    if (!selectedAlcohol) {
-      return;
-    }
-    const { alcoholNo, alcoholName, alcoholType, ...others } = selectedAlcohol;
-    return {
-      alcoholNo,
-      alcoholName,
-      alcoholType,
-    };
-  }, [selectedAlcohol]);
 
   useEffect(() => {
     setSearchKeyword(selectedAlcohol?.alcoholName ?? "");
-    setAlcoholInfo(parsedDTO);
+    setAlcoholNo(selectedAlcohol?.alcoholNo);
   }, [selectedAlcohol]);
 
   return (
@@ -58,14 +48,21 @@ const SearchAlcoholInput = ({
         name="positionInfo"
         size="small"
         InputProps={{
-          startAdornment: <AlcholeSearchIcon />,
-          endAdornment: <InputSearchIcon />,
+          startAdornment: (
+            <InputAdornment position="start">
+              <AlcholeSearchIcon />
+            </InputAdornment>
+          ),
+          endAdornment: (
+            <InputAdornment position="end">
+              <InputSearchIcon />
+            </InputAdornment>
+          ),
         }}
         onChange={({ target }) => setSearchKeyword(target.value)}
         value={searchKeyword}
         onFocus={() => setIsSearchingAlCohol(true)}
         onBlur={() => setIsSearchingAlCohol(false)}
-        sx={{ px: 0 }}
         autoComplete="off"
       />
       {isSearchingAlcohol && (
@@ -79,7 +76,6 @@ const SearchAlcoholInput = ({
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => {
                     setSelectedAlcohol(alcoholData);
-                    setSearchKeyword(alcoholData.alcoholName);
                     setIsSearchingAlCohol(false);
                   }}
                   sx={ListItemButtonStyle}
@@ -94,6 +90,7 @@ const SearchAlcoholInput = ({
                 </ListItemButton>
               ))}
             {isLoading && <CircularProgress sx={{ margin: "0 auto" }} />}
+            {data?.list.length === 0 && <>검색결과가 없어요</>}
           </List>
         </Box>
       )}
@@ -112,6 +109,8 @@ const SearchAlcoholInput = ({
 const WrapperStyle = {
   width: "calc(100% - 32px)",
   minHeight: "50px",
+  maxHeight:'142px',
+  overflowY:'auto',
   backgroundColor: "#F5F5F5",
   border: "1px solid #E6E6E6",
   borderRadius: 1.5,
@@ -138,4 +137,4 @@ const FlexboxStyle = {
   gap: 1,
 };
 
-export default React.memo(SearchAlcoholInput);
+export default memo(SearchAlcoholInput);

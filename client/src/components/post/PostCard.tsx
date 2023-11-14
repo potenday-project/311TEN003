@@ -38,8 +38,8 @@ const PostCard = ({
   alcoholType,
   commentCount,
   likedByMe,
+  quoteCount,
 }: PostInterface) => {
-
   const openPostDetailPage = useOpenPostDetailPage();
   const hasImage = useMemo(() => postAttachUrls.length !== 0, [postAttachUrls]);
   const { mutate: likeHandler } = useLikePostMutation();
@@ -143,7 +143,7 @@ const PostCard = ({
           </ButtonBase>
           <ButtonBase data-testid="QuoteBtn" aria-label="Quote">
             <QuoteIcon />
-            <Typography variant="label">인용</Typography>
+            <Typography variant="label">{quoteCount ?? 0}</Typography>
           </ButtonBase>
           <ButtonBase data-testid="shareBtn" aria-label="share">
             <ShareIcon />

@@ -1,23 +1,24 @@
-import { Box, Chip, IconButton, Typography } from "@mui/material";
+import { Box, BoxProps, Chip, IconButton, Typography } from "@mui/material";
 import PostSeeMoreIcon from "@/assets/icons/PostSeeMoreIcon.svg";
 import { PostInterface } from "@/types/post/PostInterface";
 import XIcon from "@/assets/icons/XIcon.svg";
 
-type Props = {
+interface AlcoholNameTagInterface extends BoxProps {
   alcoholName: PostInterface["alcoholName"];
   alcoholType: PostInterface["alcoholType"];
   removable?: boolean;
   onClickRemove?: () => void;
-};
+}
 
 const AlcoleNameTag = ({
   alcoholName,
   alcoholType,
   removable = false,
   onClickRemove,
-}: Props) => {
+  ...others
+}: AlcoholNameTagInterface) => {
   return (
-    <Box sx={WrapperStyle}>
+    <Box sx={WrapperStyle} {...others}>
       <Box
         sx={{
           display: "flex",
@@ -29,6 +30,7 @@ const AlcoleNameTag = ({
         <Chip
           label={alcoholType}
           color={"primary"}
+          size="small"
           variant="outlined"
           sx={ChipStyle}
         />
@@ -37,7 +39,10 @@ const AlcoleNameTag = ({
         </Typography>
       </Box>
       {removable ? (
-        <IconButton onClick={() => onClickRemove && onClickRemove()}>
+        <IconButton
+          sx={{ p: 0 }}
+          onClick={() => onClickRemove && onClickRemove()}
+        >
           <XIcon />
         </IconButton>
       ) : (
