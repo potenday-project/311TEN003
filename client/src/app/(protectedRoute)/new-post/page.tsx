@@ -1,23 +1,9 @@
 "use client";
 
-import {
-  AppBar,
-  Box,
-  Button,
-  ButtonBase,
-  Container,
-  IconButton,
-  Paper,
-  TextField,
-  Toolbar,
-  Tooltip,
-  Typography,
-} from "@mui/material";
-
-import GoBackIcon from "@/assets/icons/GoBackIcon.svg";
+import { Box, Container, Paper, Tooltip } from "@mui/material";
 
 import { useRouter } from "next/navigation";
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import HOME from "@/const/clientPath";
 import CameraIcon from "@/assets/icons/CameraIcon.svg";
 import PinIcon from "@/assets/icons/PinIcon.svg";
@@ -34,6 +20,7 @@ import SearchAlcoholInput from "@/components/newpost/SearchAlcoholInput";
 import CustomAppbar from "@/components/CustomAppbar";
 import SquareIconButton from "@/components/SquareIconButton";
 import PreviewImageByURL from "@/components/PreviewImageByURL";
+import NewPostTextEditor from "@/components/newpost/NewPostTextEditor";
 
 export default function NewpostPage() {
   const { setLoading } = useGlobalLoadingStore();
@@ -49,7 +36,6 @@ export default function NewpostPage() {
 
   const [alcoholNo, setAlcoholNo] =
     useState<NewPostRequestAlCohol["alcoholNo"]>();
-  const [userTypedTag, setUserTypedTag] = useState<string>("");
 
   const [file, setFile] = useState<File>();
   const [fileUrl, setFileUrl] = useState<string | ArrayBuffer | null>();
@@ -64,12 +50,6 @@ export default function NewpostPage() {
     reader.readAsDataURL(file);
     reader.onloadend = () => setFileUrl(reader.result);
   }, [file]);
-
-  const changeHadler = ({
-    target,
-  }: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormValue((prev) => ({ ...prev, [target.name]: target.value }));
-  };
 
   const { mutateAsync: newPostHandler } = useNewPostMutation();
   const { mutateAsync: attachFileHandler } = useNewAttachMutation();
@@ -128,60 +108,15 @@ export default function NewpostPage() {
           {/* 검색창 */}
           <SearchAlcoholInput setAlcoholNo={setAlcoholNo} />
           {/* 내용 */}
-          <TextField
-            id="filled-multiline-flexible"
-            placeholder="입력해주세요"
-            multiline
-            name={"postContent"}
-            onChange={(e) => {
-              e.target.value.length <= 200 && changeHadler(e);
-            }}
-            value={formValue.postContent}
-            rows={6}
+          <NewPostTextEditor
+            onContentChange={({ content, tagList }) =>
+              setFormValue((prev) => ({
+                ...prev,
+                postContent: content,
+                tagList,
+              }))
+            }
           />
-          {/* 총길이 카운터 */}
-          <Typography variant="label" sx={{ textAlign: "right" }}>
-            {formValue.postContent!.length} /{" "}
-            <Typography variant="label" color="primary.main" component="span">
-              200자
-            </Typography>
-          </Typography>
-          {/* 태그폼 */}
-          <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-            {formValue.tagList!.map((tag) => {
-              return (
-                <Typography variant="label" key={tag}>
-                  #{tag}
-                </Typography>
-              );
-            })}
-          </Box>
-          <Box
-            component="form"
-            onSubmit={(e) => {
-              e.preventDefault();
-              setFormValue((prev) => {
-                if (!userTypedTag || prev.tagList?.includes(userTypedTag)) {
-                  setUserTypedTag("");
-                  return prev;
-                }
-                return {
-                  ...prev,
-                  tagList: [...(prev?.tagList ?? []), userTypedTag],
-                };
-              });
-              setUserTypedTag("");
-            }}
-            sx={{ display: "flex", gap: 1 }}
-          >
-            <TextField
-              onChange={({ target }) => setUserTypedTag(target.value)}
-              value={userTypedTag}
-              size="small"
-              sx={{ flexShrink: 1 }}
-            />
-            <Button type="submit">태그 추가</Button>
-          </Box>
           {/* 파일 미리보기 */}
           {fileUrl && <PreviewImageByURL fileUrl={fileUrl} />}
           {/* 버튼 그룹 */}

@@ -23,6 +23,8 @@ import AlcoleNameTag from "./AlcoleNameTag";
 import dayjs from "dayjs";
 import useLikePostMutation from "@/queries/post/useLikePostMutation";
 import useUnLikePostMutation from "@/queries/post/useUnLikePostMutation";
+import "../newpost/quill.mention.css";
+import { sanitize } from "isomorphic-dompurify";
 
 const PostCard = ({
   postAttachUrls,
@@ -94,14 +96,11 @@ const PostCard = ({
 
         <CardContent sx={{ px: 0 }}>
           {/* Contents */}
-          <Typography
-            variant="body1"
-            className={hasImage ? "line-clamp-2" : "line-clamp-5"}
-            onClick={() => openPostDetailPage(id, String(postNo))}
-          >
-            {postContent}
-          </Typography>
-
+          <div
+            dangerouslySetInnerHTML={{
+              __html: sanitize(postContent),
+            }}
+          ></div>
           {/* Hash tags */}
           <PostHashTagList tags={tagList} />
         </CardContent>

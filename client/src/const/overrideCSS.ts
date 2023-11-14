@@ -3,6 +3,9 @@ const OverrideCSS = Object.freeze({
     color: "inherit",
     textDecoration: "none",
   },
+  p:{
+    margin:0
+  }
 });
 
 export default OverrideCSS;
