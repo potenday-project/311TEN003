@@ -7,7 +7,8 @@
 REPOSITORY=/Users/dongseoklee/github/311TEN003
 
 # common
-PROJECT_NAME=server
+PROJECT_LOCATION_FOLDER_NAME=server
+PROJECT_NAME=bside_311
 
 cd $REPOSITORY/$PROJECT_NAME/
 
