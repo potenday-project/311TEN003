@@ -4,6 +4,7 @@ import { PostInterface } from "@/types/post/PostInterface";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getPostListInfiniteQueryKey } from "./useGetPostListInfiniteQuery";
 import getTokenFromLocalStorage from "@/utils/getTokenFromLocalStorage";
+import { POST_LIKE_URL } from "@/const/serverPath";
 /**
  * 좋아요를 수행하고, 게시글을 invalidation 하는 쿼리
  * @returns
