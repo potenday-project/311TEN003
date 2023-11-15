@@ -33,7 +33,8 @@ const NavbarData = [
   {
     iconComponent: <MyIcon />,
     label: "내 정보",
-    href: MY_PROFILE,
+    //FIXME 실제 URL로 변경
+    href: MY_PROFILE+"/1",
   },
 ];
 
