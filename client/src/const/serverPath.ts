@@ -40,3 +40,15 @@ export const ATTACH_FILE = (type: ATTACH_FILE_ResourceType, resourcePk: number) 
  * 알콜리스트를 받아오는 URL
  */
 export const GET_ALCOHOL_LIST = '/alcohols' as const
+
+/**
+ * 포스트의 PK를 입력받아 해당 PK의 게시글의 좋아요를 요청
+ * @param id 게시글의 PK
+ */
+export const POST_LIKE_URL = (id:string)=>`/posts/like/${id}` as const
+
+/**
+ * 포스트의 PK를 입력받아 해당 PK의 게시글의 좋아요 취소를 요청
+ * @param id 게시글의 PK
+ */
+export const POST_UN_LIKE_URL = (id:string)=>`/posts/like-cancel/${id}` as const
