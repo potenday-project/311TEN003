@@ -55,7 +55,7 @@ const NewPostTextEditor = ({ onContentChange }: NewPostTextEditorInterface) => {
   return (
     <>
       <ReactQuill
-        style={{ height: 300 }}
+        style={{ height: 100 }}
         modules={modules}
         placeholder="입력해주세요"
         onChange={(content, _d, _s, editor) => {

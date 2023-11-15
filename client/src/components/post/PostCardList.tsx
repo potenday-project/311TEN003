@@ -13,7 +13,7 @@ import NoResult from "@/assets/images/noResult.png";
 import getTokenFromLocalStorage from "@/utils/getTokenFromLocalStorage";
 
 function PostCardList(props: UseGetPostListQueryInterface) {
-  const { data, fetchNextPage, isFetchingNextPage, hasNextPage } =
+  const { data, fetchNextPage, isFetchingNextPage, hasNextPage, isSuccess,isLoading } =
     useGetPostListInfiniteQuery({
       ...props,
       headers: { Authorization: getTokenFromLocalStorage() },
@@ -31,12 +31,13 @@ function PostCardList(props: UseGetPostListQueryInterface) {
 
   return (
     <div>
-      {hasResult ? (
+      {hasResult &&
+        isSuccess &&
         // 검색결과가 있을시
         data?.pages.map((page) =>
           page.list.map((post) => <PostCard {...post} key={post.postNo} />)
-        )
-      ) : (
+        )}
+      {isSuccess && !hasResult && (
         // 검색결과 없을 시
         <Box
           sx={{
@@ -50,7 +51,7 @@ function PostCardList(props: UseGetPostListQueryInterface) {
         </Box>
       )}
       {/* 로딩창 */}
-      {isFetchingNextPage ? (
+      {isFetchingNextPage||isLoading ? (
         <Box sx={{ width: "100%", textAlign: "center", py: 1 }}>
           <CircularProgress />
         </Box>
