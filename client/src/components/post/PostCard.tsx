@@ -3,7 +3,6 @@
 import { PostInterface } from "@/types/post/PostInterface";
 import { MoreVertOutlined } from "@mui/icons-material";
 import {
-  Avatar,
   Box,
   Card,
   CardActions,
@@ -25,6 +24,7 @@ import useLikePostMutation from "@/queries/post/useLikePostMutation";
 import useUnLikePostMutation from "@/queries/post/useUnLikePostMutation";
 import "../newpost/quill.mention.css";
 import { sanitize } from "isomorphic-dompurify";
+import UserAvatar from "../user/info/UserAvatar";
 
 const PostCard = ({
   postAttachUrls,
@@ -49,14 +49,10 @@ const PostCard = ({
 
   return (
     <Card sx={{ display: "flex", gap: 2, p: 2 }}>
-      <Avatar
-        sx={{ bgcolor: "secondary.main" }}
-        sizes="40"
+      <UserAvatar
         src={profileImgUrls[0]}
-        data-testid="avatar"
-      >
-        {profileImgUrls[0] || String(id)[0].toUpperCase()}
-      </Avatar>
+        fallback={String(id)[0].toUpperCase()}
+      />
       <Box sx={{ width: "100%" }}>
         {/* Header */}
         <Box
@@ -119,14 +115,13 @@ const PostCard = ({
         )}
         {/* CTA */}
         <CardActions sx={{ px: 0, justifyContent: "end", gap: 2 }}>
-          <ButtonBase data-testid="commentBtn" aria-label="comment">
+          <ButtonBase
+            data-testid="commentBtn"
+            aria-label="comment"
+            onClick={() => openPostDetailPage(id, String(postNo))}
+          >
             <CommentIcon />
-            <Typography
-              variant="label"
-              onClick={() => openPostDetailPage(id, String(postNo))}
-            >
-              {commentCount ?? 0}
-            </Typography>
+            <Typography variant="label">{commentCount ?? 0}</Typography>
           </ButtonBase>
           <ButtonBase
             data-testid="likeBtn"
