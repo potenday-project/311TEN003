@@ -1,3 +1,4 @@
+'use client'
 import { AppBar, Button, IconButton, Toolbar, Typography } from "@mui/material";
 import GoBackIcon from "@/assets/icons/GoBackIcon.svg";
 import { MouseEventHandler, memo } from "react";

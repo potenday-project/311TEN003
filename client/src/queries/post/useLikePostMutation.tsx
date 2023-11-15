@@ -26,8 +26,7 @@ const useLikePostMutation = () => {
  */
 export const useLikePostMutationFn = async (id: PostInterface["postNo"]) => {
   const token = getTokenFromLocalStorage();
-  // FIXME 리터럴제거
-  const { data } = await axios.post(`/posts/like/${id}`, null, {
+  const { data } = await axios.post(POST_LIKE_URL(String(id)), null, {
     headers: { Authorization: token },
   });
   return data;
