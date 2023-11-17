@@ -30,7 +30,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.bside.bside_311.util.JwtUtil.NORMAL_TOKEN;
 import static com.bside.bside_311.util.JwtUtil.normalValidity;
@@ -92,15 +91,19 @@ public class UserService {
             YesOrNo.N);
     Long followerCount =
         userFollowRepository.countByFollowedAndDelYnIs(user.of(userNo), YesOrNo.N);
+    Long followingCount =
+        userFollowRepository.countByFollowingAndDelYnIs(user.of(userNo), YesOrNo.N);
     Boolean isFollowing = null;
     Long myUserNo = AuthUtil.getUserNoFromAuthentication();
     if (myUserNo != null) {
       isFollowing = userFollowRepository.findByFollowingAndFollowedAndDelYnIs(user.of(myUserNo),
-                              user.of(userNo), YesOrNo.N)
-                          .isPresent();
+                                            user.of(userNo), YesOrNo.N)
+                                        .isPresent();
     }
 
-    return GetUserInfoResponseDto.of(MyInfoResponseDto.of(user, AttachDto.of(profileAttachList), followerCount), isFollowing);
+    return GetUserInfoResponseDto.of(
+        MyInfoResponseDto.of(user, AttachDto.of(profileAttachList), followerCount, followingCount),
+        isFollowing);
   }
 
   public MyInfoResponseDto getMyInfo(Long myUserNo) {
@@ -111,7 +114,10 @@ public class UserService {
             YesOrNo.N);
     Long followerCount =
         userFollowRepository.countByFollowedAndDelYnIs(user.of(myUserNo), YesOrNo.N);
-    return MyInfoResponseDto.of(user, AttachDto.of(profileAttachList), followerCount);
+    Long followingCount =
+        userFollowRepository.countByFollowingAndDelYnIs(user.of(myUserNo), YesOrNo.N);
+    return MyInfoResponseDto.of(user, AttachDto.of(profileAttachList), followerCount,
+        followingCount);
   }
 
   public void withdraw(Long myUserNo) {

@@ -17,6 +17,8 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 public class MyInfoResponseDto {
+  @Schema(example = "1", description = "유저 번호")
+  Long userNo;
 
   @Schema(example = "apple", description = "아이디(중복검사 필요)")
   String id;
@@ -32,22 +34,30 @@ public class MyInfoResponseDto {
   @Schema(example = "24", description = "팔로워수")
   Long followerCount;
 
+  @Schema(example = "24", description = "당사자가 타인을 팔로잉 하는 수")
+  Long followingCount;
+
 
   public MyInfoResponseDto(MyInfoResponseDto myInfoResponseDto) {
+    this.userNo = myInfoResponseDto.getUserNo();
     this.id = myInfoResponseDto.getId();
     this.nickname = myInfoResponseDto.getNickname();
     this.profileImages = myInfoResponseDto.getProfileImages();
     this.introduction = myInfoResponseDto.getIntroduction();
     this.followerCount = myInfoResponseDto.getFollowerCount();
+    this.followingCount = myInfoResponseDto.getFollowingCount();
   }
 
-  public static MyInfoResponseDto of(User user, List<AttachDto> profileImages, Long followerCount) {
+  public static MyInfoResponseDto of(User user, List<AttachDto> profileImages, Long followerCount,
+                                     Long followingCount) {
     MyInfoResponseDto myInfoResponseDto = MyInfoResponseDto.builder()
+                                                           .userNo(user.getId())
                                                            .id(user.getUserId())
                                                            .nickname(user.getNickname())
                                                            .profileImages(profileImages)
                                                            .introduction(user.getIntroduction())
                                                            .followerCount(followerCount)
+                                                           .followingCount(followingCount)
                                                            .build();
     return myInfoResponseDto;
   }

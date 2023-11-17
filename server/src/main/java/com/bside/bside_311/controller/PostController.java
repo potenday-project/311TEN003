@@ -35,6 +35,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 @Slf4j
 @Validated
 @RestController
@@ -51,8 +55,7 @@ public class PostController {
   public AddPostResponseDto addPost(@RequestBody @Valid AddPostRequestDto addPostRequestDto) {
     log.info(">>> PostController.addPost");
     return postService.addPost(Post.of(addPostRequestDto), addPostRequestDto.getAlcoholNo(),
-        addPostRequestDto.getAlcoholFeature(), addPostRequestDto.getTagList(),
-        addPostRequestDto.getAlcoholInfo());
+        addPostRequestDto.getAlcoholFeature(), addPostRequestDto.getTagList());
   }
 
   @Operation(summary = "[o]게시글 수정", description = "게시글 수정 API")
@@ -83,16 +86,31 @@ public class PostController {
                                      @Schema(description = "사이즈, 기본값 10.", example = "10")
                                      Long size,
                                      @RequestParam(required = false, name = "orderColumn")
-                                     @Schema(description = "정렬 컬럼", example = "alcohol_no")
+                                     @Schema(description = "정렬 컬럼", example = "post_no")
                                      String orderColumn,
                                      @RequestParam(required = false, name = "orderType")
                                      @Schema(description = "정렬 타입", example = "DESC")
                                      String orderType,
                                      @RequestParam(required = false, name = "searchKeyword")
                                      @Schema(description = "키워드", example = "키워드")
-                                     String searchKeyword) {
+                                     String searchKeyword,
+                                     @RequestParam(required = false, name = "searchUserNos")
+                                     @Schema(description = "검색 유저 번호들.", example = "1,2,4")
+                                     String searchUserNos
+
+  ) {
     log.info(">>> PostController.getPost");
-    return postService.getPosts(page, size, orderColumn, orderType, searchKeyword);
+    List<Long> searchUserNoList = new ArrayList<>();
+    try {
+      searchUserNoList =
+          Arrays.stream(searchUserNos.split(",")).map(Long::parseLong).toList();
+    } catch (NumberFormatException e) {
+      log.error(">>> PostController.getPost searchUserNos 파싱 에러 NumberFormatException", e);
+    } catch (Exception e) {
+      log.error(">>> PostController.getPost searchUserNos 파싱 에러 Exception", e);
+    }
+    return postService.getPosts(page, size, orderColumn, orderType, searchKeyword,
+        searchUserNoList);
   }
 
   @Operation(summary = "[o]게시글 상세 조회", description = "게시글 상세 조회 API")

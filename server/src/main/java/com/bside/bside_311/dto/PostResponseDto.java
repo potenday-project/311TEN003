@@ -26,12 +26,13 @@ import java.util.List;
 public class PostResponseDto {
   private String nickname;
   private String id;
+  private Long createdBy;
   @Schema(example = "[\"www.naver.com\", \"www.daum.net\"]", description = "프로필 이미지 URL")
   @Builder.Default
   private List<AttachDto> profileImgUrls = new ArrayList<>();
   private boolean isFollowedByMe;
   private boolean isLikedByMe;
-  private LocalDateTime updateDt;
+  private LocalDateTime lastModifiedDate;
   private boolean edited;
   private Long postNo;
   private String postContent;
@@ -89,8 +90,10 @@ public class PostResponseDto {
 
     // END
     return postResponseDtoBuilder
-               .updateDt(post.getLastModifiedDate())
-               .edited(post.getLastModifiedBy() != null ? true : false)
+               .createdBy(post.getCreatedBy())
+               .lastModifiedDate(post.getLastModifiedDate())
+               .edited(
+                   post.getCreatedDate().isEqual(post.getLastModifiedDate()) ? false : true)
                .postNo(post.getId())
                .postContent(post.getContent())
                .commentCount((long) comments.size())

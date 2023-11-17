@@ -7,6 +7,12 @@
         <if test='searchKeyword != null and !searchKeyword.equalsIgnoreCase("")'>
             and p.content like CONCAT('%', #{searchKeyword},'%')
         </if>
+        <if test="searchUserNoList != null and searchUserNoList.size() > 0">
+            and p.created_by in
+            <foreach collection="searchUserNoList" item="userNo" open="(" separator="," close=")">
+                #{userNo}
+            </foreach>
+        </if>
     </sql>
 
     <select id="getPosts" resultType="GetPostsMvo" parameterType="GetPostVo">

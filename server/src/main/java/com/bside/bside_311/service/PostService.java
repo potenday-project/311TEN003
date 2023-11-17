@@ -1,7 +1,5 @@
 package com.bside.bside_311.service;
 
-import com.bside.bside_311.dto.AddAlcoholRequestDto;
-import com.bside.bside_311.dto.AddAlcoholResponseDto;
 import com.bside.bside_311.dto.AddCommentRequestDto;
 import com.bside.bside_311.dto.AddCommentResponseDto;
 import com.bside.bside_311.dto.AddPostResponseDto;
@@ -68,7 +66,7 @@ public class PostService {
 
   public AddPostResponseDto addPost(
       Post post, Long alcoholNo, String alcoholFeature,
-      List<String> tagStrList, AddAlcoholRequestDto alcoholInfo) {
+      List<String> tagStrList) {
     log.info(">>> PostService.addPost");
 
     postRepository.save(post);
@@ -78,13 +76,6 @@ public class PostService {
     }
 
     postRepository.save(post);
-    if (alcoholInfo != null) {
-      if (StringUtils.isEmpty(alcoholInfo.getAlcoholName())) {
-        throw new IllegalArgumentException("술 이름은 필수입니다.");
-      }
-      AddAlcoholResponseDto addAlcoholResponseDto = alcoholService.addAlcohol(alcoholInfo);
-      alcoholNo = addAlcoholResponseDto.getAlcoholNo();
-    }
 
     if (alcoholNo != null && alcoholFeature != null) {
       Alcohol alcohol = alcoholRepository.findByIdAndDelYnIs(alcoholNo, YesOrNo.N).orElseThrow(
@@ -101,6 +92,15 @@ public class PostService {
   public void editPost(Long postNo, EditPostRequestDto editPostRequestDto) {
     Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+    if (StringUtils.isNotEmpty(editPostRequestDto.getPostContent())) {
+      post.setContent(editPostRequestDto.getPostContent());
+    }
+    if (StringUtils.isNotEmpty(editPostRequestDto.getPostType())) {
+      post.setContent(editPostRequestDto.getPostType());
+    }
+    if (StringUtils.isNotEmpty(editPostRequestDto.getPositionInfo())) {
+      post.setContent(editPostRequestDto.getPositionInfo());
+    }
     postRepository.save(post);
 
     List<String> tagStrList = editPostRequestDto.getTagList();
@@ -113,15 +113,6 @@ public class PostService {
       post.removeAllPostTagsAndAddNewPostTags(tags);
     }
     postRepository.save(post);
-
-    AddAlcoholRequestDto alcoholInfo = editPostRequestDto.getAlcoholInfo();
-    if (alcoholInfo != null) {
-      if (StringUtils.isEmpty(alcoholInfo.getAlcoholName())) {
-        throw new IllegalArgumentException("술 이름은 필수입니다.");
-      }
-      AddAlcoholResponseDto addAlcoholResponseDto = alcoholService.addAlcohol(alcoholInfo);
-      alcoholNo = addAlcoholResponseDto.getAlcoholNo();
-    }
 
     if (alcoholNo != null && alcoholFeature != null) {
       Alcohol alcohol = alcoholRepository.findByIdAndDelYnIs(alcoholNo, YesOrNo.N).orElseThrow(
@@ -168,7 +159,8 @@ public class PostService {
     Alcohol alcohol = null;
     List<PostAlcohol> postAlcohols = post.getPostAlcohols();
     if (CollectionUtils.isNotEmpty(postAlcohols)) {
-      alcohol = postAlcohols.get(0).getAlcohol();
+      alcohol = postAlcohols.stream().filter(postAlcohol -> postAlcohol.getDelYn() == YesOrNo.N)
+                            .map(PostAlcohol::getAlcohol).findFirst().orElse(null);
     }
 
     List<PostTag> nonDeletedPostTags =
@@ -208,7 +200,7 @@ public class PostService {
   }
 
   public GetPostResponseDto getPosts(Long page, Long size, String orderColumn, String orderType,
-                                     String searchKeyword) {
+                                     String searchKeyword, List<Long> searchUserNoList) {
     GetPostVo getPostVo = GetPostVo.builder()
                                    .page(page)
                                    .offset(page * size)
@@ -216,6 +208,7 @@ public class PostService {
                                    .orderColumn(orderColumn)
                                    .orderType(orderType)
                                    .searchKeyword(searchKeyword)
+                                   .searchUserNoList(searchUserNoList)
                                    .build();
     List<GetPostsMvo> getPostsMvos = postMybatisRepository.getPosts(getPostVo);
     Long totalCount = postMybatisRepository.getPostsCount(getPostVo);
