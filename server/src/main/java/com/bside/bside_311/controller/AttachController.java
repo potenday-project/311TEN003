@@ -1,5 +1,6 @@
 package com.bside.bside_311.controller;
 
+import com.bside.bside_311.config.security.UserRequired;
 import com.bside.bside_311.dto.ImageRequestDto;
 import com.bside.bside_311.dto.UploadAttachResponseDto;
 import com.bside.bside_311.entity.AttachType;
@@ -35,6 +36,7 @@ public class AttachController {
 
   @Operation(summary = "[o]사진 첨부", description = "사진 첨부 API")
   @PostMapping(value = "/resources/{attachType}/{resourceNo}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @UserRequired
   @ResponseStatus(HttpStatus.CREATED)
   public UploadAttachResponseDto userAttachPicture(
       @PathVariable("resourceNo") @Schema(example = "1", description = "리소스의 PK") Long resourceNo,
@@ -50,6 +52,7 @@ public class AttachController {
   }
 
   @Operation(summary = "[o]사진 삭제", description = "사진 삭제 API")
+  @UserRequired
   @DeleteMapping("/{attachNo}")
   public void userDeletePicture(@PathVariable("attachNo") Long attachNo) {
     // FIXME 자신이 소유하고 있는 자원만 접근이 가능하도록 조치.

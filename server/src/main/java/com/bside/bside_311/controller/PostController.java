@@ -1,5 +1,6 @@
 package com.bside.bside_311.controller;
 
+import com.bside.bside_311.config.security.UserRequired;
 import com.bside.bside_311.dto.AddCommentRequestDto;
 import com.bside.bside_311.dto.AddCommentResponseDto;
 import com.bside.bside_311.dto.AddPostRequestDto;
@@ -45,14 +46,17 @@ public class PostController {
   private final AttachService attachService;
 
   @Operation(summary = "[o]게시글 등록 ", description = "게시글 등록 API")
+  @UserRequired
   @PostMapping
   public AddPostResponseDto addPost(@RequestBody @Valid AddPostRequestDto addPostRequestDto) {
     log.info(">>> PostController.addPost");
     return postService.addPost(Post.of(addPostRequestDto), addPostRequestDto.getAlcoholNo(),
-        addPostRequestDto.getAlcoholFeature(), addPostRequestDto.getTagList(), addPostRequestDto.getAlcoholInfo());
+        addPostRequestDto.getAlcoholFeature(), addPostRequestDto.getTagList(),
+        addPostRequestDto.getAlcoholInfo());
   }
 
   @Operation(summary = "[o]게시글 수정", description = "게시글 수정 API")
+  @UserRequired
   @PatchMapping("/{postNo}")
   public void editPost(@PathVariable("postNo") Long postNo,
                        @RequestBody @Valid EditPostRequestDto editPostRequestDto) {
@@ -63,6 +67,7 @@ public class PostController {
   }
 
   @Operation(summary = "[o]게시글 삭제", description = "게시글 삭제 API")
+  @UserRequired
   @DeleteMapping("/{postNo}")
   public void deletePost(@PathVariable("postNo") Long postNo) {
     log.info(">>> PostController.deletePost");
@@ -99,6 +104,7 @@ public class PostController {
 
   @Operation(summary = "[o]게시글 댓글 등록", description = "게시글 댓글 등록 API")
   @PostMapping("/{postNo}/comments")
+  @UserRequired
   @ResponseStatus(HttpStatus.CREATED)
   public AddCommentResponseDto addComment(@PathVariable("postNo") Long postNo, @Valid @RequestBody
   AddCommentRequestDto addCommentRequestDto) {
@@ -116,6 +122,7 @@ public class PostController {
 
   @Operation(summary = "[o]게시글 댓글 수정", description = "게시글 댓글 수정 API")
   @PatchMapping("/{postNo}/comments/{commentNo}")
+  @UserRequired
   public void editComment(@PathVariable("postNo") Long postNo,
                           @PathVariable("commentNo") Long commentNo,
                           @Valid @RequestBody
@@ -126,6 +133,7 @@ public class PostController {
 
   @Operation(summary = "[o]게시글 댓글 삭제", description = "게시글 댓글 삭제 API")
   @DeleteMapping("/{postNo}/comments/{commentNo}")
+  @UserRequired
   public void deleteComment(@PathVariable("postNo") Long postNo,
                             @PathVariable("commentNo") Long commentNo) {
     log.info(">>> PostController.deleteComment");
@@ -134,6 +142,7 @@ public class PostController {
 
   @Operation(summary = "[o]인용 등록 ", description = "인용 등록 API")
   @PostMapping("/{postNo}/quotes/{quotedPostNo}")
+  @UserRequired
   @ResponseStatus(HttpStatus.CREATED)
   public AddQuoteResponseDto addQuote(@PathVariable("postNo")
                                       @Schema(example = "1", description = "포스트 번호") Long postNo
@@ -146,6 +155,7 @@ public class PostController {
 
   @Operation(summary = "[o]인용 삭제", description = "인용 삭제 API")
   @DeleteMapping("/quotes/{quoteNo}")
+  @UserRequired
   public void deleteQuote(@PathVariable("quoteNo") Long quoteNo) {
     log.info(">>> PostController.deleteQuote");
     postService.deleteQuote(quoteNo);
@@ -160,6 +170,7 @@ public class PostController {
 
   @Operation(summary = "[o]게시글 좋아요", description = "게시글 좋아요 API")
   @PostMapping("/like/{postNo}")
+  @UserRequired
   public void likePost(@PathVariable("postNo") Long postNo) {
     log.info(">>> PostController.likePost");
     Long userNo = AuthUtil.getUserNoFromAuthentication();
@@ -168,6 +179,7 @@ public class PostController {
 
   @Operation(summary = "[o]게시글 좋아요 취소", description = "게시글 좋아요 취소 API")
   @PostMapping("/like-cancel/{postNo}")
+  @UserRequired
   public void likeCancelPost(@PathVariable("postNo") Long postNo) {
     log.info(">>> PostController.likeCancelPost");
     Long userNo = AuthUtil.getUserNoFromAuthentication();

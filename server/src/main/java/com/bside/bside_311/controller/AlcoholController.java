@@ -1,5 +1,6 @@
 package com.bside.bside_311.controller;
 
+import com.bside.bside_311.config.security.UserRequired;
 import com.bside.bside_311.dto.AddAlcoholRequestDto;
 import com.bside.bside_311.dto.AddAlcoholResponseDto;
 import com.bside.bside_311.dto.AlcoholResponseDto;
@@ -45,6 +46,7 @@ public class AlcoholController {
 
   @Operation(summary = "[o]술 등록 ", description = "술 등록 API")
   @PostMapping
+  @UserRequired
   @ResponseStatus(HttpStatus.CREATED)
   public AddAlcoholResponseDto addAlcohol(
       @RequestBody @Valid AddAlcoholRequestDto addAlcoholRequestDto) {
@@ -54,6 +56,7 @@ public class AlcoholController {
 
   @Operation(summary = "[o]술 수정", description = "술 수정 API")
   @PatchMapping("/{alcoholNo}")
+  @UserRequired
   public void editAlcohol(@PathVariable("alcoholNo") Long alcoholNo,
                           @RequestBody @Valid EditAlcoholRequestDto editAlcoholRequestDto) {
     log.info(">>> AlcoholController.editAlcohol");
@@ -62,6 +65,7 @@ public class AlcoholController {
 
   @Operation(summary = "[o]술 삭제", description = "술 삭제 API")
   @DeleteMapping("/{alcoholNo}")
+  @UserRequired
   public void deleteAlcohol(@PathVariable("alcoholNo") Long alcoholNo) {
     log.info(">>> AlcoholController.deleteAlcohol");
     alcoholService.deleteAlcohol(alcoholNo);

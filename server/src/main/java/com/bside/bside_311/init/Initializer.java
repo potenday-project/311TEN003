@@ -45,6 +45,16 @@ public class Initializer {
     alcoholTypeRepository.save(AlcoholType.builder().name("와인").description("와인이다.").build());
     alcoholTypeRepository.save(AlcoholType.builder().name("막걸리").description("와인이다.").build());
 
+    String signupAdminBody = """
+        {
+          "email": "admin@example.com",
+          "password": "1a2s3d4f1!",
+          "id": "admin",
+          "nickname": "admin"
+        }
+        """;
+    userController.signupAdmin(objectMapper.readValue(signupAdminBody, UserSignupRequestDto.class));
+
     String signupBody = """
         {
           "email": "test@example.com",

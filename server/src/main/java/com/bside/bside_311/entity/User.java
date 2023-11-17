@@ -74,12 +74,12 @@ public class User extends BaseEntity {
     this.postLikeList = postLikeList;
   }
 
-  public static User of(UserSignupRequestDto userSignupRequestDto) {
+  public static User of(UserSignupRequestDto userSignupRequestDto, Role role) {
     return User.builder().email(userSignupRequestDto.getEmail())
                .password(userSignupRequestDto.getPassword())
                .userId(userSignupRequestDto.getId())
                .nickname(userSignupRequestDto.getNickname())
-               .role(Role.ROLE_USER)
+               .role(role)
                .build();
   }
 

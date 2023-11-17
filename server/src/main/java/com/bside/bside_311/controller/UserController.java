@@ -1,5 +1,6 @@
 package com.bside.bside_311.controller;
 
+import com.bside.bside_311.config.security.UserRequired;
 import com.bside.bside_311.dto.ChangePasswordRequestDto;
 import com.bside.bside_311.dto.GetUserInfoResponseDto;
 import com.bside.bside_311.dto.LoginResponseDto;
@@ -9,6 +10,7 @@ import com.bside.bside_311.dto.UserLoginRequestDto;
 import com.bside.bside_311.dto.UserSignupRequestDto;
 import com.bside.bside_311.dto.UserSignupResponseDto;
 import com.bside.bside_311.dto.UserUpdateRequestDto;
+import com.bside.bside_311.entity.Role;
 import com.bside.bside_311.entity.User;
 import com.bside.bside_311.repository.UserMybatisRepository;
 import com.bside.bside_311.service.UserService;
@@ -39,13 +41,22 @@ public class UserController {
   private final UserService userService;
   private final UserMybatisRepository userMybatisRepository;
 
-  @Operation(summary = "[o]유저 등록", description = "유저 등록 API")
+  @Operation(summary = "[o]일반 유저 등록", description = "일반 유저 등록 API")
   @PostMapping("/signup")
   @ResponseStatus(HttpStatus.CREATED)
   public UserSignupResponseDto signup(
       @Valid @RequestBody UserSignupRequestDto userSignupRequestDto) {
     log.info(">>> UserController.signup");
-    return userService.signUp(User.of(userSignupRequestDto));
+    return userService.signUp(User.of(userSignupRequestDto, Role.ROLE_USER));
+  }
+
+  @Operation(summary = "[o] 어드민 유저 등록", description = "어드민 유저 등록 API")
+  @PostMapping("/signup/admin-special")
+  @ResponseStatus(HttpStatus.CREATED)
+  public UserSignupResponseDto signupAdmin(
+      @Valid @RequestBody UserSignupRequestDto userSignupRequestDto) {
+    log.info(">>> UserController.signupAdmin");
+    return userService.signUp(User.of(userSignupRequestDto, Role.ROLE_ADMIN));
   }
 
   @Operation(summary = "[o]유저 로그인", description = "유저 로그인 API")
@@ -82,6 +93,7 @@ public class UserController {
 
   @Operation(summary = "[o]유저 정보 변경")
   @PatchMapping()
+  @UserRequired
   @PreAuthorize("hasAnyRole('ROLE_USER')")
   public void updateUser(@RequestBody @Valid UserUpdateRequestDto userUpdateRequestDto) {
     Long userNo = AuthUtil.getUserNoFromAuthentication();
@@ -91,7 +103,7 @@ public class UserController {
 
   @Operation(summary = "[o]비밀번호 변경", description = "비밀번호 변경 API")
   @PatchMapping("/pwd/change")
-  @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+  @UserRequired
   public void changePassword(
       @RequestBody @Valid ChangePasswordRequestDto changePasswordRequestDto) {
     log.info(">>> UserController.changePassword");
@@ -100,6 +112,7 @@ public class UserController {
 
   @Operation(summary = "[o]내 정보 조회", description = "내 정보 조회 API")
   @GetMapping("/me")
+  @UserRequired
   public MyInfoResponseDto getMyInfo() {
     Long myUserNo = AuthUtil.getUserNoFromAuthentication();
 
@@ -116,6 +129,7 @@ public class UserController {
 
   @Operation(summary = "[o]회원 탈퇴", description = "회원 탈퇴 API")
   @DeleteMapping()
+  @UserRequired
   public void withdraw() {
     Long myUserNo = AuthUtil.getUserNoFromAuthentication();
     userService.withdraw(myUserNo);
@@ -124,7 +138,7 @@ public class UserController {
 
   @Operation(summary = "[o]유저 팔로우하기", description = "유저 팔로우하기 API")
   @PostMapping("/follow/{userNo}")
-  @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+  @UserRequired
   UserFollowResponseDto followUser(@PathVariable("userNo") Long userNo) {
     log.info(">>> UserController.followUser");
     Long myUserNo = AuthUtil.getUserNoFromAuthentication();
@@ -133,6 +147,7 @@ public class UserController {
 
   @Operation(summary = "[o]유저 언팔로우하기", description = "유저 언팔로우하기 API")
   @PostMapping("/unfollow/{userNo}")
+  @UserRequired
   void unfollowUser(@PathVariable("userNo") Long userNo) {
     log.info(">>> UserController.unfollowUser");
     Long myUserNo = AuthUtil.getUserNoFromAuthentication();
