@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bside.bside_311.repository.PostMybatisRepository">
+    <sql id="getPostsWhereSql">
+        p.del_yn = 'N'
+        <if test='searchKeyword != null and !searchKeyword.equalsIgnoreCase("")'>
+            and p.content like CONCAT('%', #{searchKeyword},'%')
+        </if>
+    </sql>
+
+    <select id="getPosts" resultType="GetPostsMvo" parameterType="GetPostVo">
+        select * /* PostMybatisRepository.getPosts */
+        from post p
+        <where>
+            <include refid="getPostsWhereSql"></include>
+
+        </where>
+        <choose>
+            <when test="orderColumn != null and orderType != null">
+                ORDER BY p.${orderColumn} ${orderType}
+            </when>
+            <otherwise>
+                ORDER BY p.post_no DESC
+            </otherwise>
+        </choose>
+
+        <if test="offset != null">
+            LIMIT #{offset}, #{size}
+        </if>
+    </select>
+
+    <select id="getPostsCount" resultType="Long" parameterType="GetAlcoholsVo">
+        select count(*) /* AlcoholMybatisRepository.getAlcoholsCount */
+        from post p
+        <where>
+            <include refid="getPostsWhereSql"/>
+        </where>
+    </select>
+</mapper>

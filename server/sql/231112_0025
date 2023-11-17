@@ -1,0 +1,17 @@
+-- bside.alcohol_tag definition
+
+CREATE TABLE `alcohol_tag` (
+  `alcohol_no` bigint DEFAULT NULL,
+  `created_by` bigint DEFAULT NULL,
+  `created_date` datetime(6) DEFAULT NULL,
+  `last_modified_by` bigint DEFAULT NULL,
+  `last_modified_date` datetime(6) DEFAULT NULL,
+  `post_tag_no` bigint NOT NULL AUTO_INCREMENT,
+  `tag_no` bigint DEFAULT NULL,
+  `del_yn` enum('N','Y') DEFAULT 'N',
+  PRIMARY KEY (`post_tag_no`),
+  KEY `FKd0x09usc61vfc004cyn3au3dc` (`alcohol_no`),
+  KEY `FKam5om99numpdvspuroi2niehd` (`tag_no`),
+  CONSTRAINT `FKam5om99numpdvspuroi2niehd` FOREIGN KEY (`tag_no`) REFERENCES `tag` (`tag_no`),
+  CONSTRAINT `FKd0x09usc61vfc004cyn3au3dc` FOREIGN KEY (`alcohol_no`) REFERENCES `alcohol` (`alcohol_no`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

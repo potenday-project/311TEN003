@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bside.bside_311.repository.AlcoholMybatisRepository">
+    <sql id="getAlcoholsWhereSql">
+        a.del_yn = 'N'
+        <if test='searchKeyword != null and !searchKeyword.equalsIgnoreCase("")'>
+            and a.name like CONCAT('%', #{searchKeyword},'%')
+        </if>
+    </sql>
+
+    <select id="getAlcohols" resultType="GetAlcoholsMvo" parameterType="GetAlcoholsVo">
+        select * /* AlcoholMybatisRepository.getAlcohols */
+        from alcohol a
+        <where>
+            <include refid="getAlcoholsWhereSql"></include>
+
+        </where>
+        <choose>
+            <when test="orderColumn != null and orderType != null">
+                ORDER BY a.${orderColumn} ${orderType}
+            </when>
+            <otherwise>
+                ORDER BY a.alcohol_no DESC
+            </otherwise>
+        </choose>
+
+        <if test="offset != null">
+            LIMIT #{offset}, #{size}
+        </if>
+    </select>
+
+    <select id="getAlcoholsCount" resultType="Long" parameterType="GetAlcoholsVo">
+        select count(*) /* AlcoholMybatisRepository.getAlcoholsCount */
+        from alcohol a
+        <where>
+            <include refid="getAlcoholsWhereSql"/>
+        </where>
+    </select>
+</mapper>

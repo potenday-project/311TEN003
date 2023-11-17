@@ -1,30 +1,9 @@
 spring:
   profiles:
     active: local
-  datasource:
-    url: jdbc:h2:tcp://localhost/~/bside_311
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
-
-
-  jpa:
-    database: h2
-    database-platform: org.hibernate.dialect.H2Dialect
-    hibernate:
-      ddl-auto: 'create-drop'
-    properties:
-      hibernate:
-        # show_sql: true
-        format_sql: true
-        use_sql_comments: true
-
-logging.level:
-  org.hibernate.SQL: debug
-#  org.hibernate.orm.jdbc.bind: trace
 
 mybatis:
-  type-aliases-package: com.bside.bside_311.entity;com.bside.bside_311.dto;
+  type-aliases-package: com.bside.bside_311.entity;com.bside.bside_311.dto;java.lang;
   mapper-locations: mybatis/mapper/**/*.xml
   configuration:
     map-underscore-to-camel-case: true
@@ -36,3 +15,21 @@ decorator:
   datasource:
     p6spy:
       enable-logging: true
+
+springdoc:
+  version: '0.0.1'
+  api-docs:
+    groups:
+      enabled: true
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  swagger-ui:
+    path: /
+    disable-swagger-default-url: true
+    display-request-duration: true
+    operations-sorter: method
+    tags-sorter: alpha
+    displayRequestDuration: true
+    #    doc-expansion: none
+    groups-order: DESC
+    persistAuthorization: true

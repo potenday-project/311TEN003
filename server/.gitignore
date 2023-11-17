@@ -266,3 +266,20 @@ gradle-app.setting
 *.hprof
 
 # End of https://www.toptal.com/developers/gitignore/api/java,macos,windows,intellij,gradle
+
+src/main/generated/**
+
+src/main/resources/application-prd.yml
+src/main/resources/application.properties
+
+
+## logs ##
+logs/
+
+### security information
+application.yml
+
+### operation log
+replay_pid.*.log
+hs_err_pid.*.log
+nohup.out
