@@ -1,6 +1,6 @@
 import { REMOVE_POST } from "@/const/serverPath";
 import { axiosPrivate } from "@/libs/axios";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useInvalidatePostList } from "./useGetPostListInfiniteQuery";
 
 export const useDeletePostMutation = () => {
