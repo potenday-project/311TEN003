@@ -4,7 +4,7 @@ import { nameOfApp, oneLineMessage } from "@/const/brand";
 import OverrideCSS from "@/const/overrideCSS";
 import { Box, GlobalStyles } from "@mui/material";
 import Pretendard from "~/assets/font/Pretendard";
-import NavigationBar from "~/components/NavigationBar";
+import NavigationBar from "~/components/Navigation/NavigationBar";
 import "./globals.css";
 import CustomQueryClientProvider from "@/components/queryClient/CustomQueryClientProvider";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
