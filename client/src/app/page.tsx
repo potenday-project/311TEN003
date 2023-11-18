@@ -1,11 +1,11 @@
 "use server";
 import PostCardList from "@/components/post/PostCardList";
 import { getPostListQueryFn } from "@/queries/post/useGetPostListInfiniteQuery";
+import getTokenFromCookies from "@/utils/getTokenFromCookies";
 import { Container, Paper } from "@mui/material";
-import { cookies } from "next/headers";
 
 export default async function Home() {
-  const accessToken = cookies().get("accessToken")?.value;
+  const accessToken = await getTokenFromCookies()
   
   const initialData = await getPostListQueryFn({
     page: 0,
