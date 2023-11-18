@@ -1,5 +1,6 @@
 export interface MyInfoInterface {
   id: string;
+  userNo:string;
   nickname: string;
   profileImages: ProfileImagesType[];
   introduction: string;

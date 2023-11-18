@@ -25,13 +25,17 @@ import useUnLikePostMutation from "@/queries/post/useUnLikePostMutation";
 import "../newpost/quill.mention.css";
 import { sanitize } from "isomorphic-dompurify";
 import UserAvatar from "../user/info/UserAvatar";
+import Link from "next/link";
+import { USER_PAGE } from "@/const/clientPath";
+import { useUserInfoQuery } from "@/queries/auth/useUserInfoQuery";
 
 const PostCard = ({
   postAttachUrls,
   id,
+  createdBy,
   nickname,
   postContent,
-  updateDt,
+  lastModifiedDate,
   tagList,
   postNo,
   likeCount,
@@ -46,13 +50,21 @@ const PostCard = ({
   const hasImage = useMemo(() => postAttachUrls.length !== 0, [postAttachUrls]);
   const { mutate: likeHandler } = useLikePostMutation();
   const { mutate: unLikeHandler } = useUnLikePostMutation();
+  const { data: currentUser } = useUserInfoQuery();
+
+  const isMyPost = useMemo(
+    () => currentUser?.userNo === createdBy,
+    [currentUser]
+  );
 
   return (
     <Card sx={{ display: "flex", gap: 2, p: 2 }}>
-      <UserAvatar
-        src={profileImgUrls[0]}
-        fallback={String(id)[0].toUpperCase()}
-      />
+      <Link href={USER_PAGE(createdBy)}>
+        <UserAvatar
+          src={profileImgUrls[0]}
+          fallback={String(id)[0].toUpperCase()}
+        />
+      </Link>
       <Box sx={{ width: "100%" }}>
         {/* Header */}
         <Box
@@ -72,20 +84,25 @@ const PostCard = ({
             }}
           >
             {/* 타이틀 */}
-            <Typography color="primary.main">{nickname}</Typography>
-            <Typography
-              variant="label"
-              color={"text.secondary"}
-            >{`@${id}`}</Typography>
+            <Link href={USER_PAGE(createdBy)}>
+              <Typography color="primary.main">{nickname}</Typography>
+            </Link>
+            <Link href={USER_PAGE(createdBy)}>
+              <Typography
+                variant="label"
+                color={"text.secondary"}
+              >{`@${id}`}</Typography>
+            </Link>
             <Typography variant="label" color={"text.secondary"}>
-              {dayjs(updateDt).format("MM.DD")}
+              {dayjs(lastModifiedDate).format("MM.DD")}
             </Typography>
           </Box>
 
-          <ButtonBase aria-label="settings" sx={{ p: 0 }}>
-            <MoreVertOutlined />
+          <ButtonBase aria-label="settings" sx={{ p: 0, height: 24 }}>
+            {isMyPost && <MoreVertOutlined />}
           </ButtonBase>
         </Box>
+
         {alcoholName && (
           <AlcoleNameTag alcoholName={alcoholName} alcoholType={alcoholType} />
         )}
@@ -110,7 +127,11 @@ const PostCard = ({
             onClick={() => openPostDetailPage(id, String(postNo))}
             image={postAttachUrls[0].attachUrl}
             alt={`${id}의 포스트`}
-            sx={{ borderRadius: 2, bgcolor: "background.default" }}
+            sx={{
+              borderRadius: 2,
+              bgcolor: "background.default",
+              cursor: "pointer",
+            }}
           />
         )}
         {/* CTA */}

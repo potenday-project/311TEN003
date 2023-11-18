@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import axios from "@/libs/axios";
 import { PostInterface } from "@/types/post/PostInterface";
 
@@ -6,7 +6,7 @@ const useGetPostDetailQuery = (
   postId: string,
   options?: { initialData: PostInterface }
 ) => {
-  return useSuspenseQuery({
+  return useQuery({
     queryKey: ["post", postId],
     queryFn: () => getPostDetailQueryFn(postId),
     initialData: options?.initialData,

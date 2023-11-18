@@ -1,4 +1,4 @@
-import NavigationBar from "@/components/NavigationBar";
+import NavigationBar from "@/components/Navigation/NavigationBar";
 
 import { Meta, StoryObj } from "@storybook/react";
 const meta = {

@@ -16,6 +16,11 @@ export const FORGOTPASSWORD = "/auth/forgot-password" as const;
  */
 export const MY_PROFILE = "/user" as const;
 /**
+ * 유저의 PK를 입력받아 해당유저의 프로필 페이지로 이동하는 URL
+ */
+export const USER_PAGE = (pk:string|number)=>`/user/${pk}`
+
+/**
  * 술과사전 페이지 라우트
  */
 export const WIKI = "/wiki" as const;
