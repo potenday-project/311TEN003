@@ -9,8 +9,12 @@ export interface PostInterface {
   /**
    * 업데이트 된 날짜
    */
-  updateDt?: string;
+  lastModifiedDate?: string;
   /**
+  * 해당 게시글을 생성한유저PK
+  */
+  createdBy:string;
+    /**
    * 수정 됬는지 여부
    */
   edited?: boolean;

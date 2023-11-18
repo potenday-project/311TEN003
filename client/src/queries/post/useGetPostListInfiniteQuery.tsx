@@ -49,6 +49,7 @@ export interface GetPostListOptions {
   page?: number;
   size?: number;
   searchKeyword?: string;
+  searchUserNos?:string;
 }
 /**
  * 실제 서버에서 응답해주는 값
