@@ -31,6 +31,7 @@ const UserInfo = ({ initialData, userId }: Props) => {
   if (!data) {
     return <></>;
   }
+
   const {
     id,
     followerCount,
@@ -75,7 +76,7 @@ const UserInfo = ({ initialData, userId }: Props) => {
       {isMyProfile ? (
         <Button fullWidth>설정</Button>
       ) : (
-        <FollowUserBtn fullWidth isFollowing={isFollowing} />
+        <FollowUserBtn userId={userId} isFollowing={isFollowing} fullWidth/>
       )}
     </Box>
   );
