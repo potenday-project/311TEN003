@@ -34,6 +34,7 @@ import com.bside.bside_311.repository.TagRepository;
 import com.bside.bside_311.repository.UserFollowRepository;
 import com.bside.bside_311.repository.UserRepository;
 import com.bside.bside_311.util.AuthUtil;
+import com.bside.bside_311.util.MessageUtil;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,14 +44,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
 public class PostService {
-  private final AlcoholService alcoholService;
   private final TagService tagService;
   private final UserRepository userRepository;
   private final PostLikeRepository postLikeRepository;
@@ -77,7 +76,7 @@ public class PostService {
 
     postRepository.save(post);
 
-    if (alcoholNo != null && alcoholFeature != null) {
+    if (alcoholNo != null) {
       Alcohol alcohol = alcoholRepository.findByIdAndDelYnIs(alcoholNo, YesOrNo.N).orElseThrow(
           () -> new IllegalArgumentException("술이 존재하지 않습니다."));
       PostAlcohol postAlcohol = PostAlcohol.of(post, alcohol, alcoholFeature);
@@ -91,7 +90,7 @@ public class PostService {
 
   public void editPost(Long postNo, EditPostRequestDto editPostRequestDto) {
     Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
     if (StringUtils.isNotEmpty(editPostRequestDto.getPostContent())) {
       post.setContent(editPostRequestDto.getPostContent());
     }
@@ -124,37 +123,18 @@ public class PostService {
 
   public void deletePost(Long postNo) {
     Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
     post.setDelYn(YesOrNo.Y);
   }
 
-//  private void addOrSetPost(Post post, Long alcoholNo, String alcoholFeature,
-//                            List<String> tagList) {
-//    postRepository.save(post);
-//    if (CollectionUtils.isNotEmpty(tagList)) {
-//      for (String tagName : tagList) {
-//        Tag tag = tagRepository.findByNameAndDelYnIs(tagName, YesOrNo.N).orElse(Tag.of());
-//        tagRepository.save(tag);
-//      }
-//    }
-//    if (alcoholNo != null && alcoholFeature != null) {
-//      Alcohol alcohol = alcoholRepository.findByIdAndDelYnIs(alcoholNo, YesOrNo.N).orElseThrow(
-//          () -> new IllegalArgumentException("술이 존재하지 않습니다."));
-//      PostAlcohol postAlcohol = PostAlcohol.of(post, alcohol, alcoholFeature);
-//      post.addPostAlcohol(postAlcohol);
-//      alcohol.addPostAlcohol(postAlcohol);
-//    }
-//  }
-
-
   public PostResponseDto getPostDetail(Long postNo, List<AttachDto> attachDtos) {
     Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
     Long userNo = post.getCreatedBy();
     User user = null;
     if (userNo != null) {
       user = userRepository.findByIdAndDelYnIs(userNo, YesOrNo.N).orElseThrow(
-          () -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+          () -> new IllegalArgumentException(MessageUtil.USER_NOT_FOUND_MSG));
     }
     Alcohol alcohol = null;
     List<PostAlcohol> postAlcohols = post.getPostAlcohols();
@@ -164,8 +144,7 @@ public class PostService {
     }
 
     List<PostTag> nonDeletedPostTags =
-        post.getPostTags().stream().filter(postTag -> postTag.getDelYn() == YesOrNo.N).collect(
-            Collectors.toList());
+        post.getPostTags().stream().filter(postTag -> postTag.getDelYn() == YesOrNo.N).toList();
 
     List<Tag> tags = tagRepository.findByPostTagsInAndDelYnIs(nonDeletedPostTags, YesOrNo.N);
     List<Comment> comments = commentRepository.findByPostAndDelYnIs(post, YesOrNo.N);
@@ -212,9 +191,9 @@ public class PostService {
                                    .build();
     List<GetPostsMvo> getPostsMvos = postMybatisRepository.getPosts(getPostVo);
     Long totalCount = postMybatisRepository.getPostsCount(getPostVo);
-    List<Post> posts = getPostsMvos.stream().map(Post::of).collect(Collectors.toList());
+    List<Post> posts = getPostsMvos.stream().map(Post::of).toList();
     List<PostResponseDto> list =
-        posts.stream().map(post -> getPostDetail(post.getId())).collect(Collectors.toList());
+        posts.stream().map(post -> getPostDetail(post.getId())).toList();
     // FIXME
     // 추구 여기서 첨부파일 개수 쿼리 최적화.
     return GetPostResponseDto.of(list, totalCount);
@@ -222,7 +201,7 @@ public class PostService {
 
   public AddCommentResponseDto addComment(Long postNo, AddCommentRequestDto addCommentRequestDto) {
     Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
     Comment comment = Comment.of(post, addCommentRequestDto.getCommentContent());
     post.addComment(comment);
     commentRepository.save(comment);
@@ -232,17 +211,16 @@ public class PostService {
 
   public GetPostCommentsResponseDto getPostComments(Long postNo) {
     Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
     List<Comment> comments =
-        post.getComments().stream().filter(comment -> comment.getDelYn() == YesOrNo.N).collect(
-            Collectors.toList());
+        post.getComments().stream().filter(comment -> comment.getDelYn() == YesOrNo.N).toList();
     return GetPostCommentsResponseDto.of(comments);
   }
 
   public void editComment(Long postNo, Long commentNo,
                           EditCommentRequestDto editCommentRequestDto) {
-    Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+    postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
+        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
     Comment comment = commentRepository.findByIdAndDelYnIs(commentNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
     if (!ObjectUtils.isEmpty(editCommentRequestDto) &&
@@ -252,8 +230,8 @@ public class PostService {
   }
 
   public void deleteComment(Long postNo, Long commentNo) {
-    Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+    postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
+        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
     Comment comment = commentRepository.findByIdAndDelYnIs(commentNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
     comment.setDelYn(YesOrNo.Y);
@@ -261,7 +239,7 @@ public class PostService {
 
   public PostQuote addQuote(Long postNo, Long quotedPostNo) {
     Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
 
     Post quotedPost = postRepository.findByIdAndDelYnIs(quotedPostNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException("인용할 게시글이 존재하지 않습니다."));
@@ -280,29 +258,28 @@ public class PostService {
 
   public GetQuotesByPostResponseDto getQuotesByPost(Long postNo) {
     Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
     List<PostQuote> postQuotes = postQuoteRepository.findByPostAndDelYnIs(post, YesOrNo.N);
     return GetQuotesByPostResponseDto.of(postQuotes);
   }
 
   public void likePost(Long userNo, Long postNo) {
     User user = userRepository.findByIdAndDelYnIs(userNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+        () -> new IllegalArgumentException(MessageUtil.USER_NOT_FOUND_MSG));
     Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
 
     PostLike postLike =
         postLikeRepository.findByUserAndPostAndDelYnIs(user, post, YesOrNo.N).orElse(
             PostLike.of(user, post));
     postLikeRepository.save(postLike);
-    return;
   }
 
   public void likeCancelPost(Long userNo, Long postNo) {
     User user = userRepository.findByIdAndDelYnIs(userNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+        () -> new IllegalArgumentException(MessageUtil.USER_NOT_FOUND_MSG));
     Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
 
     PostLike postLike =
         postLikeRepository.findByUserAndPostAndDelYnIs(user, post, YesOrNo.N).orElseThrow(
