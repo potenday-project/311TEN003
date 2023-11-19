@@ -1,16 +1,4 @@
-export interface MyInfoInterface {
-  id: string;
-  userNo:string;
-  nickname: string;
-  profileImages: ProfileImagesType[];
-  introduction: string;
-  followerCount: number;
-  followingCount:number;
-  isFollowing?:boolean
-}
+import { UserInfoInterface } from "../user/userInfoInterface";
 
-export interface ProfileImagesType {
-  attachNo: number;
-  attachUrl: string;
-  attachType: string;
-}
+export interface MyInfoInterface
+  extends Omit<UserInfoInterface, "isFollowing"> {}

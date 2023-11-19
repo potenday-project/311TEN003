@@ -11,11 +11,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import NavbarUserImage from "@/components/Navigation/NavbarUserImage";
 import { useMemo } from "react";
-import { useUserInfoQuery } from "@/queries/auth/useUserInfoQuery";
+import { useMyInfoQuery } from "@/queries/auth/useMyInfoQuery";
 
 const NavigationBar = () => {
   const path = usePathname();
-  const { data: userInfo } = useUserInfoQuery();
+  const { data: userInfo } = useMyInfoQuery();
   const NavbarData = useMemo(
     () => [
       {

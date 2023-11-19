@@ -1,6 +1,6 @@
 "use client";
 import CustomAppbar from "@/components/CustomAppbar";
-import { useUserInfoQuery } from "@/queries/auth/useUserInfoQuery";
+import { useMyInfoQuery } from "@/queries/auth/useMyInfoQuery";
 import { Container, Paper } from "@mui/material";
 import React, { useMemo } from "react";
 
@@ -10,7 +10,7 @@ type Props = {
 };
 
 const UserInfoPageLayout = ({ children, params }: Props) => {
-  const { data: userInfo } = useUserInfoQuery();
+  const { data: userInfo } = useMyInfoQuery();
   const isMyProfile = useMemo(
     () => String(userInfo?.userNo) === String(params.userId),
     [userInfo,params.userId]

@@ -1,9 +1,9 @@
 "use client";
-import { useUserInfoQuery } from "@/queries/auth/useUserInfoQuery";
+import { useMyInfoQuery } from "@/queries/auth/useMyInfoQuery";
 import UserAvatar from "../user/info/UserAvatar";
 import MyIcon from "~/assets/icons/MyIcon.svg";
 const NavbarUserImage = () => {
-  const { data } = useUserInfoQuery();
+  const { data } = useMyInfoQuery();
   return data ? (
     <UserAvatar
       sx={{ width: 28, height: 28, m: 0.25 }}

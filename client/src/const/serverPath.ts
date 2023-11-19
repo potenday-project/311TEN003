@@ -58,3 +58,17 @@ export const POST_UN_LIKE_URL = (id:string)=>`/posts/like-cancel/${id}` as const
  * @returns 
  */
 export const USER_SUMMARY = (id:string)=>`/user/${id}/summary` as const
+
+/**
+ * 유저 ID 를 입력받아 해당 유저를 팔로우 하는 URL
+ * @param id 유저 PK
+ * @returns 
+ */
+export const FOLLOW_USER = (id:string) => `/user/follow/${id}` as const
+
+/**
+ * 유저 ID 를 입력받아 해당 유저를 언팔로우 하는 URL
+ * @param id 유저 PK
+ * @returns 
+ */
+export const UNFOLLOW_USER = (id:string) => `/user/unfollow/${id}` as const

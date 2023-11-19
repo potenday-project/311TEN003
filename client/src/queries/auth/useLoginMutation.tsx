@@ -2,7 +2,7 @@
 import useLogin from "@/hooks/useLogin";
 import { SigninRequirement } from "@/types/auth/signinRequirement";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { userInfoQueryKeys } from "./useUserInfoQuery";
+import { MyInfoQueryKeys } from "./useMyInfoQuery";
 import { useRouter } from "next/navigation";
 import HOME from "@/const/clientPath";
 import errorHandler from "@/utils/errorHandler";
@@ -25,7 +25,7 @@ const useLoginMutation = () => {
     // 로그인에 성공한 경우, 토큰을 로컬스토리지에 저장, 이전 로그인 쿼리를 인벨리데이트
     onSuccess: async ({ token }) => {
       localStorage?.setItem("accessToken", token);
-      queryClient.invalidateQueries({ queryKey: userInfoQueryKeys.all });
+      queryClient.invalidateQueries({ queryKey: MyInfoQueryKeys.all });
       router.refresh();
       router.push(HOME);
     },
@@ -52,6 +52,6 @@ export const LoginMuataionKey = {
    * @param id 유저아이디
    * @returns 로그인뮤테이션 키
    */
-  byId: (id: SigninRequirement["id"]) => [...LoginMuataionKey.all, id] as const,
+  byId: (id: SigninRequirement["id"]) => [...LoginMuataionKey.all, {id}] as const,
 };
 export default useLoginMutation;
