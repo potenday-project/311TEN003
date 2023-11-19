@@ -1,7 +1,7 @@
 "use client";
 
 import { PostInterface } from "@/types/post/PostInterface";
-import { MoreVertOutlined } from "@mui/icons-material";
+
 import {
   Box,
   Card,
@@ -28,6 +28,7 @@ import UserAvatar from "../user/info/UserAvatar";
 import Link from "next/link";
 import { USER_PAGE } from "@/const/clientPath";
 import { useMyInfoQuery } from "@/queries/auth/useMyInfoQuery";
+import PostCardOptionDropdown from "./PostCardOptionDropdown";
 
 const PostCard = ({
   postAttachUrls,
@@ -56,7 +57,6 @@ const PostCard = ({
     () => currentUser?.userNo === createdBy,
     [currentUser]
   );
-
   return (
     <Card sx={{ display: "flex", gap: 2, p: 2 }}>
       <Link href={USER_PAGE(createdBy)}>
@@ -81,6 +81,7 @@ const PostCard = ({
               display: "flex",
               flexDirection: "row",
               gap: 1,
+              height: 24,
             }}
           >
             {/* 타이틀 */}
@@ -98,9 +99,9 @@ const PostCard = ({
             </Typography>
           </Box>
 
-          <ButtonBase aria-label="settings" sx={{ p: 0, height: 24 }}>
-            {isMyPost && <MoreVertOutlined />}
-          </ButtonBase>
+          {isMyPost && (
+            <PostCardOptionDropdown postId={postNo}/>
+          )}
         </Box>
 
         {alcoholName && (
