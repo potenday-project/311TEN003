@@ -27,7 +27,7 @@ import { sanitize } from "isomorphic-dompurify";
 import UserAvatar from "../user/info/UserAvatar";
 import Link from "next/link";
 import { USER_PAGE } from "@/const/clientPath";
-import { useUserInfoQuery } from "@/queries/auth/useUserInfoQuery";
+import { useMyInfoQuery } from "@/queries/auth/useMyInfoQuery";
 
 const PostCard = ({
   postAttachUrls,
@@ -50,7 +50,7 @@ const PostCard = ({
   const hasImage = useMemo(() => postAttachUrls.length !== 0, [postAttachUrls]);
   const { mutate: likeHandler } = useLikePostMutation();
   const { mutate: unLikeHandler } = useUnLikePostMutation();
-  const { data: currentUser } = useUserInfoQuery();
+  const { data: currentUser } = useMyInfoQuery();
 
   const isMyPost = useMemo(
     () => currentUser?.userNo === createdBy,

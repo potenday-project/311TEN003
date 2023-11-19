@@ -6,9 +6,9 @@ import { SigninRequirement } from "@/types/auth/signinRequirement";
 import getTokenFromLocalStorage from "@/utils/getTokenFromLocalStorage";
 import { useQuery } from "@tanstack/react-query";
 
-export const useUserInfoQuery = () =>
+export const useMyInfoQuery = () =>
   useQuery({
-    queryKey: userInfoQueryKeys.all,
+    queryKey: MyInfoQueryKeys.all,
     queryFn: getMyInfoByLocalStorage,
   });
 
@@ -20,7 +20,7 @@ export const getMyInfoByLocalStorage = async () => {
   return data;
 };
 
-export const userInfoQueryKeys = {
+export const MyInfoQueryKeys = {
   /**
    * 모든 로그인 관련 쿼리키
    */
