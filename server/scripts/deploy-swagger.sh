@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# prd
-REPOSITORY=/home/bside/311TEN003
+# swagger
+REPOSITORY=/home/bside/311TEN003_for_swagger
 
 # local
 #REPOSITORY=/Users/dongseoklee/github/311TEN003
@@ -25,7 +25,7 @@ echo "Release Version Updated"
 
 echo "> gradlew, deploy.sh 권한 변경 "
 chmod 777 gradlew
-chmod 774 scripts/deploy.sh
+chmod 774 scripts/deploy-swagger.sh
 
 echo "> 프로젝트 Build 시작"
 ./gradlew build --exclude-task test
