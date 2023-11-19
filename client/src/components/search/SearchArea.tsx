@@ -41,18 +41,10 @@ const SearchArea = ({ initialData, searchKeyword }: Props) => {
           }}
         />
       </motion.div>
-      <Suspense
-        fallback={
-          <Box sx={{ width: "100%", textAlign: "center", py: 1 }}>
-            <CircularProgress />
-          </Box>
-        }
-      >
-        <PostCardList
-          initialData={!keyword ? MemoidInitailData : undefined}
-          searchKeyword={debouncedValue}
-        />
-      </Suspense>
+      <PostCardList
+        initialData={!keyword ? MemoidInitailData : undefined}
+        searchKeyword={debouncedValue}
+      />
     </Paper>
   );
 };

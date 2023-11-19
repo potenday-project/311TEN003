@@ -1,7 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
-import { axiosPrivate } from "@/libs/axios";
+import axios from "@/libs/axios";
 import { POST_LIST } from "@/const/serverPath";
 import { NewPostRequestInterface } from "@/types/newPost/NewPostInterface";
+import getTokenFromLocalStorage from "@/utils/getTokenFromLocalStorage";
 
 const useNewPostMutation = () => {
   return useMutation({
@@ -13,10 +14,9 @@ const useNewPostMutation = () => {
 };
 
 const usePostNewPostFn = async (formData: NewPostRequestInterface) => {
-  const { data } = await axiosPrivate.post<{ postNo: number }>(
-    POST_LIST,
-    formData
-  );
+  const { data } = await axios.post<{ postNo: number }>(POST_LIST, formData, {
+    headers: { Authorization: getTokenFromLocalStorage() },
+  });
   return data;
 };
 

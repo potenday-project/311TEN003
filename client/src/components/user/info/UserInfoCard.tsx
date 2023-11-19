@@ -4,7 +4,7 @@ import UserAvatar from "@/components/user/info/UserAvatar";
 import { Box, Button, Typography } from "@mui/material";
 
 type Props = {
-  data: MyInfoInterface & { isFollowing: boolean };
+  data: MyInfoInterface;
 };
 
 const UserInfo = ({ data }: Props) => {
@@ -12,6 +12,7 @@ const UserInfo = ({ data }: Props) => {
   const {
     id,
     followerCount,
+    followingCount,
     nickname,
     profileImages,
     isFollowing,
@@ -38,6 +39,8 @@ const UserInfo = ({ data }: Props) => {
       <Box sx={RowWrapperSX}>
         <Typography fontWeight="bold">{followerCount}</Typography>
         <Typography color="text.secondary">팔로워</Typography>
+        <Typography fontWeight="bold">{followingCount}</Typography>
+        <Typography color="text.secondary">팔로잉</Typography>
       </Box>
       {isFollowing ? (
         <Button variant="outlined" fullWidth>

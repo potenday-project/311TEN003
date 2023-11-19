@@ -1,20 +1,29 @@
 "use client";
 import CustomAppbar from "@/components/CustomAppbar";
+import { useUserInfoQuery } from "@/queries/auth/useUserInfoQuery";
 import { Container, Paper } from "@mui/material";
-import React from "react";
+import React, { useMemo } from "react";
 
 type Props = {
   children: React.ReactNode;
+  params: { userId: string };
 };
 
-const UserInfoPageLayout = ({ children }: Props) => {
-  
+const UserInfoPageLayout = ({ children, params }: Props) => {
+  const { data: userInfo } = useUserInfoQuery();
+  const isMyProfile = useMemo(
+    () => String(userInfo?.userNo) === String(params.userId),
+    [userInfo,params.userId]
+  );
+
   return (
     <Paper>
       <CustomAppbar
-        title={""}
-        buttonTitle={"설정"}
+        buttonTitle={isMyProfile ? "설정" : undefined}
         onClickButton={() => {
+          if(!isMyProfile){
+            return
+          }
           console.log("눌림");
         }}
       />
