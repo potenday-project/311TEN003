@@ -5,6 +5,8 @@ export interface MyInfoInterface {
   profileImages: ProfileImagesType[];
   introduction: string;
   followerCount: number;
+  followingCount:number;
+  isFollowing?:boolean
 }
 
 export interface ProfileImagesType {
