@@ -3,7 +3,6 @@ import SearchArea from "@/components/search/SearchArea";
 import { getPostListQueryFn } from "@/queries/post/useGetPostListInfiniteQuery";
 import getTokenFromCookies from "@/utils/getTokenFromCookies";
 import { Container } from "@mui/material";
-import { cookies } from "next/headers";
 
 const SearchPage = async ({
   searchParams,
