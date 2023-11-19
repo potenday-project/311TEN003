@@ -23,7 +23,7 @@ echo "Release Version Updated"
 #grep "^Release" ./releasenote.txt | tail -1 > ./src/main/frontend/public/latestReleaseVer.txt
 
 
-echo "> gradlew, deploy.sh 권한 변경 "
+echo "> gradlew, deploy-swagger.sh 권한 변경 "
 chmod 777 gradlew
 chmod 774 scripts/deploy-swagger.sh
 
