@@ -1,5 +1,6 @@
 package com.bside.bside_311.controller;
 
+import com.bside.bside_311.dto.MyInfoResponseDto;
 import com.bside.bside_311.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,14 +10,16 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.Matchers.containsString;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(UserController.class)
-class UserControllerTest extends ControllerTest{
+class UserControllerTest extends ControllerTest {
 
   @Autowired
   private MockMvc mockMvc;
@@ -33,7 +36,7 @@ class UserControllerTest extends ControllerTest{
     String name = "Newbie";
 
     String json = String.format(
-            """
+        """
             {
                 "email": "%s",
                 "password": "%s",
@@ -45,8 +48,8 @@ class UserControllerTest extends ControllerTest{
     );
 
     MvcResult mvcResult = mockMvc.perform(post("/user/signup")
-                                     .contentType(MediaType.APPLICATION_JSON)
-                                     .content(json))
+                                              .contentType(MediaType.APPLICATION_JSON)
+                                              .content(json))
                                  .andExpect(status().isCreated())
                                  .andReturn();
     String responseBody = mvcResult.getResponse().getContentAsString();
@@ -63,21 +66,34 @@ class UserControllerTest extends ControllerTest{
 
     String json = String.format(
         """
-        {
-            "email": "%s",
-            "password": "%s",
-            "id": "%s"
-        }
-        """,
+            {
+                "email": "%s",
+                "password": "%s",
+                "id": "%s"
+            }
+            """,
         email, password, id, name
     );
 
     MvcResult mvcResult = mockMvc.perform(post("/user/signup")
-                                     .contentType(MediaType.APPLICATION_JSON)
-                                     .content(json))
+                                              .contentType(MediaType.APPLICATION_JSON)
+                                              .content(json))
                                  .andExpect(status().is4xxClientError())
                                  .andReturn();
     String responseBody = mvcResult.getResponse().getContentAsString();
     System.out.println(responseBody);
+  }
+
+  @Test
+  @DisplayName("GET /me success")
+  void me() throws Exception {
+    given(userService.getMyInfo(normalUser.getId()))
+        .willReturn(MyInfoResponseDto.of(normalUser, null, 0L,
+            0L));
+
+    mockMvc.perform(get("/user/me")
+                        .header("Authorization", "Bearer " + userAccessToken))
+           .andExpect(status().isOk())
+           .andExpect(content().string(containsString("userNo")));
   }
 }

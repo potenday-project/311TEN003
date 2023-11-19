@@ -69,8 +69,6 @@ dependencies {
 //	}
     runtimeOnly 'com.mysql:mysql-connector-j'
 
-    runtimeOnly 'com.mysql:mysql-connector-j'
-
     annotationProcessor 'org.projectlombok:lombok'
 
     // spring boot 3.0 query dsl setting.

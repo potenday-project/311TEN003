@@ -12,7 +12,6 @@ import com.bside.bside_311.dto.UserSignupResponseDto;
 import com.bside.bside_311.dto.UserUpdateRequestDto;
 import com.bside.bside_311.entity.Role;
 import com.bside.bside_311.entity.User;
-import com.bside.bside_311.repository.UserMybatisRepository;
 import com.bside.bside_311.service.UserService;
 import com.bside.bside_311.util.AuthUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,7 +38,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "유저", description = "유저 API")
 public class UserController {
   private final UserService userService;
-  private final UserMybatisRepository userMybatisRepository;
 
   @Operation(summary = "[o]일반 유저 등록", description = "일반 유저 등록 API")
   @PostMapping("/signup")

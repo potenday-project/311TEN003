@@ -37,7 +37,7 @@ cp ./build/libs/*.jar $REPOSITORY/
 echo "> 현재 구동중인 애플리케이션 pid 확인"
 
 #CURRENT_PID=$(pgrep -f ${PROJECT_NAME}.*.jar)
-CURRENT_PID=$(pgrep -f "active=prd")
+CURRENT_PID=$(pgrep -f "active=swagger")
 
 echo "$CURRENT_PID"
 
@@ -56,5 +56,5 @@ JAR_NAME=$(ls $REPOSITORY/ |grep ${PROJECT_NAME}.*.jar | tail -n 1)
 
 echo "> JAR Name: $JAR_NAME"
 
-nohup java -jar $REPOSITORY/"$JAR_NAME"  --spring.profiles.active=prd &
+nohup java -jar $REPOSITORY/"$JAR_NAME"  --spring.profiles.active=swagger &
 
