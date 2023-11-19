@@ -52,3 +52,9 @@ export const POST_LIKE_URL = (id:string)=>`/posts/like/${id}` as const
  * @param id 게시글의 PK
  */
 export const POST_UN_LIKE_URL = (id:string)=>`/posts/like-cancel/${id}` as const
+/**
+ * 유저 ID 를 입력받아 해당 유저의 정보를 불러오는 URL
+ * @param id 유저 PK
+ * @returns 
+ */
+export const USER_SUMMARY = (id:string)=>`/user/${id}/summary` as const

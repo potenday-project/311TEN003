@@ -13,16 +13,21 @@ export const useGetPostListInfiniteQuery = ({
   initialData,
   size,
   searchKeyword,
+  searchUserNos,
   headers,
 }: UseGetPostListQueryInterface) => {
   return useInfiniteQuery({
-    queryKey: getPostListInfiniteQueryKey.byKeyword(searchKeyword),
+    queryKey: getPostListInfiniteQueryKey.byKeyword({
+      keyword: searchKeyword,
+      userNo: searchUserNos,
+    }),
 
     queryFn: async ({ pageParam = 0 }) =>
       await getPostListQueryFn({
         page: pageParam,
         size,
         searchKeyword,
+        searchUserNos,
         headers: headers?.Authorization
           ? headers
           : { Authorization: getTokenFromLocalStorage() },
@@ -49,7 +54,7 @@ export interface GetPostListOptions {
   page?: number;
   size?: number;
   searchKeyword?: string;
-  searchUserNos?:string;
+  searchUserNos?: string;
 }
 /**
  * 실제 서버에서 응답해주는 값
@@ -70,13 +75,14 @@ export const getPostListQueryFn = async ({
   page = 0,
   size = 10,
   searchKeyword,
+  searchUserNos,
   headers,
 }: GetPostListOptions & {
   headers?: AxiosRequestConfig<any>["headers"];
 }): Promise<AugmentedGetPostListResponse> => {
   const { data } = await axios.get<GetPostListResponse>("/posts", {
     baseURL: process.env.NEXT_PUBLIC_BASE_URL,
-    params: { page, size, searchKeyword },
+    params: { page, size, searchKeyword, searchUserNos },
     headers,
   });
   return {
@@ -88,7 +94,8 @@ export const getPostListQueryFn = async ({
 
 export const getPostListInfiniteQueryKey = {
   all: ["posts"] as const,
-  byKeyword: (keyword?: string) => ["posts", keyword ?? ""] as const,
+  byKeyword: ({ keyword, userNo }: { keyword?: string; userNo?: string }) =>
+    ["posts", keyword , userNo ] as const,
 };
 
 /**

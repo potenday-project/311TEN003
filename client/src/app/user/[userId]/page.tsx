@@ -6,16 +6,17 @@ import NoResult from "@/assets/images/noResult.png";
 import { Box } from "@mui/material";
 import Image from "next/image";
 import PostCardList from "@/components/post/PostCardList";
+import { USER_SUMMARY } from "@/const/serverPath";
 
 const page = async ({ params }: { params: { userId: string } }) => {
   try {
     const { data } = await axios.get<
       MyInfoInterface & { isFollowing: boolean }
-    >(`/user/${params.userId}/summary`);
+    >(USER_SUMMARY(params.userId));
     return (
       <>
         <UserInfoCard data={data} />
-        <PostCardList/>
+        <PostCardList searchUserNos={params.userId} />
       </>
     );
   } catch {
