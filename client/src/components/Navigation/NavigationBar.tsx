@@ -6,14 +6,16 @@ import SearchIcon from "~/assets/icons/SearchIcon.svg";
 import PostIcon from "~/assets/icons/PostIcon.svg";
 import BeverageIcon from "~/assets/icons/BeverageIcon.svg";
 
-import HOME, { MY_PROFILE, NEW_POST, SEARCH, WIKI } from "@/const/clientPath";
+import HOME, { MY_PROFILE, NEW_POST, SEARCH, SIGNIN, WIKI } from "@/const/clientPath";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import NavbarUserImage from "@/components/Navigation/NavbarUserImage";
 import { useMemo } from "react";
+import { useUserInfoQuery } from "@/queries/auth/useUserInfoQuery";
 
 const NavigationBar = () => {
   const path = usePathname();
+  const { data: userInfo } = useUserInfoQuery();
   const NavbarData = useMemo(
     () => [
       {
@@ -38,10 +40,10 @@ const NavigationBar = () => {
       {
         iconComponent: <NavbarUserImage />,
         label: "내 정보",
-        href: MY_PROFILE,
+        href: userInfo ? `${MY_PROFILE}/${userInfo.userNo}` : SIGNIN,
       },
     ],
-    []
+    [userInfo]
   );
   return (
     <Paper sx={WrapperStyle} elevation={0}>
