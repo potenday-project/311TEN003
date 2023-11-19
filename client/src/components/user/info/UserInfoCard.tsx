@@ -1,14 +1,36 @@
-import { MyInfoInterface } from "@/types/auth/myInfo";
-import React from "react";
+"use client";
 import UserAvatar from "@/components/user/info/UserAvatar";
+import FollowUserBtn from "@/components/user/info/FollowUserBtn";
 import { Box, Button, Typography } from "@mui/material";
+import { UserInfoInterface } from "@/types/user/userInfoInterface";
+import useUserInfoQuery from "@/queries/user/useUserInfoQuery";
+import getTokenFromLocalStorage from "@/utils/getTokenFromLocalStorage";
+import { useMyInfoQuery } from "@/queries/auth/useMyInfoQuery";
+import { useMemo } from "react";
 
 type Props = {
-  data: MyInfoInterface;
+  initialData?: UserInfoInterface;
+  userId: string;
 };
 
-const UserInfo = ({ data }: Props) => {
-  
+const UserInfo = ({ initialData, userId }: Props) => {
+  const { data: userInfo } = useMyInfoQuery();
+
+  const isMyProfile = useMemo(
+    () => String(userInfo?.userNo) === String(userId),
+    [userInfo, userId]
+  );
+
+  const token = getTokenFromLocalStorage();
+
+  const { data } = useUserInfoQuery({
+    userId,
+    initialData,
+    config: { headers: { Authorization: token } },
+  });
+  if (!data) {
+    return <></>;
+  }
   const {
     id,
     followerCount,
@@ -20,11 +42,18 @@ const UserInfo = ({ data }: Props) => {
   } = data;
 
   return (
-    <Box sx={{display:'flex',alignItems:'center',flexDirection:'column', gap:1}}>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        flexDirection: "column",
+        gap: 1,
+      }}
+    >
       <UserAvatar
         src={profileImages[0]?.attachUrl}
         fallback={id}
-        sx={{width:"56px",height:'56px'}}
+        sx={{ width: "56px", height: "56px" }}
       />
       <Box sx={RowWrapperSX}>
         <Typography color="primary.main" fontWeight="bold">
@@ -32,22 +61,21 @@ const UserInfo = ({ data }: Props) => {
         </Typography>
         <Typography color="text.secondary">@{id}</Typography>
       </Box>
-      <Box sx={{height:48}}>
-      <Typography color="text.secondary">
-        {introduction ?? "자기소개가 없습니다"}
-      </Typography></Box>
+      <Box sx={{ height: 48 }}>
+        <Typography color="text.secondary">
+          {introduction ?? "자기소개가 없습니다"}
+        </Typography>
+      </Box>
       <Box sx={RowWrapperSX}>
         <Typography fontWeight="bold">{followerCount}</Typography>
         <Typography color="text.secondary">팔로워</Typography>
         <Typography fontWeight="bold">{followingCount}</Typography>
         <Typography color="text.secondary">팔로잉</Typography>
       </Box>
-      {isFollowing ? (
-        <Button variant="outlined" fullWidth>
-          언팔로우
-        </Button>
+      {isMyProfile ? (
+        <Button fullWidth>설정</Button>
       ) : (
-        <Button fullWidth>팔로우</Button>
+        <FollowUserBtn fullWidth isFollowing={isFollowing} />
       )}
     </Box>
   );
