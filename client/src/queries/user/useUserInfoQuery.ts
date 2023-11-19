@@ -31,7 +31,7 @@ export const getUserInfoFn = async (
 };
 export const UserInfoQueryKey = {
   all: ["userInfo"] as const,
-  byId: (userId: string) => ["userInfo", userId] as const,
+  byId: (userId: string) => ["userInfo", { userId }] as const,
 };
 
 export default useUserInfoQuery;

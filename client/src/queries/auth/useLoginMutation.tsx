@@ -52,6 +52,6 @@ export const LoginMuataionKey = {
    * @param id 유저아이디
    * @returns 로그인뮤테이션 키
    */
-  byId: (id: SigninRequirement["id"]) => [...LoginMuataionKey.all, id] as const,
+  byId: (id: SigninRequirement["id"]) => [...LoginMuataionKey.all, {id}] as const,
 };
 export default useLoginMutation;
