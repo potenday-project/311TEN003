@@ -13,7 +13,7 @@ const ErrorPage = ({
   reset: () => void;
 }) => {
   useEffect(() => {
-    errorHandler(JSON.stringify(error));
+    errorHandler(error);
   }, [error]);
 
   return (

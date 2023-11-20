@@ -6,6 +6,7 @@ import { UserInfoQueryKey } from "./useUserInfoQuery";
 import { UserInfoInterface } from "@/types/user/userInfoInterface";
 import { MyInfoQueryKeys } from "../auth/useMyInfoQuery";
 import { MyInfoInterface } from "@/types/auth/myInfo";
+import errorHandler from "@/utils/errorHandler";
 
 const useUnFollowMutation = () => {
   const queryClient = useQueryClient();
@@ -42,7 +43,8 @@ const useUnFollowMutation = () => {
     /**
      * Mutation 실패시 원래 QuerySnapShot정보로 롤백
      */
-    onError: (_err, queryFnParams, context) => {
+    onError: (err, queryFnParams, context) => {
+      errorHandler(err)
       if (!context) {
         return;
       }
