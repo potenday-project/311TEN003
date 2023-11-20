@@ -9,6 +9,7 @@ import "./globals.css";
 import CustomQueryClientProvider from "@/components/queryClient/CustomQueryClientProvider";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import GlobalLoadingPopup from "./../components/GlobalLoadingPopup";
+import GlobalToast from "@/components/GlobalToast";
 
 export const metadata: Metadata = {
   title: `${nameOfApp} | ${oneLineMessage}`,
@@ -35,6 +36,7 @@ export default function RootLayout({ children, Modal }: RootLayoutInterface) {
           <ThemeRegistry options={{ key: "mui" }}>
             <GlobalStyles styles={OverrideCSS} />
             <GlobalLoadingPopup />
+            <GlobalToast/>
             {Modal}
             <Box
               sx={{

@@ -29,8 +29,8 @@ const useLoginMutation = () => {
       router.refresh();
       router.push(HOME);
     },
-    onError: (error: AxiosError<{ detailMessage: string }>) =>
-      errorHandler(error.response?.data.detailMessage ?? "에러가 발생했니다"),
+    onError: (error) =>
+      errorHandler(error),
     onSettled: () => {
       setLoading(false);
     },

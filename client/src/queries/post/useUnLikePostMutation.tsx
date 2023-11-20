@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getPostListInfiniteQueryKey } from "./useGetPostListInfiniteQuery";
 import getTokenFromLocalStorage from "@/utils/getTokenFromLocalStorage";
 import { POST_UN_LIKE_URL } from "@/const/serverPath";
+import errorHandler from "@/utils/errorHandler";
 /**
  * 좋아요를 취소하고, 게시글을 invalidation 하는 쿼리
  * @returns
@@ -17,6 +18,9 @@ const useLikePostMutation = () => {
       queryClient.invalidateQueries({
         queryKey: getPostListInfiniteQueryKey.all,
       }),
+    onError:(err)=>{
+      errorHandler(err)
+    }
   });
 };
 

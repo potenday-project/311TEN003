@@ -5,6 +5,7 @@ import { SignupRequirement } from "@/types/auth/signupRequirement";
 import { useMutation } from "@tanstack/react-query";
 import useLoginMutation from "./useLoginMutation";
 import { useGlobalLoadingStore } from "@/store/useGlobalLoadingStore";
+import errorHandler from "@/utils/errorHandler";
 
 const useSignupMutation = () => {
   const { mutate: loginHandler } = useLoginMutation();
@@ -24,6 +25,9 @@ const useSignupMutation = () => {
     },
     onSettled: () => {
       setLoading(false);
+    },
+    onError: (err) => {
+      errorHandler(err);
     },
   });
 };

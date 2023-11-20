@@ -2,6 +2,7 @@ import { REMOVE_POST } from "@/const/serverPath";
 import { axiosPrivate } from "@/libs/axios";
 import { useMutation } from "@tanstack/react-query";
 import { useInvalidatePostList } from "./useGetPostListInfiniteQuery";
+import errorHandler from "@/utils/errorHandler";
 
 export const useDeletePostMutation = () => {
   const invalidatePreviousData = useInvalidatePostList();
@@ -10,6 +11,9 @@ export const useDeletePostMutation = () => {
     onSuccess: () => {
       invalidatePreviousData();
     },
+    onError:(err)=>{
+      errorHandler(err)
+    }
   });
 };
 
