@@ -178,8 +178,8 @@ public class PostService {
     return getPostDetail(postNo, null);
   }
 
-  public GetPostResponseDto getPosts(Long page, Long size, String orderColumn, String orderType,
-                                     String searchKeyword, List<Long> searchUserNoList) {
+  public GetPostResponseDto getPostsOld(Long page, Long size, String orderColumn, String orderType,
+                                        String searchKeyword, List<Long> searchUserNoList) {
     GetPostVo getPostVo = GetPostVo.builder()
                                    .page(page)
                                    .offset(page * size)
@@ -194,6 +194,27 @@ public class PostService {
     List<Post> posts = getPostsMvos.stream().map(Post::of).toList();
     List<PostResponseDto> list =
         posts.stream().map(post -> getPostDetail(post.getId())).toList();
+    // FIXME
+    // 추구 여기서 첨부파일 개수 쿼리 최적화.
+    return GetPostResponseDto.of(list, totalCount);
+  }
+
+  public GetPostResponseDto getPosts(Long page, Long size, String orderColumn, String orderType,
+                                     String searchKeyword, List<Long> searchUserNoList) {
+    GetPostVo getPostVo = GetPostVo.builder()
+            .page(page)
+            .offset(page * size)
+            .size(size)
+            .orderColumn(orderColumn)
+            .orderType(orderType)
+            .searchKeyword(searchKeyword)
+            .searchUserNoList(searchUserNoList)
+            .build();
+    List<GetPostsMvo> getPostsMvos = postMybatisRepository.getPosts(getPostVo);
+    Long totalCount = postMybatisRepository.getPostsCount(getPostVo);
+    List<Post> posts = getPostsMvos.stream().map(Post::of).toList();
+    List<PostResponseDto> list =
+            posts.stream().map(post -> getPostDetail(post.getId())).toList();
     // FIXME
     // 추구 여기서 첨부파일 개수 쿼리 최적화.
     return GetPostResponseDto.of(list, totalCount);

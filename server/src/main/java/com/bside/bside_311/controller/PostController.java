@@ -109,7 +109,7 @@ public class PostController {
     } catch (Exception e) {
       log.error(">>> PostController.getPost searchUserNos 파싱 에러 Exception", e);
     }
-    return postService.getPosts(page, size, orderColumn, orderType, searchKeyword,
+    return postService.getPostsOld(page, size, orderColumn, orderType, searchKeyword,
         searchUserNoList);
   }
 
