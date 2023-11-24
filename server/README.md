@@ -2,6 +2,8 @@
 
 * http://localhost:8080/swagger-ui/index.html
 
+* http://localhost:8080/test
+
 # 수동 배포 방법 정리.(개선 필요.)
 
 ```sh
