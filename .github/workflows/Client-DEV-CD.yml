@@ -16,18 +16,15 @@ jobs:
       - name: Docker Setup Buildx
         uses: docker/setup-buildx-action@v1.6.0
 
-      - name: Build Docker Image
-        run: docker buildx build --platform linux/amd64,linux/arm64 -f Dockerfile --build-arg NEXT_PUBLIC_BASE_URL=${{secrets.NEXT_PUBLIC_BASE_URL}}  --build-arg NEXT_PUBLIC_CLIENT_BASE_URL=${{secrets.NEXT_PUBLIC_CLIENT_BASE_URL}} --build-arg PORT=${{secrets.CLIENT_DEV_PORT}} -t ${{ secrets.CLIENT_STORYBOOK_REPO }}/${{ secrets.CLIENT_DEV_SERVICE_NAME }}:latest .
-        working-directory: ./client
-
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.CLIENT_DOCKER_USERNAME }}
           password: ${{ secrets.CLIENT_DOCKER_PASSWORD }}
 
-      - name: Push Image to Dockerhub
-        run: docker push ${{ secrets.CLIENT_STORYBOOK_REPO }}/${{ secrets.CLIENT_DEV_SERVICE_NAME }}:latest
+      - name: Build Docker Image
+        run: docker buildx build --platform linux/amd64,linux/arm64 -f Dockerfile --build-arg NEXT_PUBLIC_BASE_URL=${{secrets.NEXT_PUBLIC_BASE_URL}}  --build-arg NEXT_PUBLIC_CLIENT_BASE_URL=${{secrets.NEXT_PUBLIC_CLIENT_BASE_URL}} --build-arg PORT=${{secrets.CLIENT_DEV_PORT}} -t ${{ secrets.CLIENT_STORYBOOK_REPO }}/${{ secrets.CLIENT_DEV_SERVICE_NAME }}:latest --push .
+        working-directory: ./client
 
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@v0.1.4
