@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import PostHashTagList from "./PostHashtagList";
 import { useOpenPostDetailPage } from "@/hooks/useOpenPostDetailPage";
-import { useMemo } from "react";
+import { useContext, useMemo } from "react";
 import ShareIcon from "@/assets/icons/ShareIcon.svg";
 import LikeIcon from "@/assets/icons/LikeIcon.svg";
 import CommentIcon from "@/assets/icons/CommentIcon.svg";
@@ -30,6 +30,7 @@ import Link from "next/link";
 import { USER_PAGE } from "@/const/clientPath";
 import { useMyInfoQuery } from "@/queries/auth/useMyInfoQuery";
 import PostCardOptionDropdown from "./PostCardOptionDropdown";
+import { postcardContext } from "@/store/PostCardContext";
 
 const PostCard = ({
   postAttachUrls,
@@ -50,14 +51,18 @@ const PostCard = ({
 }: PostInterface) => {
   const openPostDetailPage = useOpenPostDetailPage();
   const hasImage = useMemo(() => postAttachUrls.length !== 0, [postAttachUrls]);
-  const { mutate: likeHandler } = useLikePostMutation();
-  const { mutate: unLikeHandler } = useUnLikePostMutation();
+
+  const searchContext = useContext(postcardContext)
+
+  const { mutate: likeHandler } = useLikePostMutation(searchContext);
+  const { mutate: unLikeHandler } = useUnLikePostMutation(searchContext);
   const { data: currentUser } = useMyInfoQuery();
 
   const isMyPost = useMemo(
     () => currentUser?.userNo === createdBy,
     [currentUser]
   );
+
   return (
     <Card sx={{ display: "flex", gap: 2, p: 2 }}>
       <Link href={USER_PAGE(createdBy)}>

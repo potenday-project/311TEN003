@@ -11,15 +11,24 @@ import { useMemo } from "react";
 import Image from "next/image";
 import NoResult from "@/assets/images/noResult.png";
 import getTokenFromLocalStorage from "@/utils/getTokenFromLocalStorage";
+import { postcardContext } from "@/store/PostCardContext";
 
 function PostCardList(props: UseGetPostListQueryInterface) {
-  const { data, fetchNextPage, isFetchingNextPage, hasNextPage, isSuccess,isLoading } =
-    useGetPostListInfiniteQuery({
-      ...props,
-      headers: { Authorization: getTokenFromLocalStorage() },
-    });
-  const { ref, inView } = useInView();
+  const {
+    data,
+    fetchNextPage,
+    isFetchingNextPage,
+    hasNextPage,
+    isSuccess,
+    isLoading,
+  } = useGetPostListInfiniteQuery({
+    ...props,
+    headers: { Authorization: getTokenFromLocalStorage() },
+  });
 
+  const { searchKeyword, searchUserNos } = props;
+
+  const { ref, inView } = useInView({ threshold: 0.9 });
   useEffect(() => {
     if (hasNextPage && inView) fetchNextPage();
   }, [inView, hasNextPage]);
@@ -30,7 +39,7 @@ function PostCardList(props: UseGetPostListQueryInterface) {
   );
 
   return (
-    <div>
+    <postcardContext.Provider value={{ searchKeyword, searchUserNos }}>
       {hasResult &&
         isSuccess &&
         // 검색결과가 있을시
@@ -51,15 +60,15 @@ function PostCardList(props: UseGetPostListQueryInterface) {
         </Box>
       )}
       {/* 로딩창 */}
-      {isFetchingNextPage||isLoading ? (
+      {isFetchingNextPage || isLoading ? (
         <Box sx={{ width: "100%", textAlign: "center", py: 1 }}>
           <CircularProgress />
         </Box>
       ) : (
         // 인터섹션옵저버
-        <div style={{ height: 50 }} ref={ref}></div>
+        <div style={{ height: 60 }} ref={ref}></div>
       )}
-    </div>
+    </postcardContext.Provider>
   );
 }
 

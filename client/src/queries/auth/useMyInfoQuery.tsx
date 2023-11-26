@@ -13,6 +13,9 @@ export const useMyInfoQuery = () =>
 
 export const getMyInfoByLocalStorage = async () => {
   const accessToken = getTokenFromLocalStorage();
+  if (!accessToken) {
+    return null;
+  }
   const { data } = await axiosPrivate.get<MyInfoInterface>(MY_INFO, {
     headers: { Authorization: accessToken },
   });
