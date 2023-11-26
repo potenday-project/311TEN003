@@ -10,6 +10,7 @@ import {
   CardMedia,
   Typography,
   ButtonBase,
+  Stack,
 } from "@mui/material";
 import PostHashTagList from "./PostHashtagList";
 import { useOpenPostDetailPage } from "@/hooks/useOpenPostDetailPage";
@@ -76,12 +77,12 @@ const PostCard = ({
             px: 0,
           }}
         >
-          <Box
+          <Stack
+            direction="row"
+            gap={1}
             sx={{
-              display: "flex",
-              flexDirection: "row",
-              gap: 1,
               height: 24,
+              alignItems:'center'
             }}
           >
             {/* 타이틀 */}
@@ -97,11 +98,9 @@ const PostCard = ({
             <Typography variant="label" color={"text.secondary"}>
               {dayjs(lastModifiedDate).format("MM.DD")}
             </Typography>
-          </Box>
+          </Stack>
 
-          {isMyPost && (
-            <PostCardOptionDropdown postId={postNo}/>
-          )}
+          {isMyPost && <PostCardOptionDropdown postId={postNo} />}
         </Box>
 
         {alcoholName && (
