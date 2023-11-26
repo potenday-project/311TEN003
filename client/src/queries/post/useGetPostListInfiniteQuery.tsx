@@ -92,10 +92,15 @@ export const getPostListQueryFn = async ({
   };
 };
 
+export interface PostListInfiniteQueryKey {
+  keyword?: string;
+  userNo?: string;
+}
+
 export const getPostListInfiniteQueryKey = {
   all: ["posts"] as const,
-  byKeyword: ({ keyword, userNo }: { keyword?: string; userNo?: string }) =>
-    ["posts", {keyword , userNo} ] as const,
+  byKeyword: ({ keyword, userNo }: PostListInfiniteQueryKey) =>
+    ["posts", { keyword, userNo }] as const,
 };
 
 /**
