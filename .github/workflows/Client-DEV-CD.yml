@@ -34,7 +34,7 @@ jobs:
           password: ${{ secrets.STORYBOOK_CLOUD_PASSWORD }}
           port: ${{ secrets.STORYBOOK_CLOUD_PORT }}
           script: |
-            sudo docker login -u ${{ secrets.CLIENT_DOCKER_USERNAME }}
+            sudo docker login -u ${{ secrets.CLIENT_DOCKER_USERNAME }} --password-stdin
             ${{ secrets.CLIENT_DOCKER_PASSWORD }}
             sudo docker pull ${{ secrets.CLIENT_STORYBOOK_REPO }}/${{ secrets.CLIENT_DEV_SERVICE_NAME }}:latest
             sudo docker rm -f ${{ secrets.CLIENT_DEV_SERVICE_NAME }}
