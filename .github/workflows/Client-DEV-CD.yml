@@ -13,8 +13,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Docker Setup Buildx
+        uses: docker/setup-buildx-action@v1.6.0
+
       - name: Build Docker Image
-        run: docker build -f Dockerfile --build-arg NEXT_PUBLIC_BASE_URL=${{secrets.NEXT_PUBLIC_BASE_URL}}  --build-arg NEXT_PUBLIC_CLIENT_BASE_URL=${{secrets.NEXT_PUBLIC_CLIENT_BASE_URL}} --build-arg PORT=${{secrets.CLIENT_DEV_PORT}} -t ${{ secrets.CLIENT_STORYBOOK_REPO }}/${{ secrets.CLIENT_DEV_SERVICE_NAME }}:latest .
+        run: docker buildx build --platform linux/amd64,linux/arm64 -f Dockerfile --build-arg NEXT_PUBLIC_BASE_URL=${{secrets.NEXT_PUBLIC_BASE_URL}}  --build-arg NEXT_PUBLIC_CLIENT_BASE_URL=${{secrets.NEXT_PUBLIC_CLIENT_BASE_URL}} --build-arg PORT=${{secrets.CLIENT_DEV_PORT}} -t ${{ secrets.CLIENT_STORYBOOK_REPO }}/${{ secrets.CLIENT_DEV_SERVICE_NAME }}:latest .
         working-directory: ./client
 
       - name: Login to Docker Hub
@@ -30,11 +33,11 @@ jobs:
         uses: appleboy/ssh-action@v0.1.4
         with:
           host: ${{ secrets.STORYBOOK_CLOUD_HOST }}
-          username: root
+          username: ${{ secrets.CLOUD_USERNAME }}
           password: ${{ secrets.STORYBOOK_CLOUD_PASSWORD }}
           port: ${{ secrets.STORYBOOK_CLOUD_PORT }}
           script: |
             sudo docker pull ${{ secrets.CLIENT_STORYBOOK_REPO }}/${{ secrets.CLIENT_DEV_SERVICE_NAME }}:latest
             sudo docker rm -f ${{ secrets.CLIENT_DEV_SERVICE_NAME }}
-            sudo docker run --name ${{ secrets.CLIENT_DEV_SERVICE_NAME }} -d -e PORT=${{secrets.CLIENT_DEV_PORT}} -p ${{ secrets.CLIENT_DEV_PORT }}:${{ secrets.CLIENT_DEV_PORT }}  ${{ secrets.CLIENT_STORYBOOK_REPO }}/${{ secrets.CLIENT_DEV_SERVICE_NAME }}:latest
+            sudo docker run --name ${{ secrets.CLIENT_DEV_SERVICE_NAME }} -d -p ${{ secrets.CLIENT_DEV_PORT }}:${{ secrets.CLIENT_DEV_PORT }}  ${{ secrets.CLIENT_STORYBOOK_REPO }}/${{ secrets.CLIENT_DEV_SERVICE_NAME }}:latest
             docker image prune -f

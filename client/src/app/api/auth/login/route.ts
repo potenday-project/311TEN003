@@ -2,7 +2,7 @@ import { LOGIN_API_PATH } from "@/const/serverPath";
 import { setCookie } from "@/hooks/useSetCookie";
 import axios from "@/libs/axios";
 import { SigninResponseInterface } from "@/types/auth/signinResponse";
-import { AxiosResponse, isAxiosError } from "axios";
+import { isAxiosError } from "axios";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -13,7 +13,16 @@ export async function POST(request: NextRequest) {
       password,
     });
     setCookie({ key: "accessToken", value: data.token, httpOnly: true });
-    return NextResponse.json({ ...data });
+    return NextResponse.json(
+      { ...data },
+      {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        },
+      }
+    );
   } catch (error) {
     if (
       isAxiosError<{
@@ -26,7 +35,14 @@ export async function POST(request: NextRequest) {
       const { httpStatus, errorMessage, detailMessage } = error.response?.data;
       return NextResponse.json(
         { errorMessage, detailMessage, httpStatus },
-        { status: httpStatus }
+        {
+          status: httpStatus,
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization",
+          },
+        }
       );
     }
   }
