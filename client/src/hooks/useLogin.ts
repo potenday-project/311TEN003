@@ -11,12 +11,11 @@ export default function useLogin() {
   const loginHandler = async (props: SigninRequirement) => {
     const { id, password } = props;
     const { data } = await axios.post<SigninResponseInterface>(
-      LOGIN_BFF,
+      `${process.env.NEXT_PUBLIC_CLIENT_BASE_URL}${LOGIN_BFF}`,
       {
         id,
         password,
-      },
-      { baseURL: process.env.NEXT_PUBLIC_CLIENT_BASE_URL }
+      }
     );
     return data;
   };
