@@ -9,7 +9,7 @@ interface PostDetailInterface {
   postNo: string;
   initialData: PostInterface;
 }
-const PostDetail = async ({ postNo, initialData }: PostDetailInterface) => {
+const PostDetail = ({ postNo, initialData }: PostDetailInterface) => {
   const { data } = useGetPostDetailQuery(postNo, { initialData });
   //FIXME 포스트의 좋아요갯수가 업데이트 되지않음
   return data ? (
