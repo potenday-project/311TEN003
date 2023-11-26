@@ -12,6 +12,7 @@ import com.bside.bside_311.dto.GetPostVo;
 import com.bside.bside_311.dto.GetPostsMvo;
 import com.bside.bside_311.dto.GetQuotesByPostResponseDto;
 import com.bside.bside_311.dto.PostResponseDto;
+import com.bside.bside_311.dto.PostSearchCondition;
 import com.bside.bside_311.entity.Alcohol;
 import com.bside.bside_311.entity.AttachType;
 import com.bside.bside_311.entity.Comment;
@@ -39,6 +40,8 @@ import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -199,25 +202,14 @@ public class PostService {
     return GetPostResponseDto.of(list, totalCount);
   }
 
-  public GetPostResponseDto getPosts(Long page, Long size, String orderColumn, String orderType,
-                                     String searchKeyword, List<Long> searchUserNoList) {
-    GetPostVo getPostVo = GetPostVo.builder()
-            .page(page)
-            .offset(page * size)
-            .size(size)
-            .orderColumn(orderColumn)
-            .orderType(orderType)
-            .searchKeyword(searchKeyword)
-            .searchUserNoList(searchUserNoList)
-            .build();
-    List<GetPostsMvo> getPostsMvos = postMybatisRepository.getPosts(getPostVo);
-    Long totalCount = postMybatisRepository.getPostsCount(getPostVo);
-    List<Post> posts = getPostsMvos.stream().map(Post::of).toList();
-    List<PostResponseDto> list =
-            posts.stream().map(post -> getPostDetail(post.getId())).toList();
-    // FIXME
-    // 추구 여기서 첨부파일 개수 쿼리 최적화.
-    return GetPostResponseDto.of(list, totalCount);
+  public Page<PostResponseDto> getPosts(Pageable pageable,
+                                        String searchKeyword, List<Long> searchUserNoList) {
+    Page<Post> posts =
+        postRepository.searchPageSimple(PostSearchCondition.builder().searchKeyword(searchKeyword)
+                                                           .searchUserNoList(searchUserNoList)
+                                                           .build(), pageable);
+
+    return posts.map(PostResponseDto::of);
   }
 
   public AddCommentResponseDto addComment(Long postNo, AddCommentRequestDto addCommentRequestDto) {

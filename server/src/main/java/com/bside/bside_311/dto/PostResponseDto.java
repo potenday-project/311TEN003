@@ -101,4 +101,11 @@ public class PostResponseDto {
 
 
   }
+
+  public static PostResponseDto of(Post post) {
+//    PostResponseDto.builder().nickname()
+//  jpaPesistemContst jpa.persist(exampleEntity);
+//        post.getComments().get(1).getContent();
+    return null;
+  }
 }
