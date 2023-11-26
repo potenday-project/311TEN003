@@ -52,7 +52,7 @@ const PostCard = ({
   const openPostDetailPage = useOpenPostDetailPage();
   const hasImage = useMemo(() => postAttachUrls.length !== 0, [postAttachUrls]);
 
-  const searchContext = useContext(postcardContext)
+  const searchContext = useContext(postcardContext);
 
   const { mutate: likeHandler } = useLikePostMutation(searchContext);
   const { mutate: unLikeHandler } = useUnLikePostMutation(searchContext);
@@ -73,21 +73,18 @@ const PostCard = ({
       </Link>
       <Box sx={{ width: "100%" }}>
         {/* Header */}
-        <Box
+        <Stack
           data-testid="mui-header"
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            px: 0,
-          }}
+          direction="row"
+          justifyContent="space-between"
+          px={0}
         >
           <Stack
             direction="row"
             gap={1}
             sx={{
               height: 24,
-              alignItems:'center'
+              alignItems: "center",
             }}
           >
             {/* 타이틀 */}
@@ -106,7 +103,7 @@ const PostCard = ({
           </Stack>
 
           {isMyPost && <PostCardOptionDropdown postId={postNo} />}
-        </Box>
+        </Stack>
 
         {alcoholName && (
           <AlcoleNameTag alcoholName={alcoholName} alcoholType={alcoholType} />

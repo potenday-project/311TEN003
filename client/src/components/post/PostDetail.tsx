@@ -16,13 +16,17 @@ const PostDetail = ({ postNo, initialData }: PostDetailInterface) => {
     headers: { Authorization: getTokenFromLocalStorage() },
   });
   //FIXME 포스트의 좋아요갯수가 업데이트 되지않음
-  return data ? (
+  return (
     <>
-      <PostCard {...data} />
-      <PostCommentList postNo={postNo} />
+      {data ? (
+        <>
+          <PostCard {...data} />
+          <PostCommentList postNo={postNo} />
+        </>
+      ) : (
+        <CircularProgress />
+      )}
     </>
-  ) : (
-    <CircularProgress />
   );
 };
 export default PostDetail;

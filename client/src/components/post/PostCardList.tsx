@@ -6,7 +6,7 @@ import useGetPostListInfiniteQuery, {
 } from "@/queries/post/useGetPostListInfiniteQuery";
 import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
-import { Box, CircularProgress } from "@mui/material";
+import { Box, CircularProgress, Stack } from "@mui/material";
 import { useMemo } from "react";
 import Image from "next/image";
 import NoResult from "@/assets/images/noResult.png";
@@ -48,16 +48,9 @@ function PostCardList(props: UseGetPostListQueryInterface) {
         )}
       {isSuccess && !hasResult && (
         // 검색결과 없을 시
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            py: 8,
-          }}
-        >
+        <Stack justifyContent="center" alignItems="center" py={8}>
           <Image src={NoResult} alt="no result alert" />
-        </Box>
+        </Stack>
       )}
       {/* 로딩창 */}
       {isFetchingNextPage || isLoading ? (
