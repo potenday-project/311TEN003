@@ -42,7 +42,7 @@ const ModalWrapper = ({ children, disableBox }: ModalInterface) => {
             overflowY: "auto",
           }}
         >
-          {children}
+          <>{children}</>
         </Box>
       }
     </Modal>
