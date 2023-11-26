@@ -25,7 +25,7 @@ export const getPostDetailQueryFn = async (
     baseURL: process.env.NEXT_PUBLIC_BASE_URL,
     headers: {
       Authorization:
-        options?.headers?.Authorization || getTokenFromLocalStorage(),
+        options?.Authorization || getTokenFromLocalStorage(),
     },
   });
   return data;
