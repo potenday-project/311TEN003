@@ -15,7 +15,7 @@ import AlcholeSearchIcon from "@/assets/icons/AlcholeSearchIcon.svg";
 import InputSearchIcon from "@/assets/icons/InputSearchIcon.svg";
 import useGetAlcoholListQuery from "@/queries/alcohol/useGetAlcoholListQuery";
 import { AlcoholDetailInterface } from "@/types/alcohol/AlcoholInterface";
-import AlcoleNameTag from "./../post/AlcoleNameTag";
+import AlcoleNameTag from "@/components/wiki/AlcoholNameTag";
 import useDebounce from "@/hooks/useDebounce";
 import { NewPostRequestAlCohol } from "@/types/newPost/NewPostInterface";
 

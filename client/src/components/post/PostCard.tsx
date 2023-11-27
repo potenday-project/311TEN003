@@ -19,7 +19,7 @@ import ShareIcon from "@/assets/icons/ShareIcon.svg";
 import LikeIcon from "@/assets/icons/LikeIcon.svg";
 import CommentIcon from "@/assets/icons/CommentIcon.svg";
 import QuoteIcon from "@/assets/icons/QuoteIcon.svg";
-import AlcoleNameTag from "./AlcoleNameTag";
+import AlcoleNameTag from "@/components/wiki/AlcoholNameTag";
 import dayjs from "dayjs";
 import useLikePostMutation from "@/queries/post/useLikePostMutation";
 import useUnLikePostMutation from "@/queries/post/useUnLikePostMutation";
