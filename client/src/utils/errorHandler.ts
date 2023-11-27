@@ -15,6 +15,8 @@ export const useErrorHandler = () => {
       switch (error.response.status) {
         case 401:
           fireToast("로그인 후 이용 가능합니다");
+          // 토큰이 만료된 경우가 대부분이므로 토큰제거
+          localStorage.removeItem('accessToken')
       }
     }
   }, []);
