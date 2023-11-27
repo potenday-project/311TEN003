@@ -17,5 +17,3 @@ export const useGlobalSnackbarStore = create<GlobalSnackbarStore>((set) => ({
     set({ isOpen: true, message, variant }),
   closeToast: () => set((prev) => ({ ...prev, message: "", isOpen: false })),
 }));
-
-export const useFireToast =()=> useGlobalSnackbarStore((state)=>state.fireToast)
