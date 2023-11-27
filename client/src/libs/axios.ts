@@ -25,4 +25,5 @@ export default axios.create({ baseURL: process.env.NEXT_PUBLIC_BASE_URL });
  */
 export const axiosBff = axios.create({
   baseURL: process.env.NEXT_PUBLIC_CLIENT_BASE_URL,
+  withCredentials:true
 });
