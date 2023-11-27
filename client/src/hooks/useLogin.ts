@@ -15,6 +15,10 @@ export default function useLogin() {
       {
         id,
         password,
+      },
+      {
+        baseURL: process.env.NEXT_PUBLIC_CLIENT_BASE_URL,
+        withCredentials: true,
       }
     );
     return data;
