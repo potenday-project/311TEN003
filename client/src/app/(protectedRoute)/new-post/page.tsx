@@ -90,7 +90,7 @@ export default function NewpostPage() {
       {/* 최상단 앱바 */}
       <CustomAppbar
         title="포스팅"
-        buttonTitle="공유"
+        buttonComponent="공유"
         disableButton={isSuccess}
         onClickButton={submitHandler}
       />
