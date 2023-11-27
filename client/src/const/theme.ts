@@ -94,22 +94,22 @@ const theme = createTheme({
       },
     },
     MuiButtonBase: {
-      styleOverrides: { root: { gap: 4 } },
+      styleOverrides: { root: { gap: 4, borderRadius: 8 } },
     },
     MuiSvgIcon: {
       styleOverrides: { root: { color: "#8A8A8A" } },
     },
-    MuiAppBar:{
-      styleOverrides:{
-        root:{
-          color:"#1C1C1C",
-          backgroundColor:'#fefefe'
-        }
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          color: "#1C1C1C",
+          backgroundColor: "#fefefe",
+        },
       },
-      defaultProps:{
-        elevation:0
-      }
-    }
+      defaultProps: {
+        elevation: 0,
+      },
+    },
   },
 });
 

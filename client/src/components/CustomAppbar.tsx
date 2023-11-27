@@ -1,12 +1,12 @@
 "use client";
 import { AppBar, Button, IconButton, Toolbar, Typography } from "@mui/material";
 import GoBackIcon from "@/assets/icons/GoBackIcon.svg";
-import { MouseEventHandler, memo } from "react";
+import { MouseEventHandler, ReactNode, memo } from "react";
 import { useRouter } from "next/navigation";
 
 interface CustomAppbarInterface {
   title?: string;
-  buttonTitle?: string;
+  buttonComponent?: ReactNode;
   disableButton?: boolean;
   onClickButton?: MouseEventHandler<HTMLButtonElement>;
 }
@@ -14,7 +14,7 @@ interface CustomAppbarInterface {
 
 const CustomAppbar = ({
   title,
-  buttonTitle,
+  buttonComponent,
   disableButton,
   onClickButton,
 }: CustomAppbarInterface) => {
@@ -29,14 +29,14 @@ const CustomAppbar = ({
         <Typography variant="subtitle2" fontWeight={"bold"}>
           {title}
         </Typography>
-        {buttonTitle && (
+        {buttonComponent && (
           <Button
             disabled={disableButton}
             onClick={onClickButton}
             variant="text"
             sx={{ minWidth: 40, fontWeight: "medium" }}
           >
-            {buttonTitle}
+            {buttonComponent}
           </Button>
         )}
       </Toolbar>

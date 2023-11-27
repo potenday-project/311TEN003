@@ -19,7 +19,7 @@ const UserInfoPageLayout = ({ children, params }: Props) => {
   return (
     <Paper>
       <CustomAppbar
-        buttonTitle={isMyProfile ? "설정" : undefined}
+        buttonComponent={isMyProfile ? "설정" : undefined}
         onClickButton={() => {
           if(!isMyProfile){
             return
