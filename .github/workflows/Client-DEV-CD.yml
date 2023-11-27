@@ -39,4 +39,4 @@ jobs:
             docker pull ${{ secrets.CLIENT_STORYBOOK_REPO }}/${{ secrets.CLIENT_DEV_SERVICE_NAME }}:latest
             docker rm -f ${{ secrets.CLIENT_DEV_SERVICE_NAME }}
             docker run --name ${{ secrets.CLIENT_DEV_SERVICE_NAME }} -d -p ${{ secrets.CLIENT_DEV_PORT }}:${{ secrets.CLIENT_DEV_PORT }}  ${{ secrets.CLIENT_STORYBOOK_REPO }}/${{ secrets.CLIENT_DEV_SERVICE_NAME }}:latest
-            image prune -f
+            docker image prune -f
