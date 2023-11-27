@@ -11,6 +11,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.jsonwebtoken.lang.Collections;
+import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.StringUtils;
@@ -20,11 +21,13 @@ import java.util.function.Function;
 
 import static com.bside.bside_311.entity.QPost.post;
 
-public class PostRepositoryImpl  extends Querydsl4RepositorySupport, implements PostRepositoryCustom {
+public class PostRepositoryImpl extends Querydsl4RepositorySupport
+    implements PostRepositoryCustom {
   private final JPAQueryFactory queryFactory;
 
-  public PostRepositoryImpl() {
+  public PostRepositoryImpl(EntityManager em) {
     super(Post.class);
+    this.queryFactory = new JPAQueryFactory(em);
   }
 
   @Override

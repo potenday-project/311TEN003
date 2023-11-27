@@ -10,10 +10,12 @@ import com.bside.bside_311.dto.GetPostCommentsResponseDto;
 import com.bside.bside_311.dto.GetPostResponseDto;
 import com.bside.bside_311.dto.GetPostVo;
 import com.bside.bside_311.dto.GetPostsMvo;
+import com.bside.bside_311.dto.GetPostsToOneMvo;
 import com.bside.bside_311.dto.GetQuotesByPostResponseDto;
 import com.bside.bside_311.dto.PostResponseDto;
 import com.bside.bside_311.dto.PostSearchCondition;
 import com.bside.bside_311.entity.Alcohol;
+import com.bside.bside_311.entity.Attach;
 import com.bside.bside_311.entity.AttachType;
 import com.bside.bside_311.entity.Comment;
 import com.bside.bside_311.entity.Post;
@@ -46,7 +48,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -208,8 +213,25 @@ public class PostService {
         postRepository.searchPageSimple(PostSearchCondition.builder().searchKeyword(searchKeyword)
                                                            .searchUserNoList(searchUserNoList)
                                                            .build(), pageable);
+    List<Long> postNos = posts.stream().map(Post::getId).toList();
+    List<GetPostsToOneMvo> postsToOneList = postMybatisRepository.getPostsToOne(postNos);
+    Map<Long, GetPostsToOneMvo> postsToOneMap = new HashMap<>();
+    for (GetPostsToOneMvo getPostsToOneMvo : postsToOneList) {
+      postsToOneMap.put(getPostsToOneMvo.getPostNo(), getPostsToOneMvo);
+    }
 
-    return posts.map(PostResponseDto::of);
+    List<Attach> attachList = attachRepository.findByRefNoInAndAttachTypeIsAndDelYnIs(postNos, AttachType.POST,
+        YesOrNo.N);
+    Map<Long, List<AttachDto>> pToAMap = new HashMap<>();
+    for (Attach attach : attachList) {
+      List<AttachDto> attachDtos = pToAMap.getOrDefault(attach.getRefNo(), new ArrayList<>());
+      attachDtos.add(AttachDto.of(attach));
+    }
+    return posts.map(post -> {
+      GetPostsToOneMvo getPostsToOneMvo = postsToOneMap.get(post.getId());
+      List<AttachDto> attachDtos = pToAMap.getOrDefault(post.getId(), new ArrayList<>());
+      return PostResponseDto.of(post, getPostsToOneMvo, attachDtos);
+    });
   }
 
   public AddCommentResponseDto addComment(Long postNo, AddCommentRequestDto addCommentRequestDto) {
