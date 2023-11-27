@@ -10,7 +10,7 @@ interface AlcoholNameTagInterface extends BoxProps {
   onClickRemove?: () => void;
 }
 
-const AlcoleNameTag = ({
+const AlcoholNameTag = ({
   alcoholName,
   alcoholType,
   removable = false,
@@ -55,6 +55,7 @@ const AlcoleNameTag = ({
 };
 
 const WrapperStyle = {
+  width: '100%',
   border: "1px solid",
   borderColor: "gray.secondary",
   backgroundColor: "gray.primary",
@@ -74,4 +75,4 @@ const ChipStyle = {
   color: "#4A148C",
 };
 
-export default AlcoleNameTag;
+export default AlcoholNameTag;
