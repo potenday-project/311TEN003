@@ -5,8 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { MyInfoQueryKeys } from "./useMyInfoQuery";
 import { useRouter } from "next/navigation";
 import HOME from "@/const/clientPath";
-import errorHandler from "@/utils/errorHandler";
-import { AxiosError } from "axios";
+import { useErrorHandler } from "@/utils/errorHandler";
 import { useGlobalLoadingStore } from "@/store/useGlobalLoadingStore";
 
 const useLoginMutation = () => {
@@ -14,6 +13,7 @@ const useLoginMutation = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const { setLoading } = useGlobalLoadingStore();
+  const errorHandler = useErrorHandler();
 
   return useMutation({
     mutationKey: LoginMuataionKey.all,
@@ -29,8 +29,7 @@ const useLoginMutation = () => {
       router.refresh();
       router.push(HOME);
     },
-    onError: (error) =>
-      errorHandler(error),
+    onError: (error) => errorHandler(error),
     onSettled: () => {
       setLoading(false);
     },
@@ -52,6 +51,7 @@ export const LoginMuataionKey = {
    * @param id 유저아이디
    * @returns 로그인뮤테이션 키
    */
-  byId: (id: SigninRequirement["id"]) => [...LoginMuataionKey.all, {id}] as const,
+  byId: (id: SigninRequirement["id"]) =>
+    [...LoginMuataionKey.all, { id }] as const,
 };
 export default useLoginMutation;

@@ -3,7 +3,7 @@ import { Button, Paper } from "@mui/material";
 import hasErrorPage from "@/assets/images/hasError.png";
 import Image from "next/image";
 import { useEffect } from "react";
-import errorHandler from "@/utils/errorHandler";
+import { useErrorHandler } from "@/utils/errorHandler";
 
 const ErrorPage = ({
   error,
@@ -12,6 +12,8 @@ const ErrorPage = ({
   error: Error & { digest?: string };
   reset: () => void;
 }) => {
+  const errorHandler = useErrorHandler();
+
   useEffect(() => {
     errorHandler(error);
   }, [error]);
@@ -24,7 +26,7 @@ const ErrorPage = ({
         flexDirection: "column",
         alignItems: "center",
         height: "calc(100vh - 56px)",
-        gap:2
+        gap: 2,
       }}
     >
       <Image priority src={hasErrorPage} alt="에러임을 알림" />

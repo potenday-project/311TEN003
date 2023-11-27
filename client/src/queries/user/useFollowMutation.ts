@@ -6,10 +6,11 @@ import { UserInfoQueryKey } from "./useUserInfoQuery";
 import { UserInfoInterface } from "@/types/user/userInfoInterface";
 import { MyInfoQueryKeys } from "../auth/useMyInfoQuery";
 import { MyInfoInterface } from "@/types/auth/myInfo";
-import errorHandler from "@/utils/errorHandler";
+import { useErrorHandler } from "@/utils/errorHandler";
 
 const useFollowMutation = () => {
   const queryClient = useQueryClient();
+  const errorHandler = useErrorHandler();
   return useMutation({
     mutationFn: async (userNo: string) => await followUserMutatuibFn(userNo),
     /**

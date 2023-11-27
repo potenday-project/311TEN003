@@ -8,7 +8,11 @@ import { CheckCircle, Error, Warning } from "@mui/icons-material";
 import { Snackbar, SnackbarContent, Stack } from "@mui/material";
 
 const GlobalToast = () => {
-  const { isOpen, variant, message, closeToast } = useGlobalSnackbarStore();
+  const isOpen = useGlobalSnackbarStore((store) => store.isOpen);
+  const variant = useGlobalSnackbarStore((store) => store.variant);
+  const message = useGlobalSnackbarStore((store) => store.message);
+  const closeToast = useGlobalSnackbarStore((store) => store.closeToast);
+
   return (
     <Snackbar
       open={isOpen}
@@ -44,11 +48,11 @@ const SnackbarMessage = ({
 const IconSelector = (variant: SnackbarVariant) => {
   switch (variant) {
     case "danger":
-      return <Error sx={{color:'red'}} />;
+      return <Error sx={{ color: "red" }} />;
     case "warning":
-      return <Warning sx={{color:'orange'}}/>;
+      return <Warning sx={{ color: "orange" }} />;
     default:
-      return <CheckCircle sx={{color:'green'}}/>;
+      return <CheckCircle sx={{ color: "green" }} />;
   }
 };
 

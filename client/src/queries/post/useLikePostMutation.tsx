@@ -12,7 +12,7 @@ import {
 } from "./useGetPostListInfiniteQuery";
 import getTokenFromLocalStorage from "@/utils/getTokenFromLocalStorage";
 import { POST_LIKE_URL } from "@/const/serverPath";
-import errorHandler from "@/utils/errorHandler";
+import { useErrorHandler } from "@/utils/errorHandler";
 import { PostcardContextInterface } from "@/store/PostCardContext";
 import { useOptimisticUpdatePostList } from "@/queries/post/updator/useOptimisticUpdatePostList";
 import { useOptimisticUpdatePostDetail } from "./updator/useOptimisticUpdatePostDetail";
@@ -26,7 +26,8 @@ import { postDetailQueryKey } from "./useGetPostDetailQuery";
  */
 const useLikePostMutation = (context?: PostcardContextInterface) => {
   const queryClient = useQueryClient();
-
+  
+  const errorHandler = useErrorHandler();
   const postListUpdator = useOptimisticUpdatePostList({ type: "like" });
   const postDetailUpdator = useOptimisticUpdatePostDetail({ type: "like" });
 
@@ -52,7 +53,7 @@ const useLikePostMutation = (context?: PostcardContextInterface) => {
         );
       // [디테일쿼리]
       const detailQuerySnapshot = queryClient.getQueryData(
-        postDetailQueryKey.byId(String(id)),
+        postDetailQueryKey.byId(String(id))
       );
       // Optimastic Update
       // [리스트 쿼리]
