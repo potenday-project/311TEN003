@@ -3,9 +3,10 @@ import axios from "@/libs/axios";
 import { POST_LIST } from "@/const/serverPath";
 import { NewPostRequestInterface } from "@/types/newPost/NewPostInterface";
 import getTokenFromLocalStorage from "@/utils/getTokenFromLocalStorage";
-import errorHandler from "@/utils/errorHandler";
+import { useErrorHandler } from "@/utils/errorHandler";
 
 const useNewPostMutation = () => {
+  const errorHandler = useErrorHandler();
   return useMutation({
     mutationFn: async (formData: NewPostRequestInterface) => {
       const data = await usePostNewPostFn(formData);
