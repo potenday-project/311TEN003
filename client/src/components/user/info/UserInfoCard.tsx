@@ -6,7 +6,9 @@ import { UserInfoInterface } from "@/types/user/userInfoInterface";
 import useUserInfoQuery from "@/queries/user/useUserInfoQuery";
 import getTokenFromLocalStorage from "@/utils/getTokenFromLocalStorage";
 import { useMyInfoQuery } from "@/queries/auth/useMyInfoQuery";
-import { useMemo } from "react";
+import { useContext, useMemo } from "react";
+import UserPageContext from "@/store/user/UserPageContext";
+import UserInfoCardSkeleton from "./UserInfoCardSkeleton";
 
 type Props = {
   initialData?: UserInfoInterface;
@@ -22,14 +24,16 @@ const UserInfo = ({ initialData, userId }: Props) => {
   );
 
   const token = getTokenFromLocalStorage();
+  const { setIsEditing } = useContext(UserPageContext);
 
   const { data } = useUserInfoQuery({
     userId,
     initialData,
     config: { headers: { Authorization: token } },
   });
+
   if (!data) {
-    return <></>;
+    return <UserInfoCardSkeleton/>;
   }
 
   const {
@@ -67,7 +71,19 @@ const UserInfo = ({ initialData, userId }: Props) => {
         <Typography color="text.secondary">팔로잉</Typography>
       </Stack>
       {isMyProfile ? (
-        <Button fullWidth>설정</Button>
+        <Button
+          onClick={() => setIsEditing(true)}
+          sx={{
+            backgroundColor: "#F6EAFB",
+            color: "primary.main",
+            ":hover": {
+              backgroundColor: "#F6EAFB",
+            },
+          }}
+          fullWidth
+        >
+          프로필 수정하기
+        </Button>
       ) : (
         <FollowUserBtn userId={userId} isFollowing={isFollowing} fullWidth />
       )}
