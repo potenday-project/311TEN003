@@ -1,8 +1,11 @@
 "use client";
 import CustomAppbar from "@/components/CustomAppbar";
+import { SETTING_PAGE } from "@/const/clientPath";
 import { useMyInfoQuery } from "@/queries/auth/useMyInfoQuery";
+import UserPageContext from "@/store/user/UserPageContext";
 import { Container, Paper } from "@mui/material";
-import React, { useMemo } from "react";
+import { useRouter } from "next/navigation";
+import React, { useMemo, useState } from "react";
 
 type Props = {
   children: React.ReactNode;
@@ -13,21 +16,23 @@ const UserInfoPageLayout = ({ children, params }: Props) => {
   const { data: userInfo } = useMyInfoQuery();
   const isMyProfile = useMemo(
     () => String(userInfo?.userNo) === String(params.userId),
-    [userInfo,params.userId]
+    [userInfo, params.userId]
   );
+  const [isEditing, setIsEditing] = useState(false);
+  const router = useRouter()
 
   return (
-    <Paper>
+    <UserPageContext.Provider value={{ isEditing, setIsEditing }}>
       <CustomAppbar
         buttonComponent={isMyProfile ? "설정" : undefined}
         onClickButton={() => {
-          if(!isMyProfile){
-            return
+          if (!isMyProfile) {
+            return;
           }
-          console.log("눌림");
+          router.push(SETTING_PAGE)
         }}
       />
-      <Container sx={{ p: { xs: 0, sm: 4 } }} maxWidth={"lg"}>
+      <Container sx={{ px: { xs: 0, sm: 4 } }} maxWidth={"lg"}>
         <Paper
           sx={{
             display: "flex",
@@ -40,7 +45,7 @@ const UserInfoPageLayout = ({ children, params }: Props) => {
           {children}
         </Paper>
       </Container>
-    </Paper>
+    </UserPageContext.Provider>
   );
 };
 
