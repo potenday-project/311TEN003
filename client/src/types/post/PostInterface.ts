@@ -35,6 +35,10 @@ export interface PostInterface {
    */
   alcoholType: string;
   /**
+   * 마신 술의 PK
+   */
+  alcoholNo:number;
+  /**
    * 유저의 ID (로그인용 Email 과는 다름)
    */
   id: string;
