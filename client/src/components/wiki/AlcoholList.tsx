@@ -12,11 +12,12 @@ const AlcoholList = ({
   return (
     <>
       {alcohols?.length > 0 ? (
-        alcohols.map((alcohol) => (
+        alcohols.map(({ alcoholName, alcoholNo, alcoholType }) => (
           <AlcoholNameTag
-            key={alcohol.alcoholNo}
-            alcoholName={alcohol.alcoholName}
-            alcoholType={alcohol.alcoholType}
+            key={alcoholNo}
+            alcoholName={alcoholName}
+            alcoholType={alcoholType}
+            alcoholNo={alcoholNo}
           />
         ))
       ) : (
@@ -26,4 +27,3 @@ const AlcoholList = ({
   );
 };
 export default memo(AlcoholList);
-
