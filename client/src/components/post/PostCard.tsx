@@ -19,7 +19,7 @@ import ShareIcon from "@/assets/icons/ShareIcon.svg";
 import LikeIcon from "@/assets/icons/LikeIcon.svg";
 import CommentIcon from "@/assets/icons/CommentIcon.svg";
 import QuoteIcon from "@/assets/icons/QuoteIcon.svg";
-import AlcoleNameTag from "@/components/wiki/AlcoholNameTag";
+import AlcoholNameTag from "@/components/wiki/AlcoholNameTag";
 import dayjs from "dayjs";
 import useLikePostMutation from "@/queries/post/useLikePostMutation";
 import useUnLikePostMutation from "@/queries/post/useUnLikePostMutation";
@@ -48,6 +48,7 @@ const PostCard = ({
   commentCount,
   likedByMe,
   quoteCount,
+  alcoholNo,
 }: PostInterface) => {
   const openPostDetailPage = useOpenPostDetailPage();
   const hasImage = useMemo(() => postAttachUrls.length !== 0, [postAttachUrls]);
@@ -106,7 +107,11 @@ const PostCard = ({
         </Stack>
 
         {alcoholName && (
-          <AlcoleNameTag alcoholName={alcoholName} alcoholType={alcoholType} />
+          <AlcoholNameTag
+            alcoholNo={alcoholNo}
+            alcoholName={alcoholName}
+            alcoholType={alcoholType}
+          />
         )}
 
         <CardContent sx={{ px: 0 }}>

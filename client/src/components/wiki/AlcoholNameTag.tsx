@@ -1,11 +1,14 @@
 import { Box, BoxProps, Chip, IconButton, Typography } from "@mui/material";
 import PostSeeMoreIcon from "@/assets/icons/PostSeeMoreIcon.svg";
-import { PostInterface } from "@/types/post/PostInterface";
+import { AlcoholDetailInterface } from "@/types/alcohol/AlcoholInterface";
 import XIcon from "@/assets/icons/XIcon.svg";
+import { useRouter } from "next/navigation";
+import { WIKI_DETAIL } from "@/const/clientPath";
 
 interface AlcoholNameTagInterface extends BoxProps {
-  alcoholName: PostInterface["alcoholName"];
-  alcoholType: PostInterface["alcoholType"];
+  alcoholName: AlcoholDetailInterface["alcoholName"];
+  alcoholType: AlcoholDetailInterface["alcoholType"];
+  alcoholNo: AlcoholDetailInterface["alcoholNo"];
   removable?: boolean;
   onClickRemove?: () => void;
 }
@@ -14,9 +17,11 @@ const AlcoholNameTag = ({
   alcoholName,
   alcoholType,
   removable = false,
+  alcoholNo,
   onClickRemove,
   ...others
 }: AlcoholNameTagInterface) => {
+  const router = useRouter();
   return (
     <Box sx={WrapperStyle} {...others}>
       <Box
@@ -46,7 +51,10 @@ const AlcoholNameTag = ({
           <XIcon />
         </IconButton>
       ) : (
-        <IconButton sx={{ p: 0 }}>
+        <IconButton
+          sx={{ p: 0 }}
+          onClick={() => router.push(WIKI_DETAIL(String(alcoholNo)))}
+        >
           <PostSeeMoreIcon style={{ margin: "3px 0" }} />
         </IconButton>
       )}
@@ -55,7 +63,7 @@ const AlcoholNameTag = ({
 };
 
 const WrapperStyle = {
-  width: '100%',
+  width: "100%",
   border: "1px solid",
   borderColor: "gray.secondary",
   backgroundColor: "gray.primary",

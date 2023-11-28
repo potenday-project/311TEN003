@@ -11,7 +11,6 @@ interface CustomAppbarInterface {
   onClickButton?: MouseEventHandler<HTMLButtonElement>;
 }
 
-
 const CustomAppbar = ({
   title,
   buttonComponent,
@@ -24,12 +23,12 @@ const CustomAppbar = ({
     <AppBar position={"static"}>
       <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
         <IconButton onClick={() => router.back()}>
-          <GoBackIcon/>
+          <GoBackIcon />
         </IconButton>
-        <Typography variant="subtitle2" fontWeight={"bold"}>
+        <Typography component="h1" variant="subtitle2" fontWeight={"bold"}>
           {title}
         </Typography>
-        {buttonComponent && (
+        {buttonComponent ? (
           <Button
             disabled={disableButton}
             onClick={onClickButton}
@@ -38,6 +37,8 @@ const CustomAppbar = ({
           >
             {buttonComponent}
           </Button>
+        ) : (
+          <div style={{ width: "40px" }} />
         )}
       </Toolbar>
     </AppBar>

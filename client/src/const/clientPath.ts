@@ -18,20 +18,31 @@ export const MY_PROFILE = "/user" as const;
 /**
  * 유저의 PK를 입력받아 해당유저의 프로필 페이지로 이동하는 URL
  */
-export const USER_PAGE = (pk:string|number)=>`/user/${pk}`
+export const USER_PAGE = (pk: string | number) => `/user/${pk}`;
+
+/**
+ * 유저정보 세팅 페이지로 이동하는 라우트
+ */
+export const SETTING_PAGE = '/user/setting' as const
 
 /**
  * 술과사전 페이지 라우트
  */
 export const WIKI = "/wiki" as const;
 /**
+ * 술 PK 를 입력받아 술의 상세페이지로 이동하는 라우트
+ * @param alcoholNo 술 PK
+ */
+export const WIKI_DETAIL = (alcoholNo: string) =>
+  `${WIKI}/${alcoholNo}` as const;
+/**
  * 검색 페이지 라우트
  */
 export const SEARCH = "/search" as const;
 /**
  * 키워드를 인자로 받아 쿼리스트링이 추가된 검색페이지 라우트
- * @param keyword 
- * @returns 
+ * @param keyword
+ * @returns
  */
 export const SEARCH_BY_KEYWORD = (keyword: string) =>
   `${SEARCH}?keyword=${keyword}`;
@@ -51,7 +62,6 @@ export const POST_DETAIL = (userId: string, postId: string) => {
 /**
  * 새로운 포스트를 작성하는 페이지
  */
-export const NEW_POST = '/new-post'
-
+export const NEW_POST = "/new-post";
 
 export default HOME;

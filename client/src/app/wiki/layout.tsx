@@ -10,9 +10,8 @@ const layout = ({ children }: { children: ReactNode }) => {
 
   return (
     <WikiPageContext.Provider value={{ isSearching, setIsSearching }}>
-      <Paper>
         <WikiAppbar />
-        <Container sx={{ p: { xs: 0, sm: 4 } }} maxWidth={"lg"}>
+        <Container sx={{ px: { xs: 0, sm: 4 } }} maxWidth={"lg"}>
           <Paper
             sx={{
               display: "flex",
@@ -26,7 +25,6 @@ const layout = ({ children }: { children: ReactNode }) => {
             {children}
           </Paper>
         </Container>
-      </Paper>
     </WikiPageContext.Provider>
   );
 };
