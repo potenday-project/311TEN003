@@ -9,28 +9,30 @@ import TraditionalAlcoholIcon from "@/assets/icons/Alcohol/TraditionalAlcoholIco
 import SakeIcon from "@/assets/icons/Alcohol/SakeIcon.svg";
 
 const WikiAlcoholSelector = () => {
-  
-  const btnList =useMemo(()=>[
-    { title: "포도주", iconComponent: <WineIcon /> },
-    { title: "위스키", iconComponent: <WiskyIcon /> },
-    { title: "증류주", iconComponent: <SpiritsIcon /> },
-    { title: "우리술", iconComponent: <TraditionalAlcoholIcon /> },
-    { title: "사케", iconComponent: <SakeIcon /> },
-  ],[]) 
+  const btnList = useMemo(
+    () => [
+      { title: "포도주", iconComponent: <WineIcon /> },
+      { title: "위스키", iconComponent: <WiskyIcon /> },
+      { title: "증류주", iconComponent: <SpiritsIcon /> },
+      { title: "우리술", iconComponent: <TraditionalAlcoholIcon /> },
+      { title: "사케", iconComponent: <SakeIcon /> },
+    ],
+    []
+  );
 
   const [selectedAlcohol, setSelectedAlcohol] = useState(btnList[0].title);
 
-  const clickHandler = useCallback((title:string)=>{
-    setSelectedAlcohol(title)
-  },[])
+  const clickHandler = useCallback((title: string) => {
+    setSelectedAlcohol(title);
+  }, []);
 
   return (
-    <Stack direction="row" justifyContent='center' gap={2}>
+    <Stack direction="row" justifyContent="center" gap={2}>
       {btnList.map((btnInfo) => (
         <WikiAlcoholSelectorBtn
           key={btnInfo.title}
           isSelected={selectedAlcohol === btnInfo.title}
-          onClick={()=>clickHandler(btnInfo.title)}
+          onClick={() => clickHandler(btnInfo.title)}
           {...btnInfo}
         />
       ))}
