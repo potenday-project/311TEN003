@@ -35,7 +35,6 @@ const SearchAlcoholInput = ({ setAlcoholNo }: SearchAlcoholInputInterface) => {
   const [selectedAlcohol, setSelectedAlcohol] =
     useState<AlcoholDetailInterface>();
 
-
   useEffect(() => {
     setSearchKeyword(selectedAlcohol?.alcoholName ?? "");
     setAlcoholNo(selectedAlcohol?.alcoholNo);
@@ -48,6 +47,9 @@ const SearchAlcoholInput = ({ setAlcoholNo }: SearchAlcoholInputInterface) => {
         name="positionInfo"
         size="small"
         InputProps={{
+          sx: {
+            borderRadius: 12,
+          },
           startAdornment: (
             <InputAdornment position="start">
               <AlcholeSearchIcon />
@@ -109,8 +111,8 @@ const SearchAlcoholInput = ({ setAlcoholNo }: SearchAlcoholInputInterface) => {
 const WrapperStyle = {
   width: "calc(100% - 32px)",
   minHeight: "50px",
-  maxHeight:'142px',
-  overflowY:'auto',
+  maxHeight: "142px",
+  overflowY: "auto",
   backgroundColor: "#F5F5F5",
   border: "1px solid #E6E6E6",
   borderRadius: 1.5,
