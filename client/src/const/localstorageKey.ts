@@ -1,0 +1,1 @@
+export const ALCOHOL_SEARCH_HISTORY ='alcohol-search-history' as const

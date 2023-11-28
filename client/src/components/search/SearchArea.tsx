@@ -1,6 +1,6 @@
 "use client";
-import { Box, CircularProgress, Paper, TextField } from "@mui/material";
-import React, { useState, useMemo, Suspense } from "react";
+import { Paper, TextField } from "@mui/material";
+import React, { useState, useMemo } from "react";
 import PostCardList from "@/components/post/PostCardList";
 import { AugmentedGetPostListResponse } from "@/queries/post/useGetPostListInfiniteQuery";
 import useDebounce from "@/hooks/useDebounce";

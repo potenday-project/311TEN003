@@ -1,40 +1,29 @@
 "use client";
 import AlcoholNameTag from "@/components/wiki/AlcoholNameTag";
-import useGetAlcoholListQuery from "@/queries/alcohol/useGetAlcoholListQuery";
-import { Box, Pagination, Skeleton, Stack } from "@mui/material";
+import { AlcoholDetailInterface } from "@/types/alcohol/AlcoholInterface";
+import { Typography } from "@mui/material";
 import { memo } from "react";
 
-const AlcoholList = () => {
-  const { data: alcohols } = useGetAlcoholListQuery();
+const AlcoholList = ({
+  data: alcohols,
+}: {
+  data: AlcoholDetailInterface[];
+}) => {
   return (
-    <Stack alignItems="center" gap={2}>
-      <Stack gap={1} alignItems="center" width={"100%"} height={"232px"}>
-        {alcohols ? (
-          alcohols.list.map((alcohol) => (
-            <AlcoholNameTag
-              key={alcohol.alcoholNo}
-              alcoholName={alcohol.alcoholName}
-              alcoholType={alcohol.alcoholType}
-            />
-          ))
-        ) : (
-          <AlcoholListSkeleton />
-        )}
-      </Stack>
-      <Pagination count={alcohols?.totalCount} />
-    </Stack>
+    <>
+      {alcohols?.length > 0 ? (
+        alcohols.map((alcohol) => (
+          <AlcoholNameTag
+            key={alcohol.alcoholNo}
+            alcoholName={alcohol.alcoholName}
+            alcoholType={alcohol.alcoholType}
+          />
+        ))
+      ) : (
+        <Typography textAlign="center">검색 결과가 없어요</Typography>
+      )}
+    </>
   );
 };
+export default memo(AlcoholList);
 
-const AlcoholListSkeleton = memo(() => {
-  return Array.from(new Array(5)).map(() => (
-    <Skeleton
-      variant="rectangular"
-      width={"100%"}
-      height={40}
-      sx={{ borderRadius: 2 }}
-    />
-  ));
-});
-
-export default AlcoholList;
