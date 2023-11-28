@@ -15,7 +15,7 @@ import AlcholeSearchIcon from "@/assets/icons/AlcholeSearchIcon.svg";
 import InputSearchIcon from "@/assets/icons/InputSearchIcon.svg";
 import useGetAlcoholListQuery from "@/queries/alcohol/useGetAlcoholListQuery";
 import { AlcoholDetailInterface } from "@/types/alcohol/AlcoholInterface";
-import AlcoleNameTag from "@/components/wiki/AlcoholNameTag";
+import AlcoholNameTag from "@/components/wiki/AlcoholNameTag";
 import useDebounce from "@/hooks/useDebounce";
 import { NewPostRequestAlCohol } from "@/types/newPost/NewPostInterface";
 
@@ -97,9 +97,10 @@ const SearchAlcoholInput = ({ setAlcoholNo }: SearchAlcoholInputInterface) => {
         </Box>
       )}
       {selectedAlcohol && (
-        <AlcoleNameTag
+        <AlcoholNameTag
           alcoholName={selectedAlcohol.alcoholName}
           alcoholType={selectedAlcohol.alcoholType}
+          alcoholNo={selectedAlcohol.alcoholNo}
           onClickRemove={() => setSelectedAlcohol(undefined)}
           removable
         />
