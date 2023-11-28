@@ -11,6 +11,9 @@ const useGetAlcoholListQuery = (keyword?: string) => {
 };
 
 export const getAlcoholListByKeyword = async (keyword?: string) => {
+  if (keyword === "") {
+    return { list: [], totalCount: 0 };
+  }
   const { data } = await axios.get<{
     list: AlcoholDetailInterface[];
     totalCount: number;
