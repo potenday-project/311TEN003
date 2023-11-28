@@ -16,6 +16,10 @@ export const MY_INFO = "/user/me" as const;
  * 쿠키를 심어주는 로그인 BFF
  */
 export const LOGIN_BFF = "/api/auth/login" as const;
+/**
+ * 클라이언트단 로그인을 행하는 라우트
+ */
+export const LOGOUT_BFF = "/api/auth/logout-internal" as const;
 
 /**
  * 게시물리스트를 받아오거나, 작성하는 Path
