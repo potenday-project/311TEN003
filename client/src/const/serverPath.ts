@@ -29,12 +29,12 @@ export const LOGOUT_BFF = "/api/auth/logout-internal" as const;
 /**
  * 게시물리스트를 받아오거나, 작성하는 Path
  */
-export const POST_LIST = "/posts/old" as const;
+export const POST_LIST = "/posts" as const;
 
 /**
  * 게시물리스트를 받아오거나, 작성하는 Path 버전2 (Breaking Change)
  */
-export const POST_LIST_V2 = "/posts" as const;
+export const POST_LIST_V2 = "/posts/v2" as const;
 /**
  * ID(pk) 를 입력받아 해당 포스트를 지우는 URL
  */
