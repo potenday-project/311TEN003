@@ -3,6 +3,7 @@ import axios from "@/libs/axios";
 import { PostInterface } from "@/types/post/PostInterface";
 import { AxiosRequestConfig } from "axios";
 import getTokenFromLocalStorage from "@/utils/getTokenFromLocalStorage";
+import { POST_LIST } from "@/const/serverPath";
 
 export interface UseGetPostListQueryInterface extends GetPostListOptions {
   initialData?: AugmentedGetPostListResponse;
@@ -80,7 +81,7 @@ export const getPostListQueryFn = async ({
 }: GetPostListOptions & {
   headers?: AxiosRequestConfig<any>["headers"];
 }): Promise<AugmentedGetPostListResponse> => {
-  const { data } = await axios.get<GetPostListResponse>("/posts", {
+  const { data } = await axios.get<GetPostListResponse>(POST_LIST, {
     baseURL: process.env.NEXT_PUBLIC_BASE_URL,
     params: { page, size, searchKeyword, searchUserNos },
     headers,
