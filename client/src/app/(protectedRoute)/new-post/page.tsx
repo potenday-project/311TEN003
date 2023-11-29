@@ -5,7 +5,7 @@ import { Box, Container, Paper, Tooltip } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import HOME from "@/const/clientPath";
-import CameraIcon from "@/assets/icons/CameraIcon.svg";
+import PictureIcon from "@/assets/icons/PictureIcon.svg";
 import PinIcon from "@/assets/icons/PinIcon.svg";
 import { useGlobalLoadingStore } from "@/store/useGlobalLoadingStore";
 import useNewPostMutation from "@/queries/newPost/useNewPostMutation";
@@ -90,9 +90,9 @@ export default function NewpostPage() {
       {/* 최상단 앱바 */}
       <CustomAppbar
         title="포스팅"
-        buttonComponent="공유"
-        disableButton={isSuccess}
-        onClickButton={submitHandler}
+        appendButton="공유"
+        disableAppend={isSuccess}
+        onClickAppend={submitHandler}
       />
 
       <Container sx={{ p: { xs: 0, sm: 4 } }} maxWidth={"lg"}>
@@ -125,7 +125,7 @@ export default function NewpostPage() {
             <Tooltip title="사진 첨부">
               <SquareIconButton
                 component={"label"}
-                iconComponent={<CameraIcon />}
+                iconComponent={<PictureIcon />}
               >
                 <input
                   name="image"

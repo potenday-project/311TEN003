@@ -13,6 +13,11 @@ export const SIGNUP_API_PATH = "/user/signup" as const;
 export const MY_INFO = "/user/me" as const;
 
 /**
+ * 유저정보를 수정하는 path
+ */
+export const PATCH_USER_INFO = '/user' as const
+
+/**
  * 쿠키를 심어주는 로그인 BFF
  */
 export const LOGIN_BFF = "/api/auth/login" as const;
@@ -28,7 +33,7 @@ export const POST_LIST = "/posts" as const;
 /**
  * ID(pk) 를 입력받아 해당 포스트를 지우는 URL
  */
-export const REMOVE_POST = (pk:number)=>`${POST_LIST}/${pk}` as const
+export const REMOVE_POST = (pk: number) => `${POST_LIST}/${pk}` as const;
 
 /**
  *
@@ -37,42 +42,51 @@ export const REMOVE_POST = (pk:number)=>`${POST_LIST}/${pk}` as const
  * @returns
  */
 export type ATTACH_FILE_ResourceType = "POST" | "PROFILE" | "ALCOHOL";
-export const ATTACH_FILE = (type: ATTACH_FILE_ResourceType, resourcePk: number) =>
-  `/attach/resources/${type}/${resourcePk}` as const;
+export const ATTACH_FILE = (
+  type: ATTACH_FILE_ResourceType,
+  resourcePk: number
+) => `/attach/resources/${type}/${resourcePk}` as const;
+
+/**
+ * 파일PK 를 입력받아 해당 파일을 제거하는 URL
+ * @param attachNo 파일 PK
+ */
+export const REMOVE_FILE = (attachNo: string) => `/attach/${attachNo}` as const;
 
 /**
  * 알콜리스트를 받아오는 URL
  */
-export const GET_ALCOHOL_LIST = '/alcohols' as const
+export const GET_ALCOHOL_LIST = "/alcohols" as const;
 
 /**
  * 포스트의 PK를 입력받아 해당 PK의 게시글의 좋아요를 요청
  * @param id 게시글의 PK
  */
-export const POST_LIKE_URL = (id:string)=>`/posts/like/${id}` as const
+export const POST_LIKE_URL = (id: string) => `/posts/like/${id}` as const;
 
 /**
  * 포스트의 PK를 입력받아 해당 PK의 게시글의 좋아요 취소를 요청
  * @param id 게시글의 PK
  */
-export const POST_UN_LIKE_URL = (id:string)=>`/posts/like-cancel/${id}` as const
+export const POST_UN_LIKE_URL = (id: string) =>
+  `/posts/like-cancel/${id}` as const;
 /**
  * 유저 ID 를 입력받아 해당 유저의 정보를 불러오는 URL
  * @param id 유저 PK
- * @returns 
+ * @returns
  */
-export const USER_SUMMARY = (id:string)=>`/user/${id}/summary` as const
+export const USER_SUMMARY = (id: string) => `/user/${id}/summary` as const;
 
 /**
  * 유저 ID 를 입력받아 해당 유저를 팔로우 하는 URL
  * @param id 유저 PK
- * @returns 
+ * @returns
  */
-export const FOLLOW_USER = (id:string) => `/user/follow/${id}` as const
+export const FOLLOW_USER = (id: string) => `/user/follow/${id}` as const;
 
 /**
  * 유저 ID 를 입력받아 해당 유저를 언팔로우 하는 URL
  * @param id 유저 PK
- * @returns 
+ * @returns
  */
-export const UNFOLLOW_USER = (id:string) => `/user/unfollow/${id}` as const
+export const UNFOLLOW_USER = (id: string) => `/user/unfollow/${id}` as const;

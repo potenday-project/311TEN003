@@ -9,8 +9,8 @@ const WikiAppbar = () => {
   return (
     <CustomAppbar
       title="술백과"
-      buttonComponent={<SearchIcon />}
-      onClickButton={() => setIsSearching(true)}
+      appendButton={<SearchIcon />}
+      onClickAppend={() => setIsSearching(true)}
     />
   );
 };

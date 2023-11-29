@@ -1,42 +1,62 @@
 "use client";
-import { AppBar, Button, IconButton, Toolbar, Typography } from "@mui/material";
+import {
+  AppBar,
+  Button,
+  IconButton,
+  Toolbar,
+  Typography,
+  styled,
+} from "@mui/material";
 import GoBackIcon from "@/assets/icons/GoBackIcon.svg";
 import { MouseEventHandler, ReactNode, memo } from "react";
 import { useRouter } from "next/navigation";
 
 interface CustomAppbarInterface {
   title?: string;
-  buttonComponent?: ReactNode;
-  disableButton?: boolean;
-  onClickButton?: MouseEventHandler<HTMLButtonElement>;
+  prependButton?: ReactNode;
+  onClickPrepend?: MouseEventHandler<HTMLButtonElement>;
+
+  appendButton?: ReactNode;
+  disableAppend?: boolean;
+  onClickAppend?: MouseEventHandler<HTMLButtonElement>;
 }
 
 const CustomAppbar = ({
   title,
-  buttonComponent,
-  disableButton,
-  onClickButton,
+  appendButton,
+  prependButton,
+  onClickPrepend,
+  disableAppend,
+  onClickAppend,
 }: CustomAppbarInterface) => {
   const router = useRouter();
 
   return (
     <AppBar position={"static"}>
       <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-        <IconButton onClick={() => router.back()}>
-          <GoBackIcon />
-        </IconButton>
+        {/* 프리팬드 버튼 */}
+        {prependButton ? (
+          <AppbarButton variant="text" onClick={onClickPrepend}>
+            {prependButton}
+          </AppbarButton>
+        ) : (
+          <IconButton onClick={() => router.back()}>
+            <GoBackIcon />
+          </IconButton>
+        )}
+        {/* 타이틀 */}
         <Typography component="h1" variant="subtitle2" fontWeight={"bold"}>
           {title}
         </Typography>
-        {buttonComponent ? (
-          <Button
-            disabled={disableButton}
-            onClick={onClickButton}
+        {/* 어팬드 버튼 */}
+        {appendButton ? (
+          <AppbarButton
+            disabled={disableAppend}
+            onClick={onClickAppend}
             variant="text"
-            sx={{ minWidth: 40, fontWeight: "medium" }}
           >
-            {buttonComponent}
-          </Button>
+            {appendButton}
+          </AppbarButton>
         ) : (
           <div style={{ width: "40px" }} />
         )}
@@ -44,5 +64,10 @@ const CustomAppbar = ({
     </AppBar>
   );
 };
+const AppbarButton = styled(Button)(() => ({
+  minWidth: 40,
+  fontWeight: "medium",
+  fontSize:'18px'
+}));
 
 export default memo(CustomAppbar);
