@@ -220,11 +220,15 @@ public class PostService {
       postsToOneMap.put(getPostsToOneMvo.getPostNo(), getPostsToOneMvo);
     }
 
-    List<Attach> attachList = attachRepository.findByRefNoInAndAttachTypeIsAndDelYnIs(postNos, AttachType.POST,
-        YesOrNo.N);
+    List<Attach> attachList =
+        attachRepository.findByRefNoInAndAttachTypeIsAndDelYnIs(postNos, AttachType.POST,
+            YesOrNo.N);
     Map<Long, List<AttachDto>> pToAMap = new HashMap<>();
     for (Attach attach : attachList) {
-      List<AttachDto> attachDtos = pToAMap.getOrDefault(attach.getRefNo(), new ArrayList<>());
+      if (!pToAMap.containsKey(attach.getRefNo())) {
+        pToAMap.put(attach.getRefNo(), new ArrayList<>());
+      }
+      List<AttachDto> attachDtos = pToAMap.get(attach.getRefNo());
       attachDtos.add(AttachDto.of(attach));
     }
     return posts.map(post -> {
@@ -249,7 +253,29 @@ public class PostService {
         () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
     List<Comment> comments =
         post.getComments().stream().filter(comment -> comment.getDelYn() == YesOrNo.N).toList();
-    return GetPostCommentsResponseDto.of(comments);
+    // FIXME 최적화. 추후 페이징 처리할것.
+    List<Long> commentCreatedList = comments.stream().map(Comment::getCreatedBy).toList();
+    List<User> userList =
+        userRepository.findAllByIdInAndDelYnIs(commentCreatedList, YesOrNo.N);
+    Map<Long, User> createdByToUser = new HashMap<>();
+    for (User user : userList) {
+      createdByToUser.put(user.getId(), user);
+    }
+
+    List<Attach> attachList =
+        attachRepository.findByRefNoInAndAttachTypeIsAndDelYnIs(commentCreatedList,
+            AttachType.PROFILE,
+            YesOrNo.N);
+    Map<Long, List<AttachDto>> uToAMap = new HashMap<>();
+    for (Attach attach : attachList) {
+      if (!uToAMap.containsKey(attach.getRefNo())) {
+        uToAMap.put(attach.getRefNo(), new ArrayList<>());
+      }
+      List<AttachDto> attachDtos = uToAMap.get(attach.getRefNo());
+      attachDtos.add(AttachDto.of(attach));
+    }
+
+    return GetPostCommentsResponseDto.of(comments, createdByToUser, uToAMap);
   }
 
   public void editComment(Long postNo, Long commentNo,
