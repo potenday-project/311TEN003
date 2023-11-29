@@ -22,6 +22,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -77,26 +79,26 @@ public class PostController {
     postService.deletePost(postNo);
   }
 
-  @Operation(summary = "[o]게시글 목록 조회", description = "게시글 조회 API")
-  @GetMapping
-  public GetPostResponseDto getPosts(@RequestParam(name = "page", defaultValue = "0")
-                                     @Schema(description = "페이지번호(0부터), 기본값 0.", example = "0")
-                                     Long page,
-                                     @RequestParam(name = "size", defaultValue = "10")
-                                     @Schema(description = "사이즈, 기본값 10.", example = "10")
-                                     Long size,
-                                     @RequestParam(required = false, name = "orderColumn")
-                                     @Schema(description = "정렬 컬럼", example = "post_no")
-                                     String orderColumn,
-                                     @RequestParam(required = false, name = "orderType")
-                                     @Schema(description = "정렬 타입", example = "DESC")
-                                     String orderType,
-                                     @RequestParam(required = false, name = "searchKeyword")
-                                     @Schema(description = "키워드", example = "키워드")
-                                     String searchKeyword,
-                                     @RequestParam(required = false, name = "searchUserNos")
-                                     @Schema(description = "검색 유저 번호들.", example = "1,2,4")
-                                     String searchUserNos
+  @Operation(summary = "[o]게시글 목록 조회(v1)", description = "게시글 조회 API")
+  @GetMapping("/old")
+  public GetPostResponseDto getPostsOld(@RequestParam(name = "page", defaultValue = "0")
+                                        @Schema(description = "페이지번호(0부터), 기본값 0.", example = "0")
+                                        Long page,
+                                        @RequestParam(name = "size", defaultValue = "10")
+                                        @Schema(description = "사이즈, 기본값 10.", example = "10")
+                                        Long size,
+                                        @RequestParam(required = false, name = "orderColumn")
+                                        @Schema(description = "정렬 컬럼", example = "post_no")
+                                        String orderColumn,
+                                        @RequestParam(required = false, name = "orderType")
+                                        @Schema(description = "정렬 타입", example = "DESC")
+                                        String orderType,
+                                        @RequestParam(required = false, name = "searchKeyword")
+                                        @Schema(description = "키워드", example = "키워드")
+                                        String searchKeyword,
+                                        @RequestParam(required = false, name = "searchUserNos")
+                                        @Schema(description = "검색 유저 번호들.", example = "1,2,4")
+                                        String searchUserNos
 
   ) {
     log.info(">>> PostController.getPost");
@@ -109,8 +111,32 @@ public class PostController {
     } catch (Exception e) {
       log.error(">>> PostController.getPost searchUserNos 파싱 에러 Exception", e);
     }
-    return postService.getPosts(page, size, orderColumn, orderType, searchKeyword,
+    return postService.getPostsOld(page, size, orderColumn, orderType, searchKeyword,
         searchUserNoList);
+  }
+
+  @Operation(summary = "[o]게시글 목록 조회(v2", description = "게시글 조회 API")
+  @GetMapping
+  public Page<PostResponseDto> getPosts(Pageable pageable,
+                                        @RequestParam(required = false, name = "searchKeyword")
+                                        @Schema(description = "키워드", example = "키워드")
+                                        String searchKeyword,
+                                        @RequestParam(required = false, name = "searchUserNos")
+                                        @Schema(description = "검색 유저 번호들.", example = "1,2,4")
+                                        String searchUserNos
+
+  ) {
+    log.info(">>> PostController.getPost");
+    List<Long> searchUserNoList = new ArrayList<>();
+    try {
+      searchUserNoList =
+          Arrays.stream(searchUserNos.split(",")).map(Long::parseLong).toList();
+    } catch (NumberFormatException e) {
+      log.error(">>> PostController.getPost searchUserNos 파싱 에러 NumberFormatException", e);
+    } catch (Exception e) {
+      log.error(">>> PostController.getPost searchUserNos 파싱 에러 Exception", e);
+    }
+    return postService.getPosts(pageable, searchKeyword, searchUserNoList);
   }
 
   @Operation(summary = "[o]게시글 상세 조회", description = "게시글 상세 조회 API")

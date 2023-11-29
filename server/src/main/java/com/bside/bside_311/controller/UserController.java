@@ -135,7 +135,7 @@ public class UserController {
   @Operation(summary = "[o]유저 팔로우하기", description = "유저 팔로우하기 API")
   @PostMapping("/follow/{userNo}")
   @UserRequired
-  UserFollowResponseDto followUser(@PathVariable("userNo") Long userNo) {
+  public UserFollowResponseDto followUser(@PathVariable("userNo") Long userNo) {
     log.info(">>> UserController.followUser");
     Long myUserNo = AuthUtil.getUserNoFromAuthentication();
     return UserFollowResponseDto.of(userService.followUser(myUserNo, userNo));
@@ -144,7 +144,7 @@ public class UserController {
   @Operation(summary = "[o]유저 언팔로우하기", description = "유저 언팔로우하기 API")
   @PostMapping("/unfollow/{userNo}")
   @UserRequired
-  void unfollowUser(@PathVariable("userNo") Long userNo) {
+  public void unfollowUser(@PathVariable("userNo") Long userNo) {
     log.info(">>> UserController.unfollowUser");
     Long myUserNo = AuthUtil.getUserNoFromAuthentication();
     userService.unfollowUser(myUserNo, userNo);

@@ -85,6 +85,10 @@ public class Post extends BaseEntity {
     return post;
   }
 
+  public static Post of(Post post) throws CloneNotSupportedException {
+    return (Post) post.clone();
+  }
+
   public static Post of(GetPostsMvo getPostsMvo) {
 
     Post post = Post.builder()

@@ -10,9 +10,12 @@ import com.bside.bside_311.dto.GetPostCommentsResponseDto;
 import com.bside.bside_311.dto.GetPostResponseDto;
 import com.bside.bside_311.dto.GetPostVo;
 import com.bside.bside_311.dto.GetPostsMvo;
+import com.bside.bside_311.dto.GetPostsToOneMvo;
 import com.bside.bside_311.dto.GetQuotesByPostResponseDto;
 import com.bside.bside_311.dto.PostResponseDto;
+import com.bside.bside_311.dto.PostSearchCondition;
 import com.bside.bside_311.entity.Alcohol;
+import com.bside.bside_311.entity.Attach;
 import com.bside.bside_311.entity.AttachType;
 import com.bside.bside_311.entity.Comment;
 import com.bside.bside_311.entity.Post;
@@ -39,11 +42,16 @@ import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -178,8 +186,8 @@ public class PostService {
     return getPostDetail(postNo, null);
   }
 
-  public GetPostResponseDto getPosts(Long page, Long size, String orderColumn, String orderType,
-                                     String searchKeyword, List<Long> searchUserNoList) {
+  public GetPostResponseDto getPostsOld(Long page, Long size, String orderColumn, String orderType,
+                                        String searchKeyword, List<Long> searchUserNoList) {
     GetPostVo getPostVo = GetPostVo.builder()
                                    .page(page)
                                    .offset(page * size)
@@ -199,6 +207,37 @@ public class PostService {
     return GetPostResponseDto.of(list, totalCount);
   }
 
+  public Page<PostResponseDto> getPosts(Pageable pageable,
+                                        String searchKeyword, List<Long> searchUserNoList) {
+    Page<Post> posts =
+        postRepository.searchPageSimple(PostSearchCondition.builder().searchKeyword(searchKeyword)
+                                                           .searchUserNoList(searchUserNoList)
+                                                           .build(), pageable);
+    List<Long> postNos = posts.stream().map(Post::getId).toList();
+    List<GetPostsToOneMvo> postsToOneList = postMybatisRepository.getPostsToOne(postNos);
+    Map<Long, GetPostsToOneMvo> postsToOneMap = new HashMap<>();
+    for (GetPostsToOneMvo getPostsToOneMvo : postsToOneList) {
+      postsToOneMap.put(getPostsToOneMvo.getPostNo(), getPostsToOneMvo);
+    }
+
+    List<Attach> attachList =
+        attachRepository.findByRefNoInAndAttachTypeIsAndDelYnIs(postNos, AttachType.POST,
+            YesOrNo.N);
+    Map<Long, List<AttachDto>> pToAMap = new HashMap<>();
+    for (Attach attach : attachList) {
+      if (!pToAMap.containsKey(attach.getRefNo())) {
+        pToAMap.put(attach.getRefNo(), new ArrayList<>());
+      }
+      List<AttachDto> attachDtos = pToAMap.get(attach.getRefNo());
+      attachDtos.add(AttachDto.of(attach));
+    }
+    return posts.map(post -> {
+      GetPostsToOneMvo getPostsToOneMvo = postsToOneMap.get(post.getId());
+      List<AttachDto> attachDtos = pToAMap.getOrDefault(post.getId(), new ArrayList<>());
+      return PostResponseDto.of(post, getPostsToOneMvo, attachDtos);
+    });
+  }
+
   public AddCommentResponseDto addComment(Long postNo, AddCommentRequestDto addCommentRequestDto) {
     Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
@@ -214,7 +253,29 @@ public class PostService {
         () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
     List<Comment> comments =
         post.getComments().stream().filter(comment -> comment.getDelYn() == YesOrNo.N).toList();
-    return GetPostCommentsResponseDto.of(comments);
+    // FIXME 최적화. 추후 페이징 처리할것.
+    List<Long> commentCreatedList = comments.stream().map(Comment::getCreatedBy).toList();
+    List<User> userList =
+        userRepository.findAllByIdInAndDelYnIs(commentCreatedList, YesOrNo.N);
+    Map<Long, User> createdByToUser = new HashMap<>();
+    for (User user : userList) {
+      createdByToUser.put(user.getId(), user);
+    }
+
+    List<Attach> attachList =
+        attachRepository.findByRefNoInAndAttachTypeIsAndDelYnIs(commentCreatedList,
+            AttachType.PROFILE,
+            YesOrNo.N);
+    Map<Long, List<AttachDto>> uToAMap = new HashMap<>();
+    for (Attach attach : attachList) {
+      if (!uToAMap.containsKey(attach.getRefNo())) {
+        uToAMap.put(attach.getRefNo(), new ArrayList<>());
+      }
+      List<AttachDto> attachDtos = uToAMap.get(attach.getRefNo());
+      attachDtos.add(AttachDto.of(attach));
+    }
+
+    return GetPostCommentsResponseDto.of(comments, createdByToUser, uToAMap);
   }
 
   public void editComment(Long postNo, Long commentNo,
