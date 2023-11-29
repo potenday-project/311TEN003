@@ -33,6 +33,7 @@ import java.util.List;
 
 import static com.bside.bside_311.util.JwtUtil.NORMAL_TOKEN;
 import static com.bside.bside_311.util.JwtUtil.normalValidity;
+import static com.bside.bside_311.util.ValidateUtil.resourceChangeableCheckByThisRequestToken;
 
 @Service
 @Slf4j
@@ -75,6 +76,7 @@ public class UserService {
   public void updateUser(Long userNo, UserUpdateRequestDto userUpdateRequestDto) {
     User user = userRepository.findByIdAndDelYnIs(userNo, YesOrNo.N)
                               .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+    resourceChangeableCheckByThisRequestToken(user);
     if (userUpdateRequestDto != null) {
       if (userUpdateRequestDto.getIntroduction() != null) {
         user.setIntroduction(userUpdateRequestDto.getIntroduction());
@@ -123,6 +125,7 @@ public class UserService {
   public void withdraw(Long myUserNo) {
     User user = userRepository.findByIdAndDelYnIs(myUserNo, YesOrNo.N)
                               .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+    resourceChangeableCheckByThisRequestToken(user);
     user.setDelYn(YesOrNo.Y);
     userRepository.save(user);
   }
@@ -135,6 +138,7 @@ public class UserService {
     }
     User me = userRepository.findByIdAndDelYnIs(myUserNo, YesOrNo.N)
                             .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+    resourceChangeableCheckByThisRequestToken(me);
     if (!passwordEncoder.matches(changePasswordRequestDto.getPassword(), me.getPassword())) {
       throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
     }
@@ -166,6 +170,7 @@ public class UserService {
     UserFollow userFollow =
         userFollowRepository.findByFollowingAndFollowedAndDelYnIs(me, followingUser, YesOrNo.N)
                             .orElseThrow(() -> new IllegalArgumentException("팔로우하지 않은 유저입니다."));
+    resourceChangeableCheckByThisRequestToken(userFollow);
     userFollow.setDelYn(YesOrNo.Y);
   }
 }

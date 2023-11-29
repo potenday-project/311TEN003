@@ -213,6 +213,7 @@ public class Initializer {
       postController.addQuote(5L, 3L);
     });
 
+    
     // 1번부터 5번까지 게시글 첨부파일 등록
     // 1번부터 5번까지 내 프로필 등록.
     for (int i = 0; i < 5; i++) {

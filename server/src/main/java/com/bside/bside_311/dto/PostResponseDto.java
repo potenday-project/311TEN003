@@ -105,44 +105,47 @@ public class PostResponseDto {
 
   }
 
-  public static PostResponseDto of(Post post, GetPostsToOneMvo getPostsToOneMvo, List<AttachDto> attachDtos) {
+  public static PostResponseDto of(Post post, GetPostsToOneMvo getPostsToOneMvo,
+                                   List<AttachDto> postAttachDtos, List<AttachDto> userAttachDtos) {
     List<PostTag> postTags = post.getPostTags().stream()
                                  .filter(postTag -> YesOrNo.N == postTag.getDelYn())
                                  .collect(Collectors.toList());
     List<String> tagList = postTags.stream()
                                    .filter(postTag -> YesOrNo.N == postTag.getTag().getDelYn())
                                    .map(postTag -> postTag.getTag().getName()).toList();
-    PostResponseDto postResponseDto = PostResponseDto.builder().nickname(getPostsToOneMvo.getNickname())
-                                           .id(getPostsToOneMvo.getUserId())
-                                           .createdBy(post.getCreatedBy())
-//        .profileImgUrls(PostResponseD)
-                                           .isFollowedByMe(getPostsToOneMvo.getIsFollowedByMe())
-                                           .isLikedByMe(getPostsToOneMvo.getIsLikedByMe())
-                                          .lastModifiedDate(post.getLastModifiedDate())
-                                           .edited(post.getCreatedDate()
-                                                       .isEqual(post.getLastModifiedDate()) ?
-                                                       false : true)
-                                           .postNo(post.getId())
-                                           .postContent(post.getContent())
-                                           .commentCount((long) post.getComments().stream().filter(
-                                                                        comment -> YesOrNo.N == comment.getDelYn()).toList()
-                                                                    .size())
-                                           .positionInfo(post.getPosition())
-                                           .alcoholNo(getPostsToOneMvo.getAlcoholNo())
-                                           .alcoholType(getPostsToOneMvo.getAlcoholType())
-                                           .alcoholName(getPostsToOneMvo.getAlcoholType())
-                                           .postAttachUrls(attachDtos)
-                                           .tagList(tagList)
-                                           .likeCount(
-                                               (long) post.getPostLikes().stream().filter(
-                                                              postLike -> YesOrNo.N == postLike.getDelYn())
-                                                          .collect(
-                                                              Collectors.toList()).size())
-                                           .quoteCount((long) post.getPostQuoteEds().stream()
-                                                                  .filter(postQuoted -> YesOrNo.N == postQuoted.getDelYn())
-                                                                  .collect(
-                                                                      Collectors.toList()).size())
-                                           .build();
+    PostResponseDto postResponseDto =
+        PostResponseDto.builder().nickname(getPostsToOneMvo.getNickname())
+                       .id(getPostsToOneMvo.getUserId())
+                       .createdBy(post.getCreatedBy())
+                       .isFollowedByMe(getPostsToOneMvo.getIsFollowedByMe())
+                       .isLikedByMe(getPostsToOneMvo.getIsLikedByMe())
+                       .lastModifiedDate(post.getLastModifiedDate())
+                       .edited(post.getCreatedDate()
+                                   .isEqual(post.getLastModifiedDate()) ?
+                                   false : true)
+                       .postNo(post.getId())
+                       .postContent(post.getContent())
+                       .commentCount((long) post.getComments().stream().filter(
+                                                    comment -> YesOrNo.N == comment.getDelYn()).toList()
+                                                .size())
+                       .positionInfo(post.getPosition())
+                       .alcoholNo(getPostsToOneMvo.getAlcoholNo())
+                       .alcoholType(getPostsToOneMvo.getAlcoholType())
+                       .alcoholName(getPostsToOneMvo.getAlcoholType())
+                       .postAttachUrls(postAttachDtos)
+                       .profileImgUrls(userAttachDtos)
+                       .tagList(tagList)
+                       .likeCount(
+                           (long) post.getPostLikes().stream().filter(
+                                          postLike -> YesOrNo.N == postLike.getDelYn())
+                                      .collect(
+                                          Collectors.toList()).size())
+                       .quoteCount((long) post.getPostQuoteEds().stream()
+                                              .filter(
+                                                  postQuoted -> YesOrNo.N == postQuoted.getDelYn())
+                                              .collect(
+                                                  Collectors.toList()).size())
+                       .build();
     return postResponseDto;
   }
 }

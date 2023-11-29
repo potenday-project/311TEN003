@@ -53,6 +53,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.bside.bside_311.util.ValidateUtil.resourceChangeableCheckByThisRequestToken;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -99,6 +101,7 @@ public class PostService {
   public void editPost(Long postNo, EditPostRequestDto editPostRequestDto) {
     Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
+    resourceChangeableCheckByThisRequestToken(post);
     if (StringUtils.isNotEmpty(editPostRequestDto.getPostContent())) {
       post.setContent(editPostRequestDto.getPostContent());
     }
@@ -132,6 +135,7 @@ public class PostService {
   public void deletePost(Long postNo) {
     Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
+    resourceChangeableCheckByThisRequestToken(post);
     post.setDelYn(YesOrNo.Y);
   }
 
@@ -220,21 +224,36 @@ public class PostService {
       postsToOneMap.put(getPostsToOneMvo.getPostNo(), getPostsToOneMvo);
     }
 
-    List<Attach> attachList =
+    List<Attach> postAttachList =
         attachRepository.findByRefNoInAndAttachTypeIsAndDelYnIs(postNos, AttachType.POST,
             YesOrNo.N);
     Map<Long, List<AttachDto>> pToAMap = new HashMap<>();
-    for (Attach attach : attachList) {
+    for (Attach attach : postAttachList) {
       if (!pToAMap.containsKey(attach.getRefNo())) {
         pToAMap.put(attach.getRefNo(), new ArrayList<>());
       }
       List<AttachDto> attachDtos = pToAMap.get(attach.getRefNo());
       attachDtos.add(AttachDto.of(attach));
     }
+
+    List<Long> postCreatedBys = posts.stream().map(Post::getCreatedBy).toList();
+    List<Attach> userAttachList =
+        attachRepository.findByRefNoInAndAttachTypeIsAndDelYnIs(postCreatedBys, AttachType.PROFILE,
+            YesOrNo.N);
+    Map<Long, List<AttachDto>> uToAMap = new HashMap<>();
+    for (Attach attach : userAttachList) {
+      if (!uToAMap.containsKey(attach.getRefNo())) {
+        uToAMap.put(attach.getRefNo(), new ArrayList<>());
+      }
+      List<AttachDto> attachDtos = uToAMap.get(attach.getRefNo());
+      attachDtos.add(AttachDto.of(attach));
+    }
+
     return posts.map(post -> {
       GetPostsToOneMvo getPostsToOneMvo = postsToOneMap.get(post.getId());
-      List<AttachDto> attachDtos = pToAMap.getOrDefault(post.getId(), new ArrayList<>());
-      return PostResponseDto.of(post, getPostsToOneMvo, attachDtos);
+      List<AttachDto> postAttachDtos = pToAMap.getOrDefault(post.getId(), new ArrayList<>());
+      List<AttachDto> userAttachDtos = uToAMap.getOrDefault(post.getCreatedBy(), new ArrayList<>());
+      return PostResponseDto.of(post, getPostsToOneMvo, postAttachDtos, userAttachDtos);
     });
   }
 
@@ -284,6 +303,7 @@ public class PostService {
         () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
     Comment comment = commentRepository.findByIdAndDelYnIs(commentNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
+    resourceChangeableCheckByThisRequestToken(comment);
     if (!ObjectUtils.isEmpty(editCommentRequestDto) &&
             StringUtils.isNotBlank(editCommentRequestDto.getCommentContent())) {
       comment.setContent(editCommentRequestDto.getCommentContent());
@@ -295,6 +315,7 @@ public class PostService {
         () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
     Comment comment = commentRepository.findByIdAndDelYnIs(commentNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
+    resourceChangeableCheckByThisRequestToken(comment);
     comment.setDelYn(YesOrNo.Y);
   }
 
@@ -314,6 +335,7 @@ public class PostService {
   public void deleteQuote(Long quoteNo) {
     PostQuote postQuote = postQuoteRepository.findByIdAndDelYnIs(quoteNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException("인용이 존재하지 않습니다."));
+    resourceChangeableCheckByThisRequestToken(postQuote);
     postQuote.setDelYn(YesOrNo.Y);
   }
 
@@ -345,6 +367,7 @@ public class PostService {
     PostLike postLike =
         postLikeRepository.findByUserAndPostAndDelYnIs(user, post, YesOrNo.N).orElseThrow(
             () -> new IllegalArgumentException("좋아요가 존재하지 않습니다."));
+    resourceChangeableCheckByThisRequestToken(postLike);
     postLike.setDelYn(YesOrNo.Y);
   }
 }

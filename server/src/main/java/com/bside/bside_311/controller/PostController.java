@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -80,7 +81,7 @@ public class PostController {
   }
 
   @Operation(summary = "[o]게시글 목록 조회(v1)", description = "게시글 조회 API")
-  @GetMapping("/old")
+  @GetMapping
   public GetPostResponseDto getPostsOld(@RequestParam(name = "page", defaultValue = "0")
                                         @Schema(description = "페이지번호(0부터), 기본값 0.", example = "0")
                                         Long page,
@@ -116,7 +117,7 @@ public class PostController {
   }
 
   @Operation(summary = "[o]게시글 목록 조회(v2", description = "게시글 조회 API")
-  @GetMapping
+  @GetMapping("/v2")
   public Page<PostResponseDto> getPosts(Pageable pageable,
                                         @RequestParam(required = false, name = "searchKeyword")
                                         @Schema(description = "키워드", example = "키워드")
@@ -128,14 +129,19 @@ public class PostController {
   ) {
     log.info(">>> PostController.getPost");
     List<Long> searchUserNoList = new ArrayList<>();
-    try {
-      searchUserNoList =
-          Arrays.stream(searchUserNos.split(",")).map(Long::parseLong).toList();
-    } catch (NumberFormatException e) {
-      log.error(">>> PostController.getPost searchUserNos 파싱 에러 NumberFormatException", e);
-    } catch (Exception e) {
-      log.error(">>> PostController.getPost searchUserNos 파싱 에러 Exception", e);
+    if (StringUtils.hasText(searchUserNos)) {
+      try {
+        searchUserNoList =
+            Arrays.stream(searchUserNos.split(",")).map(Long::parseLong).toList();
+      } catch (NumberFormatException e) {
+        log.error(">>> PostController.getPost searchUserNos 파싱 에러 NumberFormatException", e);
+        throw new IllegalArgumentException("searchUserNos 파싱 에러 NumberFormatException", e);
+      } catch (Exception e) {
+        log.error(">>> PostController.getPost searchUserNos 파싱 에러 Exception", e);
+        throw new IllegalArgumentException("searchUserNos 파싱 에러 Exception", e);
+      }
     }
+
     return postService.getPosts(pageable, searchKeyword, searchUserNoList);
   }
 
