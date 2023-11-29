@@ -82,7 +82,7 @@ public class PostController {
 
   @Operation(summary = "[o]게시글 목록 조회(v1)", description = "게시글 조회 API")
   @GetMapping
-  public GetPostResponseDto getPostsOld(@RequestParam(name = "page", defaultValue = "0")
+  public GetPostResponseDto getPosts(@RequestParam(name = "page", defaultValue = "0")
                                         @Schema(description = "페이지번호(0부터), 기본값 0.", example = "0")
                                         Long page,
                                         @RequestParam(name = "size", defaultValue = "10")
@@ -112,13 +112,15 @@ public class PostController {
     } catch (Exception e) {
       log.error(">>> PostController.getPost searchUserNos 파싱 에러 Exception", e);
     }
-    return postService.getPostsOld(page, size, orderColumn, orderType, searchKeyword,
+    return postService.getPosts(page, size, orderColumn, orderType, searchKeyword,
         searchUserNoList);
   }
 
   @Operation(summary = "[o]게시글 목록 조회(v2", description = "게시글 조회 API")
   @GetMapping("/v2")
-  public Page<PostResponseDto> getPosts(Pageable pageable,
+  public Page<PostResponseDto> getPostsV2(
+//                                        @Schema(description = "페이지 번호와 사이즈.정렬 까지.(0부터) ex)[1]page=0&size=5&sort=id,desc [2]page=1&size=15&sort=id,desc&sort=content,asc", example = "0")
+                                        Pageable pageable,
                                         @RequestParam(required = false, name = "searchKeyword")
                                         @Schema(description = "키워드", example = "키워드")
                                         String searchKeyword,
@@ -142,7 +144,7 @@ public class PostController {
       }
     }
 
-    return postService.getPosts(pageable, searchKeyword, searchUserNoList);
+    return postService.getPostsV2(pageable, searchKeyword, searchUserNoList);
   }
 
   @Operation(summary = "[o]게시글 상세 조회", description = "게시글 상세 조회 API")

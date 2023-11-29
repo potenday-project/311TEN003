@@ -1,7 +1,10 @@
 package com.bside.bside_311.dto;
 
 import com.bside.bside_311.entity.Alcohol;
+import com.bside.bside_311.entity.AlcoholTag;
+import com.bside.bside_311.entity.PostTag;
 import com.bside.bside_311.entity.Tag;
+import com.bside.bside_311.entity.YesOrNo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -12,6 +15,7 @@ import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
@@ -88,6 +92,39 @@ public class AlcoholResponseDto {
           tags.stream().map(Tag::getName).toList());
     }
     return alcoholResponseDtoBuilder
-               .build();
+        .build();
+  }
+
+  public static AlcoholResponseDto of(Alcohol alcohol, List<AttachDto> attachDtos) {
+    List<AlcoholTag> alcoholTags = alcohol.getAlcoholTags().stream()
+                                          .filter(postTag -> YesOrNo.N == postTag.getDelYn())
+                                          .collect(Collectors.toList());
+    List<String> tagList = alcoholTags.stream()
+                                      .filter(
+                                          alcoholTag -> YesOrNo.N == alcoholTag.getTag().getDelYn())
+                                      .map(alcoholTag -> alcoholTag.getTag().getName()).toList();
+
+    return AlcoholResponseDto.builder().alcoholNo(alcohol.getId())
+                             .alcoholName(alcohol.getName())
+                             .alcoholTypeNo(
+                                 alcohol.getAlcoholType().getId())
+                             .alcoholType(
+                                 alcohol.getAlcoholType().getName())
+                             .nickNames(
+                                 alcohol.getAlcoholNicknames().stream()
+                                        .filter(alcoholNickname -> alcoholNickname.getDelYn() ==
+                                                                       YesOrNo.N).map(
+                                            alcoholNickname -> alcoholNickname.getNickname())
+                                        .toList())
+                             .manufacturer(alcohol.getManufacturer())
+                             .description(alcohol.getDescription())
+                             .degree(alcohol.getDegree())
+                             .period(alcohol.getPeriod())
+                             .productionYear(
+                                 alcohol.getProductionYear())
+                             .volume(alcohol.getVolume())
+                             .alcoholAttachUrls(attachDtos)
+                             .tagList(tagList).build();
   }
 }
+

@@ -130,6 +130,8 @@ public class Initializer {
                                          .degree((float) (i + 0.5))
                                          .period(20L + i)
                                          .productionYear(1990L + i)
+                                         .tagList(List.of(String.format("testTag%d", i),
+                                             String.format("testTag23453%d", i)))
                                          .volume(700L + i).build());
       postController.addPost(AddPostRequestDto.builder()
                                               .alcoholNo((long) (i + 1))
@@ -216,6 +218,11 @@ public class Initializer {
     
     // 1번부터 5번까지 게시글 첨부파일 등록
     // 1번부터 5번까지 내 프로필 등록.
+//    attachPhoto();
+
+  }
+
+  private void attachPhoto() {
     for (int i = 0; i < 5; i++) {
       int finalI = i;
       setSecutiryContextDoSomethingAndClear((long) (i + 1), () -> {
@@ -228,12 +235,16 @@ public class Initializer {
               AttachType.PROFILE.name(),
               new ImageRequestDto(makeMultiPartFileByLocalFile(String.format("%d.png", finalI + 1),
                   "/example/attach/profile")));
+
+          attachController.userAttachPicture((long) (finalI + 1),
+              AttachType.ALCOHOL.name(),
+              new ImageRequestDto(makeMultiPartFileByLocalFile(String.format("%d.png", finalI + 1),
+                  "/example/attach/alcohol")));
         } catch (IOException e) {
           throw new RuntimeException(e);
         }
       });
     }
-
   }
 
   public MultipartFile makeMultiPartFileByLocalFile(String fileName, String classPathFolderPath)

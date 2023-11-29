@@ -1,60 +1,57 @@
 package com.bside.bside_311.repository;
 
-import com.bside.bside_311.dto.PostSearchCondition;
+import com.bside.bside_311.dto.AlcoholSearchCondition;
+import com.bside.bside_311.entity.Alcohol;
 import com.bside.bside_311.entity.Post;
-import com.bside.bside_311.entity.QPost;
+import com.bside.bside_311.entity.QAlcohol;
+import com.bside.bside_311.entity.QAlcoholType;
 import com.bside.bside_311.entity.QUser;
 import com.bside.bside_311.entity.YesOrNo;
 import com.bside.bside_311.repository.support.Querydsl4RepositorySupport;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import io.jsonwebtoken.lang.Collections;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.util.StringUtils;
 
-import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
+import static com.bside.bside_311.entity.QAlcohol.alcohol;
+import static com.bside.bside_311.entity.QAlcoholType.alcoholType;
 import static com.bside.bside_311.entity.QPost.post;
-import static com.bside.bside_311.entity.QUser.user;
 
-public class PostRepositoryImpl extends Querydsl4RepositorySupport
-    implements PostRepositoryCustom {
+public class AlcoholRepositoryImpl extends Querydsl4RepositorySupport
+    implements AlcoholRepositoryCustom {
   private final JPAQueryFactory queryFactory;
 
-  public PostRepositoryImpl(EntityManager em) {
-    super(Post.class);
+  public AlcoholRepositoryImpl(EntityManager em) {
+    super(Alcohol.class);
     this.queryFactory = new JPAQueryFactory(em);
   }
 
   @Override
-  public Page<Post> searchPageSimple(PostSearchCondition condition, Pageable pageable) {
-    //sort 지원.
-
+  public Page<Alcohol> searchAlcoholPage(AlcoholSearchCondition condition, Pageable pageable) {
     Function<JPAQueryFactory, JPAQuery> jpaQueryFactoryJPAQueryFunction =
-        query -> query.select(post)
-                      .from(post)
-                      .leftJoin(user).on(post.createdBy.eq(user.id))
+        query -> query.select(alcohol)
+                      .from(alcohol)
+                      .leftJoin(alcoholType).on((alcohol.alcoholType.eq(alcoholType))
+                .and(alcohol.delYn.eq(YesOrNo.N))
+                .and(alcoholType.delYn.eq(YesOrNo.N)))
                       .where(contentLike(condition.getSearchKeyword()),
-                          createdByIn(condition.getSearchUserNoList()),
                           notDeleted());
     return applyPagination(pageable, jpaQueryFactoryJPAQueryFunction
     );
   }
 
   private BooleanExpression contentLike(String searchKeyword) {
-    return StringUtils.hasText(searchKeyword) ? post.content.contains(searchKeyword) : null;
-  }
-
-  private BooleanExpression createdByIn(List<Long> searchUserNos) {
-    return !Collections.isEmpty(searchUserNos) ? post.createdBy.in(searchUserNos) : null;
+    return StringUtils.hasText(searchKeyword) ? alcohol.name.contains(searchKeyword) : null;
   }
 
   private BooleanExpression notDeleted() {
-    return post.delYn.eq(YesOrNo.N);
+    return alcohol.delYn.eq(YesOrNo.N);
   }
 }

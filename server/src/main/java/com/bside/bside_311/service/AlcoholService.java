@@ -3,6 +3,7 @@ package com.bside.bside_311.service;
 import com.bside.bside_311.dto.AddAlcoholRequestDto;
 import com.bside.bside_311.dto.AddAlcoholResponseDto;
 import com.bside.bside_311.dto.AlcoholResponseDto;
+import com.bside.bside_311.dto.AlcoholSearchCondition;
 import com.bside.bside_311.dto.AttachDto;
 import com.bside.bside_311.dto.EditAlcoholRequestDto;
 import com.bside.bside_311.dto.GetAlcoholResponseDto;
@@ -13,6 +14,7 @@ import com.bside.bside_311.entity.Alcohol;
 import com.bside.bside_311.entity.AlcoholNickname;
 import com.bside.bside_311.entity.AlcoholTag;
 import com.bside.bside_311.entity.AlcoholType;
+import com.bside.bside_311.entity.Attach;
 import com.bside.bside_311.entity.AttachType;
 import com.bside.bside_311.entity.Tag;
 import com.bside.bside_311.entity.YesOrNo;
@@ -26,10 +28,13 @@ import com.bside.bside_311.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -184,6 +189,31 @@ public class AlcoholService {
         alcohols.stream().map(alcohol -> getAlcoholDetail(alcohol.getId(), null))
                 .collect(Collectors.toList());
     return GetAlcoholResponseDto.of(alcoholResponseDtos, alcoholsCount);
+  }
+
+  public  Page<AlcoholResponseDto> getAlcoholV2(Pageable pageable, String searchKeyword) {
+    // 술 종류 fetch join
+    Page<Alcohol> alcohols = alcoholRepository.searchAlcoholPage(AlcoholSearchCondition.builder()
+                                                                                       .searchKeyword(
+                                                                                          searchKeyword)
+                                                                                       .build(),
+                                                                 pageable);
+    List<Long> alcoholNos = alcohols.stream().map(Alcohol::getId).toList();
+    List<Attach> alcoholAttachList =
+        attachRepository.findByRefNoInAndAttachTypeIsAndDelYnIs(alcoholNos, AttachType.ALCOHOL,
+            YesOrNo.N);
+    Map<Long, List<AttachDto>> aToAMap = new HashMap<>();
+    for (Attach attach : alcoholAttachList) {
+      if (!aToAMap.containsKey(attach.getRefNo())) {
+        aToAMap.put(attach.getRefNo(), new ArrayList<>());
+      }
+      List<AttachDto> attachDtos = aToAMap.get(attach.getRefNo());
+      attachDtos.add(AttachDto.of(attach));
+    }
+    return alcohols.map(alcohol -> {
+      List<AttachDto> attachDtos = aToAMap.getOrDefault(alcohol.getId(), new ArrayList<>());
+      return AlcoholResponseDto.of(alcohol, attachDtos);
+    });
   }
 
   public GetAlcoholTypesResponseDto getAlcoholTypes() {

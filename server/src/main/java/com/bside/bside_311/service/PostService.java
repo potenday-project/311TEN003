@@ -190,8 +190,8 @@ public class PostService {
     return getPostDetail(postNo, null);
   }
 
-  public GetPostResponseDto getPostsOld(Long page, Long size, String orderColumn, String orderType,
-                                        String searchKeyword, List<Long> searchUserNoList) {
+  public GetPostResponseDto getPosts(Long page, Long size, String orderColumn, String orderType,
+                                     String searchKeyword, List<Long> searchUserNoList) {
     GetPostVo getPostVo = GetPostVo.builder()
                                    .page(page)
                                    .offset(page * size)
@@ -211,8 +211,8 @@ public class PostService {
     return GetPostResponseDto.of(list, totalCount);
   }
 
-  public Page<PostResponseDto> getPosts(Pageable pageable,
-                                        String searchKeyword, List<Long> searchUserNoList) {
+  public Page<PostResponseDto> getPostsV2(Pageable pageable,
+                                          String searchKeyword, List<Long> searchUserNoList) {
     Page<Post> posts =
         postRepository.searchPageSimple(PostSearchCondition.builder().searchKeyword(searchKeyword)
                                                            .searchUserNoList(searchUserNoList)

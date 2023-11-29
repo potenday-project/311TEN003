@@ -14,6 +14,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -86,6 +88,15 @@ public class AlcoholController {
       @Schema(description = "알코올 키워드", example = "키워드") String searchKeyword) {
     log.info(">>> AlcoholController.getAlcohol");
     return alcoholService.getAlcohol(page, size, orderColumn, orderType, searchKeyword);
+  }
+  @Operation(summary = "[o]술 목록 조회v2(성능 최적화)", description = "술 조회 API")
+  @GetMapping("/v2")
+  public Page<AlcoholResponseDto> getAlcoholV2(
+//      @Schema(description = "페이지 번호와 사이즈.정렬 까지.(0부터) ex)[1]page=0&size=5&sort=id,desc [2]page=1&size=15&sort=id,desc&sort=content,asc", example = "0")
+          Pageable pageable,
+      @Schema(description = "알코올 키워드", example = "키워드") String searchKeyword) {
+    log.info(">>> AlcoholController.getAlcohol");
+    return alcoholService.getAlcoholV2(pageable, searchKeyword);
   }
 
   @Operation(summary = "[o]술 상세 조회", description = "술 상세 조회 API")
