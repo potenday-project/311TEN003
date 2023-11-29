@@ -1,5 +1,6 @@
 "use client";
 import CustomAppbar from "@/components/CustomAppbar";
+import UserInfoEditingDrawer from "@/components/user/info/drawer/UserInfoEditingDrawer";
 import { SETTING_PAGE } from "@/const/clientPath";
 import { useMyInfoQuery } from "@/queries/auth/useMyInfoQuery";
 import UserPageContext from "@/store/user/UserPageContext";
@@ -24,8 +25,8 @@ const UserInfoPageLayout = ({ children, params }: Props) => {
   return (
     <UserPageContext.Provider value={{ isEditing, setIsEditing }}>
       <CustomAppbar
-        buttonComponent={isMyProfile ? "설정" : undefined}
-        onClickButton={() => {
+        appendButton={isMyProfile ? "설정" : undefined}
+        onClickAppend={() => {
           if (!isMyProfile) {
             return;
           }
@@ -42,6 +43,7 @@ const UserInfoPageLayout = ({ children, params }: Props) => {
             p: 2,
           }}
         >
+          <UserInfoEditingDrawer />
           {children}
         </Paper>
       </Container>
