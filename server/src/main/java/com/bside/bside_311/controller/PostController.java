@@ -116,7 +116,7 @@ public class PostController {
         searchUserNoList);
   }
 
-  @Operation(summary = "[o]게시글 목록 조회(v2", description = "게시글 조회 API")
+  @Operation(summary = "[o]게시글 목록 조회(v2)", description = "게시글 조회 API Page, size 사용법. <br> ex1) /posts/v2?page=0&size=10&sort=id,desc <br> ex2) /posts/v2?page=0&size=10&sort=id,desc&sort=content,asc&searchKeyword=키워드&searchUserNos=1,2,4")
   @GetMapping("/v2")
   public Page<PostResponseDto> getPostsV2(
 //                                        @Schema(description = "페이지 번호와 사이즈.정렬 까지.(0부터) ex)[1]page=0&size=5&sort=id,desc [2]page=1&size=15&sort=id,desc&sort=content,asc", example = "0")

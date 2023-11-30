@@ -218,7 +218,9 @@ public class PostService {
                                                            .searchUserNoList(searchUserNoList)
                                                            .build(), pageable);
     List<Long> postNos = posts.stream().map(Post::getId).toList();
-    List<GetPostsToOneMvo> postsToOneList = postMybatisRepository.getPostsToOne(postNos);
+    List<GetPostsToOneMvo> postsToOneList =
+        CollectionUtils.isNotEmpty(postNos) ? postMybatisRepository.getPostsToOne(postNos) :
+            List.of();
     Map<Long, GetPostsToOneMvo> postsToOneMap = new HashMap<>();
     for (GetPostsToOneMvo getPostsToOneMvo : postsToOneList) {
       postsToOneMap.put(getPostsToOneMvo.getPostNo(), getPostsToOneMvo);
