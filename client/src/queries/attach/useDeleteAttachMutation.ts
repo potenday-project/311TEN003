@@ -1,5 +1,5 @@
 import { REMOVE_FILE } from "@/const/serverPath";
-import { axiosPrivate } from "@/libs/axios";
+import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import { useErrorHandler } from "@/utils/errorHandler";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -20,6 +20,7 @@ const useDeleteAttachMutation = () => {
 };
 
 export const deleteAttachMutationFn = async (attachNo: string) => {
+  const axiosPrivate = useAxiosPrivate();
   const { data } = await axiosPrivate.delete(REMOVE_FILE(attachNo));
   return data;
 };

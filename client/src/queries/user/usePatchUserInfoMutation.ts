@@ -1,10 +1,10 @@
 import { PATCH_USER_INFO } from "@/const/serverPath";
-import { axiosPrivate } from "@/libs/axios";
 import { UserInfoInterface } from "@/types/user/userInfoInterface";
 import { useErrorHandler } from "@/utils/errorHandler";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { UserInfoQueryKey } from "./useUserInfoQuery";
 import { useMyInfoQuery } from "../auth/useMyInfoQuery";
+import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 
 const usePatchUserInfoMutation = () => {
   const errorHandler = useErrorHandler();
@@ -26,6 +26,7 @@ const usePatchUserInfoMutation = () => {
 export const patchUserInfoMutateFn = async (
   info: Partial<UserInfoInterface>
 ) => {
+  const axiosPrivate = useAxiosPrivate();
   const { data } = await axiosPrivate.patch(PATCH_USER_INFO, { ...info });
   return data;
 };

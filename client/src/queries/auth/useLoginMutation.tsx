@@ -26,7 +26,6 @@ const useLoginMutation = () => {
     onSuccess: async ({ token }) => {
       localStorage?.setItem("accessToken", token);
       queryClient.invalidateQueries({ queryKey: MyInfoQueryKeys.all });
-      router.refresh();
       router.push(HOME);
     },
     onError: (error) => errorHandler(error),

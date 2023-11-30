@@ -1,8 +1,8 @@
 import { REMOVE_POST } from "@/const/serverPath";
-import { axiosPrivate } from "@/libs/axios";
 import { useMutation } from "@tanstack/react-query";
 import { useInvalidatePostList } from "./useGetPostListInfiniteQuery";
 import { useErrorHandler } from "@/utils/errorHandler";
+import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 
 export const useDeletePostMutation = () => {
   const invalidatePreviousData = useInvalidatePostList();
@@ -18,5 +18,7 @@ export const useDeletePostMutation = () => {
   });
 };
 
-export const deletePostFn = (pk: number) =>
-  axiosPrivate.delete(REMOVE_POST(pk));
+export const deletePostFn = (pk: number) => {
+  const axiosPrivate = useAxiosPrivate();
+  return axiosPrivate.delete(REMOVE_POST(pk));
+};

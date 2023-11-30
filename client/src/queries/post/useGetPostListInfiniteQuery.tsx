@@ -1,9 +1,9 @@
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "@/libs/axios";
 import { PostInterface } from "@/types/post/PostInterface";
 import { AxiosRequestConfig } from "axios";
 import getTokenFromLocalStorage from "@/utils/getTokenFromLocalStorage";
 import { POST_LIST } from "@/const/serverPath";
+import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 
 export interface UseGetPostListQueryInterface extends GetPostListOptions {
   initialData?: AugmentedGetPostListResponse;
@@ -81,7 +81,8 @@ export const getPostListQueryFn = async ({
 }: GetPostListOptions & {
   headers?: AxiosRequestConfig<any>["headers"];
 }): Promise<AugmentedGetPostListResponse> => {
-  const { data } = await axios.get<GetPostListResponse>(POST_LIST, {
+  const axiosPrivate = useAxiosPrivate()
+  const { data } = await axiosPrivate.get<GetPostListResponse>(POST_LIST, {
     baseURL: process.env.NEXT_PUBLIC_BASE_URL,
     params: { page, size, searchKeyword, searchUserNos },
     headers,
