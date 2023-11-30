@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { axiosPrivate } from "@/libs/axios";
 import { ATTACH_FILE, ATTACH_FILE_ResourceType } from "@/const/serverPath";
 import { useErrorHandler } from "./../../utils/errorHandler";
 import { getPostListInfiniteQueryKey } from "./../post/useGetPostListInfiniteQuery";
 import { postDetailQueryKey } from "../post/useGetPostDetailQuery";
 import { MyInfoQueryKeys } from "../auth/useMyInfoQuery";
 import { UserInfoQueryKey } from "../user/useUserInfoQuery";
+import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 
 export const useNewAttachMutation = () => {
   const errorHandler = useErrorHandler();
@@ -59,6 +59,7 @@ export const postImageFn = async (
   file: File,
   { type, pk }: NewAttatchRequestUrl
 ) => {
+  const axiosPrivate = useAxiosPrivate()
   const formData = new FormData();
   formData.append("image", file);
 

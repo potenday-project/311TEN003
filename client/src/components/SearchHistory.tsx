@@ -40,10 +40,11 @@ const SearchHistory = ({ storageKey, onClick }: SearchHistoryProps) => {
           전체 삭제
         </Button>
       </Stack>
-      <Stack>
+      <Stack component="ul">
         {searchHistory.map((keyword) => (
           <Stack
             key={keyword}
+            component="li"
             onClick={onClick}
             direction="row"
             justifyContent="space-between"

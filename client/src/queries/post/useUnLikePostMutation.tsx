@@ -102,6 +102,3 @@ export const useLikePostMutationFn = async (id: PostInterface["postNo"]) => {
 };
 
 export default useLikePostMutation;
-function postDetailUpdator(arg0: string) {
-  throw new Error("Function not implemented.");
-}
