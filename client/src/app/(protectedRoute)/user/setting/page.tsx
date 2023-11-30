@@ -12,11 +12,11 @@ import {
   styled,
 } from "@mui/material";
 import PostSeeMoreIcon from "@/assets/icons/PostSeeMoreIcon.svg";
-import { axiosBff } from "@/libs/axios";
-import { LOGOUT_BFF } from "@/const/serverPath";
+import useLogoutMutation from "@/queries/auth/useLogoutMutation";
 
 const SettingPage = () => {
   const { data: myInfo } = useMyInfoQuery();
+  const { mutate: logoutHandler } = useLogoutMutation();
 
   return (
     <>
@@ -67,16 +67,7 @@ const SettingPage = () => {
       </PaddingPaper>
       <PaddingPaper>
         <Typography variant="subtitle2">계정</Typography>
-        <Button
-          color="secondary"
-          onClick={() => {
-            // FIXME 추후 수정해야하는 로그아웃로직
-            localStorage.removeItem("accessToken");
-            axiosBff.post(LOGOUT_BFF).then((res) => {
-              location.reload()
-            });
-          }}
-        >
+        <Button color="secondary" onClick={() => logoutHandler()}>
           로그아웃
         </Button>
       </PaddingPaper>
