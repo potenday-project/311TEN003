@@ -27,6 +27,3 @@ spring:
 logging.level:
   org.hibernate.SQL: debug
 #  org.hibernate.orm.jdbc.bind: trace
-
-cloudinary:
-  url: cloudinary://884757229436341:Y9RC2dqN7SDMC3zOqs4qtDICMDo@drezugbxz
