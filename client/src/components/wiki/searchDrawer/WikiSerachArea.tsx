@@ -1,19 +1,24 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import useDebounce from "@/hooks/useDebounce";
 import InputSearchIcon from "@/assets/icons/InputSearchIcon.svg";
 import { Stack, TextField } from "@mui/material";
 import useGetAlcoholListQuery from "@/queries/alcohol/useGetAlcoholListQuery";
 import AlcoholList from "@/components/wiki/AlcoholList";
-import AlcoholListSkeleton from "../AlcoholListSkeleton";
 import SearchHistory from "@/components/SearchHistory";
 import { ALCOHOL_SEARCH_HISTORY } from "@/const/localstorageKey";
+import WikiPageContext from "@/store/wiki/WikiPageContext";
+import usePushToWikiDetail from "@/hooks/wiki/usePushToWikiDetail";
 
 const WikiSerachArea = () => {
+  const { setIsSearching } = useContext(WikiPageContext);
+
   const [searchKeyword, setSearchKeyword] = useState("");
   const debouncedValue = useDebounce(searchKeyword, 300);
-  const { data: alcohols, isSuccess } = useGetAlcoholListQuery(debouncedValue);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const { data: alcohols } = useGetAlcoholListQuery(debouncedValue);
 
+  const onClickElementHandler = usePushToWikiDetail();
+
+  const inputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
@@ -37,17 +42,17 @@ const WikiSerachArea = () => {
       <Stack gap={1} height={"232px"}>
         {searchKeyword ? (
           // 입력중인 경우
-          <>
-            {isSuccess ? (
-              <AlcoholList data={alcohols.list} />
-            ) : (
-              <AlcoholListSkeleton />
-            )}
-          </>
+          <AlcoholList
+            data={alcohols?.list}
+            onClickElement={(alcoholData) => {
+              onClickElementHandler(alcoholData);
+              setIsSearching(false);
+            }}
+          />
         ) : (
           // 입력이 없는경우 검색기록 표출
           <SearchHistory
-            onClick={() => console.log("눌림")}
+            onClick={(keyword) => setSearchKeyword(keyword)}
             storageKey={ALCOHOL_SEARCH_HISTORY}
           />
         )}

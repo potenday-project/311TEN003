@@ -2,10 +2,8 @@ import { Box, BoxProps, Chip, IconButton, Typography } from "@mui/material";
 import PostSeeMoreIcon from "@/assets/icons/PostSeeMoreIcon.svg";
 import { AlcoholDetailInterface } from "@/types/alcohol/AlcoholInterface";
 import XIcon from "@/assets/icons/XIcon.svg";
-import { useRouter } from "next/navigation";
-import { WIKI_DETAIL } from "@/const/clientPath";
 
-interface AlcoholNameTagInterface extends BoxProps {
+export interface AlcoholNameTagInterface extends BoxProps {
   alcoholName: AlcoholDetailInterface["alcoholName"];
   alcoholType: AlcoholDetailInterface["alcoholType"];
   alcoholNo: AlcoholDetailInterface["alcoholNo"];
@@ -21,7 +19,6 @@ const AlcoholNameTag = ({
   onClickRemove,
   ...others
 }: AlcoholNameTagInterface) => {
-  const router = useRouter();
   return (
     <Box sx={WrapperStyle} {...others}>
       <Box
@@ -51,10 +48,7 @@ const AlcoholNameTag = ({
           <XIcon />
         </IconButton>
       ) : (
-        <IconButton
-          sx={{ p: 0 }}
-          onClick={() => router.push(WIKI_DETAIL(String(alcoholNo)))}
-        >
+        <IconButton sx={{ p: 0 }}>
           <PostSeeMoreIcon style={{ margin: "3px 0" }} />
         </IconButton>
       )}
