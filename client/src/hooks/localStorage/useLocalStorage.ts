@@ -1,3 +1,4 @@
+'use client'
 import { useCallback, useEffect, useState } from "react";
 
 const useLocalStorage = <T>(storageKey: string) => {
@@ -14,6 +15,9 @@ const useLocalStorage = <T>(storageKey: string) => {
    * 로컬 스토리지 아이템을 파싱해서 리턴하는 함수
    */
   const getItems = useCallback((): T | null => {
+    if(typeof window ==='undefined'){
+      return null
+    }
     return JSON.parse(localStorage.getItem(storageKey) || "null");
   }, [storageKey]);
 
