@@ -6,7 +6,7 @@ import SectionHeading from "@/components/SectionHeading";
 import DevelopingNoticeImgae from "@/assets/images/developing.png";
 import Image from "next/image";
 
-const WikiPage = async () => {
+const WikiPage = () => {
   return (
     <>
       <SectionHeading
