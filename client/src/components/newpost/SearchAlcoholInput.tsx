@@ -67,6 +67,7 @@ const SearchAlcoholInput = ({ setAlcoholNo }: SearchAlcoholInputInterface) => {
         onBlur={() => setIsSearchingAlCohol(false)}
         autoComplete="off"
       />
+      {/* FIXME List 컴포넌트로 분리 */}
       {isSearchingAlcohol && (
         <Box sx={WrapperStyle}>
           <List sx={ListStyle}>
