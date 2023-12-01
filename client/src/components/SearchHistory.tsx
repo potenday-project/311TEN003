@@ -1,34 +1,19 @@
 import { Button, Stack, StackProps, Typography } from "@mui/material";
-import { useCallback, useState } from "react";
 import XIcon from "@/assets/icons/XIcon.svg";
+import { SearchHistoryKeyType } from "@/types/LocalStorageKey";
+import useSearchHistory from "@/hooks/searchHistory/useSearchHistory";
 
 interface SearchHistoryProps extends Omit<StackProps, "onClick"> {
-  storageKey: string;
-  onClick: () => void;
+  storageKey: SearchHistoryKeyType;
+  onClick: (keyword: string) => void;
 }
 
 const SearchHistory = ({ storageKey, onClick }: SearchHistoryProps) => {
-  const getItems = useCallback(() => {
-    return JSON.parse(localStorage.getItem(storageKey) ?? "[]") as string[];
-  }, [storageKey]);
-
-  const [searchHistory, setSearchHistory] = useState<string[]>(getItems());
-
-  const removeAll = useCallback(() => {
-    localStorage.setItem(storageKey, "[]");
-    setSearchHistory(getItems());
-  }, [storageKey]);
-
-  const removeByKeyword = useCallback(
-    (keyword: string) => {
-      const filteredHistory = searchHistory.filter(
-        (prevKeyword) => prevKeyword !== keyword
-      );
-      localStorage.setItem(storageKey, JSON.stringify(filteredHistory));
-      setSearchHistory(getItems());
-    },
-    [storageKey]
-  );
+  const {
+    state: searchHistory,
+    removeAll,
+    removeByKeyword,
+  } = useSearchHistory(storageKey);
 
   return searchHistory.length > 0 ? (
     <>
@@ -45,7 +30,7 @@ const SearchHistory = ({ storageKey, onClick }: SearchHistoryProps) => {
           <Stack
             key={keyword}
             component="li"
-            onClick={onClick}
+            onClick={() => onClick(keyword)}
             direction="row"
             justifyContent="space-between"
             alignItems="center"
