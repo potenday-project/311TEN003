@@ -29,6 +29,7 @@ const ModalWrapper = ({ children, disableBox }: ModalInterface) => {
         alignItems: "center",
         justifyContent: "center",
         display: "flex",
+        position:'absolute'
       }}
     >
       {
@@ -39,6 +40,7 @@ const ModalWrapper = ({ children, disableBox }: ModalInterface) => {
             p: disableBox ? 0 : 4,
             maxWidth: "90%",
             maxHeight: "90%",
+            overflowY:'auto'
           }}
         >
           <>{children}</>

@@ -5,8 +5,15 @@ import HomeIcon from "~/assets/icons/HomeIcon.svg";
 import SearchIcon from "~/assets/icons/SearchIcon.svg";
 import PostIcon from "~/assets/icons/PostIcon.svg";
 import BeverageIcon from "~/assets/icons/BeverageIcon.svg";
+import { useGlobalNavbarVisibility } from "@/store/useGlobalNavbarVisibility";
 
-import HOME, { MY_PROFILE, NEW_POST, SEARCH, SIGNIN, WIKI } from "@/const/clientPath";
+import HOME, {
+  MY_PROFILE,
+  NEW_POST,
+  SEARCH,
+  SIGNIN,
+  WIKI,
+} from "@/const/clientPath";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import NavbarUserImage from "@/components/Navigation/NavbarUserImage";
@@ -16,6 +23,9 @@ import { useMyInfoQuery } from "@/queries/auth/useMyInfoQuery";
 const NavigationBar = () => {
   const path = usePathname();
   const { data: userInfo } = useMyInfoQuery();
+
+  const isVisible = useGlobalNavbarVisibility(({ isVisible }) => isVisible);
+
   const NavbarData = useMemo(
     () => [
       {
@@ -45,35 +55,32 @@ const NavigationBar = () => {
     ],
     [userInfo]
   );
-  return (
-    <Paper sx={WrapperStyle} elevation={0}>
-      <BottomNavigation value={path} showLabels sx={BtnStyle}>
-        {NavbarData.map(({ label, href, iconComponent, ...others }) => {
-          return (
-            <BottomNavigationAction
-              icon={iconComponent as any}
-              key={String(label)}
-              component={href ? Link : "button"}
-              href={href}
-              value={href}
-              label={label}
-              {...others}
-            />
-          );
-        })}
-      </BottomNavigation>
-    </Paper>
+  return isVisible ? (
+    <BottomNavigation value={path} showLabels sx={BtnStyle}>
+      {NavbarData.map(({ label, href, iconComponent, ...others }) => {
+        return (
+          <BottomNavigationAction
+            icon={iconComponent as any}
+            key={String(label)}
+            component={href ? Link : "button"}
+            href={href}
+            value={href}
+            label={label}
+            {...others}
+          />
+        );
+      })}
+    </BottomNavigation>
+  ) : (
+    <></>
   );
 };
 
-const WrapperStyle = {
+const BtnStyle = {
   position: "fixed",
   bottom: 0,
   left: 0,
   right: 0,
-  borderRadius: 0,
-};
-const BtnStyle = {
   borderRadius: "12px 12px 0 0",
   border: "1px solid",
   borderBottom: "none",

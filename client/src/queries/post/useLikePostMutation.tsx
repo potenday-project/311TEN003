@@ -13,7 +13,7 @@ import {
 import getTokenFromLocalStorage from "@/utils/getTokenFromLocalStorage";
 import { POST_LIKE_URL } from "@/const/serverPath";
 import { useErrorHandler } from "@/utils/errorHandler";
-import { PostcardContextInterface } from "@/store/PostCardContext";
+import { PostcardContextInterface } from "@/store/post/PostCardContext";
 import { useOptimisticUpdatePostList } from "@/queries/post/updator/useOptimisticUpdatePostList";
 import { useOptimisticUpdatePostDetail } from "./updator/useOptimisticUpdatePostDetail";
 import { postDetailQueryKey } from "./useGetPostDetailQuery";

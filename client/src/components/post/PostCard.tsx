@@ -18,7 +18,6 @@ import { useContext, useMemo } from "react";
 import ShareIcon from "@/assets/icons/ShareIcon.svg";
 import LikeIcon from "@/assets/icons/LikeIcon.svg";
 import CommentIcon from "@/assets/icons/CommentIcon.svg";
-import QuoteIcon from "@/assets/icons/QuoteIcon.svg";
 import AlcoholNameTag from "@/components/wiki/AlcoholNameTag";
 import dayjs from "dayjs";
 import useLikePostMutation from "@/queries/post/useLikePostMutation";
@@ -30,7 +29,7 @@ import Link from "next/link";
 import { USER_PAGE } from "@/const/clientPath";
 import { useMyInfoQuery } from "@/queries/auth/useMyInfoQuery";
 import PostCardOptionDropdown from "./PostCardOptionDropdown";
-import { postcardContext } from "@/store/PostCardContext";
+import { postcardContext } from "@/store/post/PostCardContext";
 
 const PostCard = ({
   postAttachUrls,
@@ -47,7 +46,6 @@ const PostCard = ({
   alcoholType,
   commentCount,
   likedByMe,
-  quoteCount,
   alcoholNo,
 }: PostInterface) => {
   const openPostDetailPage = useOpenPostDetailPage();
@@ -162,10 +160,6 @@ const PostCard = ({
               <LikeIcon />
             </Box>
             <Typography variant="label">{likeCount ?? 0}</Typography>
-          </ButtonBase>
-          <ButtonBase data-testid="QuoteBtn" aria-label="Quote">
-            <QuoteIcon />
-            <Typography variant="label">{quoteCount ?? 0}</Typography>
           </ButtonBase>
           <ButtonBase data-testid="shareBtn" aria-label="share">
             <ShareIcon />

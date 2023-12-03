@@ -6,12 +6,13 @@ import useGetPostListInfiniteQuery, {
 } from "@/queries/post/useGetPostListInfiniteQuery";
 import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
-import { Box, CircularProgress, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import { useMemo } from "react";
 import Image from "next/image";
 import NoResult from "@/assets/images/noResult.png";
 import getTokenFromLocalStorage from "@/utils/getTokenFromLocalStorage";
-import { postcardContext } from "@/store/PostCardContext";
+import { postcardContext } from "@/store/post/PostCardContext";
+import PostCardSkeleton from "./PostCardSkeleton";
 
 function PostCardList(props: UseGetPostListQueryInterface) {
   const {
@@ -28,7 +29,7 @@ function PostCardList(props: UseGetPostListQueryInterface) {
 
   const { searchKeyword, searchUserNos } = props;
 
-  const { ref, inView } = useInView({ threshold: 0.9 });
+  const { ref, inView } = useInView();
   useEffect(() => {
     if (hasNextPage && inView) fetchNextPage();
   }, [inView, hasNextPage]);
@@ -55,9 +56,7 @@ function PostCardList(props: UseGetPostListQueryInterface) {
         )}
         {/* 로딩창 */}
         {isFetchingNextPage || isLoading ? (
-          <Box sx={{ width: "100%", textAlign: "center", py: 1 }}>
-            <CircularProgress />
-          </Box>
+            <PostCardSkeleton />
         ) : (
           // 인터섹션옵저버
           <div style={{ height: 60 }} ref={ref}></div>
