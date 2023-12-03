@@ -47,10 +47,10 @@ const useNewPostCommentMutation = (id?: string) => {
       );
       return { querySnapShot };
     },
-    onError: (err, queryFnParams, context) => {
+    onError: (err, _queryFnParams, context) => {
       errorHandler(err);
       queryClient.setQueryData(
-        commentQueryKey.byId(queryFnParams),
+        commentQueryKey.byId(id),
         context?.querySnapShot
       );
     },
