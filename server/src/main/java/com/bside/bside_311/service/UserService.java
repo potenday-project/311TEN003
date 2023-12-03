@@ -76,7 +76,8 @@ public class UserService {
   public void updateUser(Long userNo, UserUpdateRequestDto userUpdateRequestDto) {
     User user = userRepository.findByIdAndDelYnIs(userNo, YesOrNo.N)
                               .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
-    resourceChangeableCheckByThisRequestToken(user);
+    // resourceChangeableCheckByThisRequestToken(user);
+    // 리소스 변경 예외. 유저 생성시에는  createdBy정보가 없음.
     if (userUpdateRequestDto != null) {
       if (userUpdateRequestDto.getIntroduction() != null) {
         user.setIntroduction(userUpdateRequestDto.getIntroduction());
@@ -125,7 +126,8 @@ public class UserService {
   public void withdraw(Long myUserNo) {
     User user = userRepository.findByIdAndDelYnIs(myUserNo, YesOrNo.N)
                               .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
-    resourceChangeableCheckByThisRequestToken(user);
+    // resourceChangeableCheckByThisRequestToken(user);
+    // 리소스 변경 예외. 유저 생성시에는  createdBy정보가 없음.
     user.setDelYn(YesOrNo.Y);
     userRepository.save(user);
   }
@@ -138,7 +140,8 @@ public class UserService {
     }
     User me = userRepository.findByIdAndDelYnIs(myUserNo, YesOrNo.N)
                             .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
-    resourceChangeableCheckByThisRequestToken(me);
+    //    resourceChangeableCheckByThisRequestToken(me);
+    // 리소스 변경 예외. 유저 생성시에는  createdBy정보가 없음.
     if (!passwordEncoder.matches(changePasswordRequestDto.getPassword(), me.getPassword())) {
       throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
     }
