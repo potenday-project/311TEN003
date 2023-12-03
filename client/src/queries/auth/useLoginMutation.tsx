@@ -4,7 +4,6 @@ import { SigninRequirement } from "@/types/auth/signinRequirement";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { MyInfoQueryKeys } from "./useMyInfoQuery";
 import { useRouter } from "next/navigation";
-import HOME from "@/const/clientPath";
 import { useErrorHandler } from "@/utils/errorHandler";
 import { useGlobalLoadingStore } from "@/store/useGlobalLoadingStore";
 
@@ -26,7 +25,7 @@ const useLoginMutation = () => {
     onSuccess: async ({ token }) => {
       localStorage?.setItem("accessToken", token);
       queryClient.invalidateQueries({ queryKey: MyInfoQueryKeys.all });
-      router.push(HOME);
+      router.refresh();
     },
     onError: (error) => errorHandler(error),
     onSettled: () => {

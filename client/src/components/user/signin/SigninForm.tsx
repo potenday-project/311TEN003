@@ -1,23 +1,26 @@
 "use client";
 import useLoginMutation from "@/queries/auth/useLoginMutation";
 import { Box, Button, TextField, Typography } from "@mui/material";
-
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import HOME from "@/const/clientPath";
 
 const SigninForm = () => {
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
-  const { mutate: loginMutation, isError } = useLoginMutation();
+  const { mutateAsync: loginMutation, isError } = useLoginMutation();
+  const router = useRouter();
 
   return (
     <Box
       component="form"
-      onSubmit={(event) => {
+      onSubmit={async (event) => {
         event.preventDefault();
         if (!id || !password) {
           return;
         }
-        loginMutation({ id, password });
+        await loginMutation({ id, password });
+        router.push(HOME)
       }}
       sx={{ mt: 1 }}
     >
