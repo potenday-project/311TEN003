@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 
 export default function Layout({ children }: any) {
   const pathname = usePathname();
-  const allowedPath = ["/post/", NEW_POST, SIGNIN];
+  const allowedPath = [NEW_POST, SIGNIN];
 
   return allowedPath.some((path) => pathname.startsWith(path))
     ? children
