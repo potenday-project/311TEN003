@@ -13,10 +13,13 @@ import {
 } from "@mui/material";
 import PostSeeMoreIcon from "@/assets/icons/PostSeeMoreIcon.svg";
 import useLogoutMutation from "@/queries/auth/useLogoutMutation";
+import { useRouter } from "next/navigation";
+import HOME from "@/const/clientPath";
 
 const SettingPage = () => {
   const { data: myInfo } = useMyInfoQuery();
-  const { mutate: logoutHandler } = useLogoutMutation();
+  const { mutateAsync: logoutHandler } = useLogoutMutation();
+  const router = useRouter();
 
   return (
     <>
@@ -67,7 +70,13 @@ const SettingPage = () => {
       </PaddingPaper>
       <PaddingPaper>
         <Typography variant="subtitle2">계정</Typography>
-        <Button color="secondary" onClick={() => logoutHandler()}>
+        <Button
+          color="secondary"
+          onClick={async() => {
+            await logoutHandler();
+            router.push(HOME);
+          }}
+        >
           로그아웃
         </Button>
       </PaddingPaper>
