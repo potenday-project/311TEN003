@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import axios from "@/libs/axios";
 import { PostInterface } from "@/types/post/PostInterface";
 import { AxiosRequestConfig } from "axios";
@@ -10,7 +10,7 @@ interface PostdetailOption {
 }
 
 const useGetPostDetailQuery = (postId: string, options?: PostdetailOption) => {
-  return useQuery({
+  return useSuspenseQuery({
     queryKey: postDetailQueryKey.byId(postId),
     queryFn: () => getPostDetailQueryFn(postId, options?.headers),
     initialData: options?.initialData,
@@ -24,8 +24,7 @@ export const getPostDetailQueryFn = async (
   const { data } = await axios.get<PostInterface>(`/posts/${postId}`, {
     baseURL: process.env.NEXT_PUBLIC_BASE_URL,
     headers: {
-      Authorization:
-        options?.Authorization || getTokenFromLocalStorage(),
+      Authorization: options?.Authorization || getTokenFromLocalStorage(),
     },
   });
   return data;
