@@ -1,5 +1,5 @@
 import { POST_DETAIL } from "@/const/clientPath";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useCallback } from "react";
 
 /**
@@ -8,8 +8,14 @@ import { useCallback } from "react";
  */
 export const useOpenPostDetailPage = () => {
   const router = useRouter();
+  const path = usePathname();
+
   const openPostDetailPage = useCallback((userId: string, id: string) => {
-    router.push(POST_DETAIL(String(userId), String(id)));
+
+    if (path !== POST_DETAIL(String(userId), String(id))) {
+      router.push(POST_DETAIL(String(userId), String(id)));
+    }
   }, []);
+
   return openPostDetailPage;
 };
