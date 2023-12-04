@@ -101,7 +101,12 @@ const PostCard = ({
             </Typography>
           </Stack>
 
-          {isMyPost && <PostCardOptionDropdown postId={postNo} />}
+          {isMyPost && (
+            <PostCardOptionDropdown
+              postId={postNo}
+              filePk={postAttachUrls?.[0]?.attachNo}
+            />
+          )}
         </Stack>
 
         {alcoholName && (
