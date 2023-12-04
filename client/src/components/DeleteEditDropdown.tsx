@@ -2,15 +2,15 @@ import { ButtonBase, Menu, MenuItem } from "@mui/material";
 import { MoreVertOutlined } from "@mui/icons-material";
 import { useState } from "react";
 
-interface PostCommentDropdownInterface {
-  onDelete: () => void;
-  onEdit: () => void;
+interface DeleteEditDropdownInterface {
+  onDelete?: () => void;
+  onEdit?: () => void;
 }
 
-const PostCommentDropdown = ({
+const DeleteEditDropdown = ({
   onDelete,
   onEdit,
-}: PostCommentDropdownInterface) => {
+}: DeleteEditDropdownInterface) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -35,4 +35,4 @@ const PostCommentDropdown = ({
   );
 };
 
-export default PostCommentDropdown;
+export default DeleteEditDropdown;
