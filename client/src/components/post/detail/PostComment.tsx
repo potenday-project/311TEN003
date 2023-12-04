@@ -5,6 +5,7 @@ import { Stack, Avatar, Typography } from "@mui/material";
 import dayjs from "dayjs";
 import Link from "next/link";
 import PostCommentDropdown from "./PostCommentDropdown";
+import useDeleteCommentMutation from "@/queries/post/comment/useDeleteCommentMutation";
 
 type Props = {
   content: string;
@@ -13,6 +14,8 @@ type Props = {
   userPk: string;
   profileImg?: string;
   createdAt: string;
+  commentPk: string;
+  postPk: string;
 };
 
 const PostComment = ({
@@ -22,10 +25,13 @@ const PostComment = ({
   createdAt,
   profileImg,
   userPk,
+  postPk,
+  commentPk,
 }: Props) => {
   const { data: myData } = useMyInfoQuery();
 
   const isMyComment = userPk === String(myData?.userNo);
+  const { mutateAsync: onDelete } = useDeleteCommentMutation();
 
   return (
     <Stack direction="row" width="100%" gap={1.25}>
@@ -50,7 +56,17 @@ const PostComment = ({
               {dayjs(createdAt).format("MM.DD")}
             </Typography>
           </Stack>
-          {isMyComment && <PostCommentDropdown />}
+          {isMyComment && (
+            <PostCommentDropdown
+              onDelete={() => {
+                onDelete({
+                  commentPk: String(commentPk),
+                  postPk: String(postPk),
+                });
+              }}
+              onEdit={() => {}}
+            />
+          )}
         </Stack>
         <Typography>{content}</Typography>
       </Stack>
