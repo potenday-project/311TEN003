@@ -15,7 +15,7 @@ export const MY_INFO = "/user/me" as const;
 /**
  * 유저정보를 수정하는 path
  */
-export const PATCH_USER_INFO = '/user' as const
+export const PATCH_USER_INFO = "/user" as const;
 
 /**
  * 쿠키를 심어주는 로그인 BFF
@@ -33,7 +33,16 @@ export const POST_LIST = "/posts" as const;
 /**
  * 게시물 pk 를 입력받아 댓글을 조회,생성 하는 URL
  */
-export const POST_COMMENT = (pk:string) => `${POST_LIST}/${pk}/comments`
+export const POST_COMMENT = (pk: string) => `${POST_LIST}/${pk}/comments`;
+
+/**
+ * 게시글Pk와 댓글 PK를 입력받아 댓글 삭제를 요청하는 URL
+ * @param postPk
+ * @param commentPk
+ * @returns
+ */
+export const DELETE_COMMENT = (postPk: string, commentPk: string) =>
+  `${POST_LIST}/${postPk}/comments/${commentPk}`;
 
 /**
  * 게시물리스트를 받아오거나, 작성하는 Path 버전2 (Breaking Change)
@@ -70,8 +79,6 @@ export const REMOVE_FILE = (attachNo: string) => `/attach/${attachNo}` as const;
  * 알콜리스트를 받아오는 URL
  */
 export const GET_ALCOHOL_LIST = "/alcohols" as const;
-
-
 
 /**
  * 포스트의 PK를 입력받아 해당 PK의 게시글의 좋아요 취소를 요청

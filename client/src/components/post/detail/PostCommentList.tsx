@@ -22,8 +22,7 @@ const PostCommentList = ({ postNo }: Props) => {
               nickname,
               userId,
               profileImgUrls,
-            },
-            i
+            }
           ) => (
             <PostComment
               content={commentContent}
@@ -32,6 +31,8 @@ const PostCommentList = ({ postNo }: Props) => {
               profileImg={profileImgUrls?.[0]?.attachUrl}
               userId={userId}
               userPk={String(createdBy)}
+              commentPk={String(commentNo)}
+              postPk={postNo}
               key={commentNo}
             />
           )
