@@ -92,6 +92,14 @@ const theme = createTheme({
         disableElevation: true,
         variant: "contained",
       },
+      styleOverrides:{
+        contained:{
+          ':disabled':{
+            backgroundColor:'#F5F5F5',
+            color:'#8A8A8A'
+          }
+        }
+      }
     },
     MuiButtonBase: {
       styleOverrides: { root: { gap: 4, borderRadius: 8 } },
