@@ -40,7 +40,11 @@ const CustomAppbar = ({
             {prependButton}
           </AppbarButton>
         ) : (
-          <IconButton onClick={() => router.back()}>
+          <IconButton
+            onClick={(e) =>
+              onClickPrepend ? onClickPrepend(e) : router.back()
+            }
+          >
             <GoBackIcon />
           </IconButton>
         )}
@@ -67,7 +71,7 @@ const CustomAppbar = ({
 const AppbarButton = styled(Button)(() => ({
   minWidth: 40,
   fontWeight: "medium",
-  fontSize:'18px'
+  fontSize: "18px",
 }));
 
 export default memo(CustomAppbar);
