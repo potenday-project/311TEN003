@@ -5,6 +5,7 @@ import { useDeletePostMutation } from "@/queries/post/useDeletePostMutation";
 import useDeleteAttachMutation from "@/queries/attach/useDeleteAttachMutation";
 import { useRouter } from "next/navigation";
 import HOME from "@/const/clientPath";
+import DeleteEditDropdown from "../DeleteEditDropdown";
 
 type PostCardOptionDropdownProps = {
   postId: number;
@@ -15,13 +16,7 @@ const PostCardOptionDropdown = ({
   postId,
   filePk,
 }: PostCardOptionDropdownProps) => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
   const router = useRouter();
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
   const { mutateAsync: deletePost } = useDeletePostMutation();
   const { mutateAsync: deleteFile } = useDeleteAttachMutation();
 
@@ -33,20 +28,7 @@ const PostCardOptionDropdown = ({
     }
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-  return (
-    <>
-      <ButtonBase aria-label="settings" sx={{ p: 0 }} onClick={handleClick}>
-        <MoreVertOutlined />
-      </ButtonBase>
-      <Menu open={open} anchorEl={anchorEl} onClose={handleClose}>
-        <MenuItem onClick={deleteHandler}>삭제</MenuItem>
-        <MenuItem>수정</MenuItem>
-      </Menu>
-    </>
-  );
+  return <DeleteEditDropdown onDelete={deleteHandler} />;
 };
 
 export default PostCardOptionDropdown;

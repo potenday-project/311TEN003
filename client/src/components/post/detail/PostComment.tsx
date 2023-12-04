@@ -1,10 +1,10 @@
 import UserAvatar from "@/components/user/info/UserAvatar";
 import { USER_PAGE } from "@/const/clientPath";
 import { useMyInfoQuery } from "@/queries/auth/useMyInfoQuery";
-import { Stack, Avatar, Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import dayjs from "dayjs";
 import Link from "next/link";
-import PostCommentDropdown from "./PostCommentDropdown";
+import DeleteEditDropdown from "@/components/DeleteEditDropdown";
 import useDeleteCommentMutation from "@/queries/post/comment/useDeleteCommentMutation";
 
 type Props = {
@@ -31,7 +31,7 @@ const PostComment = ({
   const { data: myData } = useMyInfoQuery();
 
   const isMyComment = userPk === String(myData?.userNo);
-  const { mutateAsync: onDelete } = useDeleteCommentMutation();
+  const { mutateAsync: deleteHandler } = useDeleteCommentMutation();
 
   return (
     <Stack direction="row" width="100%" gap={1.25}>
@@ -57,14 +57,13 @@ const PostComment = ({
             </Typography>
           </Stack>
           {isMyComment && (
-            <PostCommentDropdown
+            <DeleteEditDropdown
               onDelete={() => {
-                onDelete({
+                deleteHandler({
                   commentPk: String(commentPk),
                   postPk: String(postPk),
                 });
               }}
-              onEdit={() => {}}
             />
           )}
         </Stack>

@@ -26,10 +26,13 @@ import "../newpost/quill.mention.css";
 import { sanitize } from "isomorphic-dompurify";
 import UserAvatar from "../user/info/UserAvatar";
 import Link from "next/link";
-import { USER_PAGE } from "@/const/clientPath";
+import HOME, { USER_PAGE } from "@/const/clientPath";
 import { useMyInfoQuery } from "@/queries/auth/useMyInfoQuery";
 import PostCardOptionDropdown from "./PostCardOptionDropdown";
 import { postcardContext } from "@/store/post/PostCardContext";
+import { useDeletePostMutation } from "@/queries/post/useDeletePostMutation";
+import useDeleteAttachMutation from "@/queries/attach/useDeleteAttachMutation";
+import { useRouter } from "next/navigation";
 
 const PostCard = ({
   postAttachUrls,
@@ -49,12 +52,27 @@ const PostCard = ({
   alcoholNo,
 }: PostInterface) => {
   const openPostDetailPage = useOpenPostDetailPage();
+  const router = useRouter();
+  
   const hasImage = useMemo(() => postAttachUrls.length !== 0, [postAttachUrls]);
 
   const searchContext = useContext(postcardContext);
 
   const { mutate: likeHandler } = useLikePostMutation(searchContext);
   const { mutate: unLikeHandler } = useUnLikePostMutation(searchContext);
+
+  const { mutateAsync: deletePost } = useDeletePostMutation();
+  const { mutateAsync: deleteFile } = useDeleteAttachMutation();
+
+  const deleteHandler = async () => {
+    if (confirm("정말 삭제하시겠습니까?")) {
+      await deletePost(postNo);
+      postAttachUrls?.[0].attachUrl &&
+        (await deleteFile(postAttachUrls?.[0].attachUrl));
+      router.push(HOME);
+    }
+  };
+  
   const { data: currentUser } = useMyInfoQuery();
 
   const isMyPost = useMemo(
