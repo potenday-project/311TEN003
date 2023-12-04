@@ -3,7 +3,7 @@
 import { Box, Container, Paper, Tooltip } from "@mui/material";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import HOME from "@/const/clientPath";
 import PictureIcon from "@/assets/icons/PictureIcon.svg";
 import PinIcon from "@/assets/icons/PinIcon.svg";
@@ -21,6 +21,8 @@ import CustomAppbar from "@/components/CustomAppbar";
 import SquareIconButton from "@/components/SquareIconButton";
 import PreviewImageByURL from "@/components/PreviewImageByURL";
 import NewPostTextEditor from "@/components/newpost/NewPostTextEditor";
+import useRenderAsDataUrl from "@/hooks/useRenderAsDataUrl";
+import SingleImageInput from "@/components/SingleImageInput";
 
 export default function NewpostPage() {
   const { setLoading } = useGlobalLoadingStore();
@@ -38,18 +40,9 @@ export default function NewpostPage() {
     useState<NewPostRequestAlCohol["alcoholNo"]>();
 
   const [file, setFile] = useState<File>();
-  const [fileUrl, setFileUrl] = useState<string | ArrayBuffer | null>();
+  const fileUrl = useRenderAsDataUrl(file);
 
   const [isSuccess, SetIsSuccess] = useState(false);
-
-  useEffect(() => {
-    if (!file) {
-      return;
-    }
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => setFileUrl(reader.result);
-  }, [file]);
 
   const { mutateAsync: newPostHandler } = useNewPostMutation();
   const { mutateAsync: attachFileHandler } = useNewAttachMutation();
@@ -127,17 +120,7 @@ export default function NewpostPage() {
                 component={"label"}
                 iconComponent={<PictureIcon />}
               >
-                <input
-                  name="image"
-                  style={{ display: "none" }}
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    if (e.target.files) {
-                      setFile(e.target.files[0]);
-                    }
-                  }}
-                />
+                <SingleImageInput onChange={(file) => setFile(file)} />
               </SquareIconButton>
             </Tooltip>
             {/* 위치 */}

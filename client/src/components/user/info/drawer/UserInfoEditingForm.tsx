@@ -9,13 +9,15 @@ import {
   Badge,
 } from "@mui/material";
 import CameraIcon from "@/assets/icons/badge/CameraIcon.svg";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import useNewAttachMutation from "@/queries/attach/useNewAttachMutation";
 import useDeleteAttachMutation from "@/queries/attach/useDeleteAttachMutation";
 import UserPageContext from "@/store/user/UserPageContext";
 import CustomAppbar from "@/components/CustomAppbar";
 import { useGlobalLoadingStore } from "./../../../../store/useGlobalLoadingStore";
 import usePatchUserInfoMutation from "@/queries/user/usePatchUserInfoMutation";
+import useRenderAsDataUrl from "@/hooks/useRenderAsDataUrl";
+import SingleImageInput from "@/components/SingleImageInput";
 
 const UserInfoEditingForm = () => {
   const { setIsEditing } = useContext(UserPageContext);
@@ -25,8 +27,9 @@ const UserInfoEditingForm = () => {
   const { data } = useMyInfoQuery();
 
   const [introduction, setIntroduction] = useState(data?.introduction);
+
   const [file, setFile] = useState<File>();
-  const [fileUrl, setFileUrl] = useState<string | ArrayBuffer | null>(null);
+  const fileUrl = useRenderAsDataUrl(file);
 
   const { mutateAsync: attachFile } = useNewAttachMutation();
   const { mutateAsync: removeFile } = useDeleteAttachMutation();
@@ -57,15 +60,6 @@ const UserInfoEditingForm = () => {
     setIsEditing(false);
     setLoading(false);
   };
-
-  useEffect(() => {
-    if (!file) {
-      return;
-    }
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => setFileUrl(reader.result);
-  }, [file]);
 
   return (
     <>
@@ -98,16 +92,7 @@ const UserInfoEditingForm = () => {
               sx={{ width: 80, height: 80, border: "1px solid #ccc" }}
             />
           </Badge>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => {
-              if (e.target.files) {
-                setFile(e.target.files[0]);
-              }
-            }}
-            style={{ display: "none" }}
-          />
+          <SingleImageInput onChange={(file) => setFile(file)} />
         </label>
         <Stack gap={2} width="100%">
           <Stack direction="row" width="100%">
