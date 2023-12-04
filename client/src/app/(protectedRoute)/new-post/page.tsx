@@ -48,35 +48,35 @@ export default function NewpostPage() {
   const { mutateAsync: attachFileHandler } = useNewAttachMutation();
   const { mutateAsync: deletePostHandler } = useDeletePostMutation();
 
-  const submitHandler = useCallback(async () => {
-    setLoading(true);
-    let postNo;
-    try {
-      const { postNo: res } = await newPostHandler({
-        ...formValue,
-        alcoholNo,
-      });
-      postNo = res;
-      if (file) {
-        try {
-          await attachFileHandler({
-            file,
-            url: { pk: postNo, type: "POST" },
-          });
-        } catch {
-          deletePostHandler(postNo);
-          return;
+  const submitHandler = useCallback(
+    async (formValue: NewPostRequestInterface, file?: File) => {
+      setLoading(true);
+      let postNo;
+      try {
+        const { postNo: res } = await newPostHandler(formValue);
+        postNo = res;
+        if (file) {
+          try {
+            await attachFileHandler({
+              file,
+              url: { pk: postNo, type: "POST" },
+            });
+          } catch {
+            deletePostHandler(postNo);
+            return;
+          }
         }
+        invalidatePreviousPost();
+        SetIsSuccess(true);
+        router.push(HOME);
+      } catch {
+        return;
+      } finally {
+        setLoading(false);
       }
-      invalidatePreviousPost();
-      SetIsSuccess(true);
-      router.push(HOME);
-    } catch {
-      return;
-    } finally {
-      setLoading(false);
-    }
-  }, [formValue, alcoholNo, router, file]);
+    },
+    [router]
+  );
 
   return (
     <Paper>
@@ -85,7 +85,7 @@ export default function NewpostPage() {
         title="포스팅"
         appendButton="공유"
         disableAppend={isSuccess}
-        onClickAppend={submitHandler}
+        onClickAppend={()=>submitHandler({...formValue,alcoholNo},file)}
       />
 
       <Container sx={{ p: { xs: 0, sm: 4 } }} maxWidth={"lg"}>
