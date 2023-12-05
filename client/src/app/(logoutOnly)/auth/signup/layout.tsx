@@ -20,7 +20,7 @@ const layout = ({ children }: layoutProps) => {
   return (
     <SignupPageContext.Provider value={{ formData, setFormData, disableBtn, setDisableBtn }}>
       <Container sx={{ px: { xs: 0, sm: 4 } }} maxWidth={"lg"}>
-        <Paper component={'form'}
+        <Paper
           sx={{
             display: "flex",
             flexDirection: "column",
