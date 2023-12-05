@@ -2,14 +2,10 @@
 import { InputAdornment, Paper, TextField } from "@mui/material";
 import { useCallback, useContext, useState } from "react";
 import SubmitCommentIcon from "@/assets/icons/comment/SubmitCommentIcon.svg";
-import { useGlobalNavbarVisibility } from "@/store/useGlobalNavbarVisibility";
 import PostDetailPageContext from "@/store/post/PostDetailPageContext";
 import useNewPostCommentMutation from "@/queries/post/comment/useNewPostCommentMutation";
 
 const PostCommentInput = () => {
-  const setIsShowingNavbar = useGlobalNavbarVisibility(
-    ({ setIsVisible }) => setIsVisible
-  );
   const { data: currentData } = useContext(PostDetailPageContext);
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -33,22 +29,21 @@ const PostCommentInput = () => {
         border: "1px solid",
         borderColor: "gray.secondary",
         position: "fixed",
-        bottom: isEditing ? 0 : "44px",
+        bottom: isEditing ? 0 : 56,
         borderRadius: 1.5,
         left: 0,
         right: 0,
         p: 2,
-        pb: isEditing ? 2 : 3.5,
+        zIndex: 2,
       }}
+      elevation={0}
     >
       <TextField
         fullWidth
         onFocus={() => {
-          setIsShowingNavbar(false);
           setIsEditing(true);
         }}
         onBlur={() => {
-          setIsShowingNavbar(true);
           setIsEditing(false);
         }}
         size="small"
@@ -64,7 +59,7 @@ const PostCommentInput = () => {
               position="end"
               onClick={(e) => {
                 e.stopPropagation();
-                submitHandler(inputValue)
+                submitHandler(inputValue);
               }}
               sx={{
                 color: inputValue.length > 0 ? "primary.main" : "text.disabled",

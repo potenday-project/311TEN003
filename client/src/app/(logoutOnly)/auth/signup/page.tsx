@@ -26,6 +26,7 @@ export default function SignUpPage() {
   const [doubleCheckPassword, setDoubleCheckPassword] = useState<string>("");
 
   const { mutateAsync: signupHandler } = useSignupMutation();
+  
   const submitHandler = useCallback(async (data: SignupRequirement) => {
     try {
       await signupHandler(data);
@@ -99,7 +100,7 @@ export default function SignUpPage() {
       >
         <TextField
           name="passwordcheck"
-          autoComplete="new-password"
+          autoComplete="off"
           label="비밀번호"
           type="password"
           value={doubleCheckPassword}
@@ -161,16 +162,19 @@ export default function SignUpPage() {
         variant="determinate"
         value={(currentIndex / (totalPageNum - 1)) * 100}
       />
-      {MultistepForm}
-      <FixedBottomCTA
-        onClick={() => {
-          !isLastStep ? next() : submitHandler(formData);
-        }}
-        size="large"
-        disabled={disableBtn}
-      >
-        {!isLastStep ? "다음" : "투파이아 시작하기"}
-      </FixedBottomCTA>
+      <form onSubmit={(e)=>{
+        e.preventDefault()
+        !isLastStep ? next() : submitHandler(formData);
+        }}>
+        {MultistepForm}
+        <FixedBottomCTA
+          type='submit'
+          size="large"
+          disabled={disableBtn}
+        >
+          {!isLastStep ? "다음" : "투파이아 시작하기"}
+        </FixedBottomCTA>
+      </form>
     </>
   );
 }
