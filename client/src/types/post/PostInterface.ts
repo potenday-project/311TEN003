@@ -1,3 +1,5 @@
+import AttachInterface from "../attach/attachInterface";
+
 /**
  * 서버로부터 응답받은 포스트 간략정보
  */
@@ -49,11 +51,11 @@ export interface PostInterface {
   /**
    * 유저가 설정한 프로필 이미지
    */
-  profileImgUrls: string[];
+  profileImgUrls: AttachInterface[];
   /**
    * 이미지 Href 배열
    */
-  postAttachUrls: postAttachUrlsType[];
+  postAttachUrls: AttachInterface[];
   /**
    * 사용자가 추가한 해시태그
    */
@@ -88,9 +90,3 @@ type QuoteInfoType = {
   quoteNo: number;
   quoteContent: string;
 };
-
-type postAttachUrlsType = {
-  attachNo:string;
-  attachUrl:string;
-  attachType:string
-}

@@ -84,7 +84,7 @@ const PostCard = ({
     <Card sx={{ display: "flex", gap: 2, p: 2 }}>
       <Link href={USER_PAGE(createdBy)}>
         <UserAvatar
-          src={profileImgUrls[0]}
+          src={profileImgUrls[0]?.attachUrl}
           fallback={String(id)[0].toUpperCase()}
         />
       </Link>

@@ -2,8 +2,9 @@ import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { PostInterface } from "@/types/post/PostInterface";
 import { AxiosRequestConfig } from "axios";
 import getTokenFromLocalStorage from "@/utils/getTokenFromLocalStorage";
-import { POST_LIST } from "@/const/serverPath";
+import { POST_LIST_V2 } from "@/const/serverPath";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
+import Pagenated from "@/types/Pagenated";
 
 export interface UseGetPostListQueryInterface extends GetPostListOptions {
   initialData?: AugmentedGetPostListResponse;
@@ -15,12 +16,14 @@ export const useGetPostListInfiniteQuery = ({
   size,
   searchKeyword,
   searchUserNos,
+  sort,
   headers,
 }: UseGetPostListQueryInterface) => {
   return useInfiniteQuery({
     queryKey: getPostListInfiniteQueryKey.byKeyword({
-      keyword: searchKeyword,
-      userNo: searchUserNos,
+      searchKeyword,
+      searchUserNos,
+      sort
     }),
 
     queryFn: async ({ pageParam = 0 }) =>
@@ -29,6 +32,7 @@ export const useGetPostListInfiniteQuery = ({
         size,
         searchKeyword,
         searchUserNos,
+        sort,
         headers: headers?.Authorization
           ? headers
           : { Authorization: getTokenFromLocalStorage() },
@@ -54,20 +58,14 @@ export const useGetPostListInfiniteQuery = ({
 export interface GetPostListOptions {
   page?: number;
   size?: number;
+  sort?: string;
   searchKeyword?: string;
   searchUserNos?: string;
 }
 /**
- * 실제 서버에서 응답해주는 값
- */
-export interface GetPostListResponse {
-  list: PostInterface[];
-  totalCount: number;
-}
-/**
  * 서버응답값 + 무한스크롤을 위해 증강된 값
  */
-export interface AugmentedGetPostListResponse extends GetPostListResponse {
+export interface AugmentedGetPostListResponse extends Pagenated<PostInterface> {
   currentPage: number;
   hasNextPage: boolean;
 }
@@ -77,32 +75,46 @@ export const getPostListQueryFn = async ({
   size = 10,
   searchKeyword,
   searchUserNos,
+  sort,
   headers,
 }: GetPostListOptions & {
   headers?: AxiosRequestConfig<any>["headers"];
 }): Promise<AugmentedGetPostListResponse> => {
-  const axiosPrivate = useAxiosPrivate()
-  const { data } = await axiosPrivate.get<GetPostListResponse>(POST_LIST, {
-    baseURL: process.env.NEXT_PUBLIC_BASE_URL,
-    params: { page, size, searchKeyword, searchUserNos },
-    headers,
-  });
+  const axiosPrivate = useAxiosPrivate();
+  const { data } = await axiosPrivate.get<Pagenated<PostInterface>>(
+    POST_LIST_V2,
+    {
+      baseURL: process.env.NEXT_PUBLIC_BASE_URL,
+      params: {
+        page,
+        size,
+        searchKeyword,
+        searchUserNos,
+        sort: sort ?? "lastModifiedDate,desc",
+      },
+      headers,
+    }
+  );
   return {
     ...data,
     currentPage: page,
-    hasNextPage: data.totalCount / ((page + 1) * size) > 1,
+    hasNextPage: data.totalElements / ((page + 1) * size) > 1,
   };
 };
 
-export interface PostListInfiniteQueryKey {
-  keyword?: string;
-  userNo?: string;
-}
+// export interface PostListInfiniteQueryKey {
+//   keyword?: string;
+//   userNo?: string;
+// }
 
 export const getPostListInfiniteQueryKey = {
   all: ["posts"] as const,
-  byKeyword: ({ keyword, userNo }: PostListInfiniteQueryKey) =>
-    ["posts", { keyword, userNo }] as const,
+  byKeyword: ({
+    searchKeyword,
+    searchUserNos,
+    sort,
+  }: Omit<GetPostListOptions, "page" | "size">) =>
+    ["posts", { searchKeyword, searchUserNos, sort }] as const,
 };
 
 /**
