@@ -1,11 +1,10 @@
 "use client";
-import { BottomNavigation, BottomNavigationAction, Paper } from "@mui/material";
+import { BottomNavigation, BottomNavigationAction } from "@mui/material";
 
 import HomeIcon from "~/assets/icons/HomeIcon.svg";
 import SearchIcon from "~/assets/icons/SearchIcon.svg";
 import PostIcon from "~/assets/icons/PostIcon.svg";
 import BeverageIcon from "~/assets/icons/BeverageIcon.svg";
-import { useGlobalNavbarVisibility } from "@/store/useGlobalNavbarVisibility";
 
 import HOME, {
   MY_PROFILE,
@@ -23,8 +22,6 @@ import { useMyInfoQuery } from "@/queries/auth/useMyInfoQuery";
 const NavigationBar = () => {
   const path = usePathname();
   const { data: userInfo } = useMyInfoQuery();
-
-  const isVisible = useGlobalNavbarVisibility(({ isVisible }) => isVisible);
 
   const NavbarData = useMemo(
     () => [
@@ -55,7 +52,7 @@ const NavigationBar = () => {
     ],
     [userInfo]
   );
-  return isVisible ? (
+  return (
     <BottomNavigation value={path} showLabels sx={BtnStyle}>
       {NavbarData.map(({ label, href, iconComponent, ...others }) => {
         return (
@@ -71,8 +68,6 @@ const NavigationBar = () => {
         );
       })}
     </BottomNavigation>
-  ) : (
-    <></>
   );
 };
 
