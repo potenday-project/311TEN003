@@ -47,9 +47,11 @@ export default function SignUpPage() {
       <SignupStep
         title={`원활한 환경을 위해\n이메일을 입력해 주세요😃`}
         error={
-          !new RegExp(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/).test(
-            formData.email
-          )
+          formData.email
+            ? !new RegExp(
+                /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
+              ).test(formData.email)
+            : undefined
         }
       >
         <TextField
