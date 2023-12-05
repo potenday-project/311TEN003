@@ -23,7 +23,7 @@ export const useGetPostListInfiniteQuery = ({
     queryKey: getPostListInfiniteQueryKey.byKeyword({
       searchKeyword,
       searchUserNos,
-      sort
+      sort,
     }),
 
     queryFn: async ({ pageParam = 0 }) =>
@@ -102,10 +102,11 @@ export const getPostListQueryFn = async ({
   };
 };
 
-// export interface PostListInfiniteQueryKey {
-//   keyword?: string;
-//   userNo?: string;
-// }
+export interface PostListInfiniteQueryKey {
+  keyword?: string;
+  userNo?: string;
+  sort?: string;
+}
 
 export const getPostListInfiniteQueryKey = {
   all: ["posts"] as const,

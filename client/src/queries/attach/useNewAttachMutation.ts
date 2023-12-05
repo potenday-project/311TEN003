@@ -33,7 +33,7 @@ export const useNewAttachMutation = () => {
           });
           queryClient.invalidateQueries({
             queryKey: getPostListInfiniteQueryKey.byKeyword({
-              userNo: String(context?.url.pk),
+              searchUserNos: String(context?.url.pk),
             }),
           });
         case "ALCOHOL":

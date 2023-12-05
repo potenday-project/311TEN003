@@ -4,8 +4,9 @@ import { AugmentedGetPostListResponse } from "../useGetPostListInfiniteQuery";
 type QueryKey = readonly [
   "posts",
   {
-    readonly keyword: string | undefined;
-    readonly userNo: string | undefined;
+    readonly searchKeyword: string | undefined;
+    readonly searchUserNos: string | undefined;
+    readonly sort: string | undefined;
   }
 ];
 
@@ -15,9 +16,11 @@ type QueryKey = readonly [
  * @param 'like' | 'unlike'
  * @returns queryKey와 postId 를 인자로 받아 무한스크롤포스트 리스트를 업데이트하는 함수
  */
-export const useOptimisticUpdatePostList = (
-  {type = "like"}: {type:"like" | "unlike"}
-) => {
+export const useOptimisticUpdatePostList = ({
+  type = "like",
+}: {
+  type: "like" | "unlike";
+}) => {
   const queryClient = useQueryClient();
   /**
    * queryKey와 postId 를 인자로 받아 무한스크롤포스트 리스트를 업데이트하는 함수
@@ -36,7 +39,7 @@ export const useOptimisticUpdatePostList = (
           ...prev,
           pages: prev.pages.map((page) => ({
             ...page,
-            list: page.list.map((post) => {
+            content: page.content.map((post) => {
               if (post.postNo === Number(id)) {
                 return {
                   ...post,

@@ -9,7 +9,7 @@ type layoutProps = {
   children: ReactNode;
 };
 
-const layout = ({ children }: layoutProps) => {
+const SignupLayout = ({ children }: layoutProps) => {
   const [disableBtn, setDisableBtn] = useState(false);
   const [formData, setFormData] = useState<SignupRequirement>({
     id: "",
@@ -35,4 +35,4 @@ const layout = ({ children }: layoutProps) => {
   );
 };
 
-export default layout;
+export default SignupLayout;

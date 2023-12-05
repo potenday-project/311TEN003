@@ -32,8 +32,8 @@ const useLikePostMutation = (context?: PostcardContextInterface) => {
   const postDetailUpdator = useOptimisticUpdatePostDetail({ type: "like" });
 
   const listQueryKey = getPostListInfiniteQueryKey.byKeyword({
-    keyword: context?.searchKeyword,
-    userNo: context?.searchUserNos,
+    searchKeyword: context?.searchKeyword,
+    searchUserNos: context?.searchUserNos,
   });
   return useMutation({
     mutationFn: (id: PostInterface["postNo"]) => useLikePostMutationFn(id),
