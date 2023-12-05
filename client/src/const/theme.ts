@@ -118,6 +118,13 @@ const theme = createTheme({
         elevation: 0,
       },
     },
+    MuiInputAdornment:{
+      styleOverrides:{
+        root:{
+          cursor:'pointer'
+        }
+      }
+    }
   },
 });
 
