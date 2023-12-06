@@ -110,6 +110,8 @@ public class Initializer {
                                                 .password("1a2s3d4f1!")
                                                 .id(String.format("test%d", i))
                                                 .nickname(String.format("bside%d", i))
+                                                .introduction(
+                                                    String.format("testIntroduction%d", i))
                                                 .build());
     }
     securityContextHolderClear();
@@ -215,7 +217,7 @@ public class Initializer {
       postController.addQuote(5L, 3L);
     });
 
-    
+
     // 1번부터 5번까지 게시글 첨부파일 등록
     // 1번부터 5번까지 내 프로필 등록.
 //    attachPhoto();

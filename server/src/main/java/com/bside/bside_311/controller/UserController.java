@@ -7,6 +7,7 @@ import com.bside.bside_311.dto.LoginResponseDto;
 import com.bside.bside_311.dto.MyInfoResponseDto;
 import com.bside.bside_311.dto.UserFollowResponseDto;
 import com.bside.bside_311.dto.UserLoginRequestDto;
+import com.bside.bside_311.dto.UserResponseDto;
 import com.bside.bside_311.dto.UserSignupRequestDto;
 import com.bside.bside_311.dto.UserSignupResponseDto;
 import com.bside.bside_311.dto.UserUpdateRequestDto;
@@ -19,6 +20,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -114,6 +117,24 @@ public class UserController {
 
     log.info(">>> UserController.getUserInfo");
     return userService.getMyInfo(myUserNo);
+  }
+
+  @Operation(summary = "[o]내가 팔로잉하는 유저 조회", description = "내가 팔로잉하는 유저 정보 조회 API")
+  @UserRequired
+  @GetMapping("/my-following-users")
+  public Page<UserResponseDto> getMyFollowingUsers(Pageable pageable) {
+    Long myUserNo = AuthUtil.getUserNoFromAuthentication();
+    log.info(">>> UserController.getMyFollowingUsers");
+    return userService.getMyFollowingUsers(myUserNo, pageable);
+  }
+
+  @Operation(summary = "[o]나를 팔로잉하는 유저 조회", description = "나를 팔로잉하는 유저 조회")
+  @UserRequired
+  @GetMapping("/users-of-following-me")
+  public Page<UserResponseDto> getUsersOfFollowingMe(Pageable pageable) {
+    Long myUserNo = AuthUtil.getUserNoFromAuthentication();
+    log.info(">>> UserController.getMyFollowingUsers");
+    return userService.getUsersOfFollowingMe(myUserNo, pageable);
   }
 
   @Operation(summary = "[o]유저 정보 조회", description = "유저 정보 조회 API")

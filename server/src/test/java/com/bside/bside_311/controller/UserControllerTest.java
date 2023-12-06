@@ -3,6 +3,7 @@ package com.bside.bside_311.controller;
 import com.bside.bside_311.dto.LoginResponseDto;
 import com.bside.bside_311.dto.MyInfoResponseDto;
 import com.bside.bside_311.dto.UserLoginRequestDto;
+import com.bside.bside_311.dto.UserResponseDto;
 import com.bside.bside_311.dto.UserSignupRequestDto;
 import com.bside.bside_311.dto.UserUpdateRequestDto;
 import com.bside.bside_311.entity.User;
@@ -13,15 +14,22 @@ import com.bside.bside_311.utils.UserUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.util.List;
+
 import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -235,5 +243,33 @@ class UserControllerTest extends ControllerTest {
     mockMvc.perform(post(String.format("/user/follow/%d", 2))
                         .header("Authorization", "Bearer " + userAccessToken))
            .andExpect(status().isOk());
+  }
+
+  @Test
+  @DisplayName("내가 팔로잉하는 유저 조회. 성공.")
+  void getMyFollowingUsers_success() throws Exception {
+    //given
+    Page<UserResponseDto> pagedResponse = new PageImpl<>(List.of(UserResponseDto.of(normalUser)));
+    given(userService.getMyFollowingUsers(eq(normalUser.getId()),
+        ArgumentMatchers.any(Pageable.class)))
+        .willReturn(pagedResponse);
+    mockMvc.perform(get("/user//my-following-users")
+                        .header("Authorization", "Bearer " + userAccessToken))
+           .andExpect(status().isOk())
+           .andExpect(content().string(containsString("userNo")));
+  }
+
+  @Test
+  @DisplayName("나를 팔로잉하는 유저 조회. 성공.")
+  void getUsersOfFollowingMePage_success() throws Exception {
+    //given
+    Page<UserResponseDto> pagedResponse = new PageImpl<>(List.of(UserResponseDto.of(normalUser)));
+    given(userService.getUsersOfFollowingMe(eq(normalUser.getId()),
+        ArgumentMatchers.any(Pageable.class)))
+        .willReturn(pagedResponse);
+    mockMvc.perform(get("/user/users-of-following-me")
+                        .header("Authorization", "Bearer " + userAccessToken))
+           .andExpect(status().isOk())
+           .andExpect(content().string(containsString("userNo")));
   }
 }

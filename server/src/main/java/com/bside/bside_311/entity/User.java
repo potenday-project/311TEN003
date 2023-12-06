@@ -82,6 +82,7 @@ public class User extends BaseEntity {
                .userId(userSignupRequestDto.getId())
                .nickname(userSignupRequestDto.getNickname())
                .role(role)
+               .introduction(userSignupRequestDto.getIntroduction())
                .build();
   }
 

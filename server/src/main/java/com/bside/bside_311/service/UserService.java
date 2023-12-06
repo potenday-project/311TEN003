@@ -6,6 +6,7 @@ import com.bside.bside_311.dto.GetUserInfoResponseDto;
 import com.bside.bside_311.dto.LoginResponseDto;
 import com.bside.bside_311.dto.MyInfoResponseDto;
 import com.bside.bside_311.dto.UserLoginRequestDto;
+import com.bside.bside_311.dto.UserResponseDto;
 import com.bside.bside_311.dto.UserSignupResponseDto;
 import com.bside.bside_311.dto.UserUpdateRequestDto;
 import com.bside.bside_311.entity.Attach;
@@ -21,6 +22,8 @@ import com.bside.bside_311.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,7 +32,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.bside.bside_311.util.JwtUtil.NORMAL_TOKEN;
 import static com.bside.bside_311.util.JwtUtil.normalValidity;
@@ -175,5 +181,43 @@ public class UserService {
                             .orElseThrow(() -> new IllegalArgumentException("팔로우하지 않은 유저입니다."));
     resourceChangeableCheckByThisRequestToken(userFollow);
     userFollow.setDelYn(YesOrNo.Y);
+  }
+
+  public Page<UserResponseDto> getMyFollowingUsers(Long myUserNo, Pageable pageable) {
+    Page<User> users = userRepository.getMyFollowingUsersPage(myUserNo, pageable);
+    List<Long> userNos = users.stream().map(User::getId).toList();
+    Map<Long, List<AttachDto>> uToAMap = getUserAttachInfos(userNos);
+
+    return users.map(user -> {
+      List<AttachDto> attachDtos = uToAMap.getOrDefault(user.getId(), List.of());
+      return UserResponseDto.of(user, attachDtos);
+    });
+  }
+
+  public Page<UserResponseDto> getUsersOfFollowingMe(Long myUserNo, Pageable pageable) {
+    Page<User> users = userRepository.getUsersOfFollowingMePage(myUserNo, pageable);
+    List<Long> userNos = users.stream().map(User::getId).toList();
+    Map<Long, List<AttachDto>> uToAMap = getUserAttachInfos(userNos);
+
+    return users.map(user -> {
+      List<AttachDto> attachDtos = uToAMap.getOrDefault(user.getId(), List.of());
+      return UserResponseDto.of(user, attachDtos);
+    });
+  }
+
+  public Map<Long, List<AttachDto>> getUserAttachInfos(List<Long> userNos) {
+
+    List<Attach> userAttachList =
+        attachRepository.findByRefNoInAndAttachTypeIsAndDelYnIs(userNos, AttachType.PROFILE,
+            YesOrNo.N);
+    Map<Long, List<AttachDto>> uToAMap = new HashMap<>();
+    for (Attach attach : userAttachList) {
+      if (!uToAMap.containsKey(attach.getRefNo())) {
+        uToAMap.put(attach.getRefNo(), new ArrayList<>());
+      }
+      List<AttachDto> attachDtos = uToAMap.get(attach.getRefNo());
+      attachDtos.add(AttachDto.of(attach));
+    }
+    return uToAMap;
   }
 }
