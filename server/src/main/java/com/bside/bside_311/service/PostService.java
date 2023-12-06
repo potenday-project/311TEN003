@@ -212,10 +212,15 @@ public class PostService {
   }
 
   public Page<PostResponseDto> getPostsV2(Pageable pageable,
-                                          String searchKeyword, List<Long> searchUserNoList) {
+                                          String searchKeyword, List<Long> searchUserNoList,
+                                          Boolean isLikedByMe, Boolean isCommentedByMe) {
     Page<Post> posts =
         postRepository.searchPageSimple(PostSearchCondition.builder().searchKeyword(searchKeyword)
                                                            .searchUserNoList(searchUserNoList)
+                                                           .isLikedByMe(isLikedByMe)
+                                                           .isCommentedByMe(isCommentedByMe)
+                                                           .myUserNo(
+                                                               AuthUtil.getUserNoFromAuthentication())
                                                            .build(), pageable);
     List<Long> postNos = posts.stream().map(Post::getId).toList();
     List<GetPostsToOneMvo> postsToOneList =

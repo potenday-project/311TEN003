@@ -83,23 +83,23 @@ public class PostController {
   @Operation(summary = "[o]게시글 목록 조회(v1)", description = "게시글 조회 API")
   @GetMapping
   public GetPostResponseDto getPosts(@RequestParam(name = "page", defaultValue = "0")
-                                        @Schema(description = "페이지번호(0부터), 기본값 0.", example = "0")
-                                        Long page,
-                                        @RequestParam(name = "size", defaultValue = "10")
-                                        @Schema(description = "사이즈, 기본값 10.", example = "10")
-                                        Long size,
-                                        @RequestParam(required = false, name = "orderColumn")
-                                        @Schema(description = "정렬 컬럼", example = "post_no")
-                                        String orderColumn,
-                                        @RequestParam(required = false, name = "orderType")
-                                        @Schema(description = "정렬 타입", example = "DESC")
-                                        String orderType,
-                                        @RequestParam(required = false, name = "searchKeyword")
-                                        @Schema(description = "키워드", example = "키워드")
-                                        String searchKeyword,
-                                        @RequestParam(required = false, name = "searchUserNos")
-                                        @Schema(description = "검색 유저 번호들.", example = "1,2,4")
-                                        String searchUserNos
+                                     @Schema(description = "페이지번호(0부터), 기본값 0.", example = "0")
+                                     Long page,
+                                     @RequestParam(name = "size", defaultValue = "10")
+                                     @Schema(description = "사이즈, 기본값 10.", example = "10")
+                                     Long size,
+                                     @RequestParam(required = false, name = "orderColumn")
+                                     @Schema(description = "정렬 컬럼", example = "post_no")
+                                     String orderColumn,
+                                     @RequestParam(required = false, name = "orderType")
+                                     @Schema(description = "정렬 타입", example = "DESC")
+                                     String orderType,
+                                     @RequestParam(required = false, name = "searchKeyword")
+                                     @Schema(description = "키워드", example = "키워드")
+                                     String searchKeyword,
+                                     @RequestParam(required = false, name = "searchUserNos")
+                                     @Schema(description = "검색 유저 번호들.", example = "1,2,4")
+                                     String searchUserNos
 
   ) {
     log.info(">>> PostController.getPost");
@@ -120,13 +120,19 @@ public class PostController {
   @GetMapping("/v2")
   public Page<PostResponseDto> getPostsV2(
 //                                        @Schema(description = "페이지 번호와 사이즈.정렬 까지.(0부터) ex)[1]page=0&size=5&sort=id,desc [2]page=1&size=15&sort=id,desc&sort=content,asc", example = "0")
-                                        Pageable pageable,
-                                        @RequestParam(required = false, name = "searchKeyword")
-                                        @Schema(description = "키워드", example = "키워드")
-                                        String searchKeyword,
-                                        @RequestParam(required = false, name = "searchUserNos")
-                                        @Schema(description = "검색 유저 번호들.", example = "1,2,4")
-                                        String searchUserNos
+      Pageable pageable,
+      @RequestParam(required = false, name = "searchKeyword")
+      @Schema(description = "키워드", example = "키워드")
+      String searchKeyword,
+      @RequestParam(required = false, name = "searchUserNos")
+      @Schema(description = "검색 유저 번호들.", example = "1,2,4")
+      String searchUserNos,
+      @RequestParam(required = false, name = "isLikedByMe")
+      @Schema(description = "나에 의해서 좋아하는 게시글 필터 여부(true or false).", example = "false")
+      Boolean isLikedByMe,
+      @RequestParam(required = false, name = "isCommentedByMe")
+      @Schema(description = "내가 댓글을 단 게시글 필터 여부.(true or false)", example = "false")
+      Boolean isCommentedByMe
 
   ) {
     log.info(">>> PostController.getPost");
@@ -144,7 +150,8 @@ public class PostController {
       }
     }
 
-    return postService.getPostsV2(pageable, searchKeyword, searchUserNoList);
+    return postService.getPostsV2(pageable, searchKeyword, searchUserNoList, isLikedByMe,
+        isCommentedByMe);
   }
 
   @Operation(summary = "[o]게시글 상세 조회", description = "게시글 상세 조회 API")

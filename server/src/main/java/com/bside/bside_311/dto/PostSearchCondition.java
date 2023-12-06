@@ -17,4 +17,10 @@ public class PostSearchCondition {
   String searchKeyword;
   @Schema(description = "검색 유저 번호들.", example = "1,2,4")
   List<Long> searchUserNoList;
+  @Schema(description = "나에 의해서 좋아하는 게시글 필터 여부(true or false).", example = "false")
+  Boolean isLikedByMe;
+  @Schema(description = "내가 댓글을 단 게시글 필터 여부.(true or false)", example = "false")
+  Boolean isCommentedByMe;
+  @Schema(description = "나의 유저 정보.(null, or 1L, 2L ...)", example = "1")
+  Long myUserNo;
 }
