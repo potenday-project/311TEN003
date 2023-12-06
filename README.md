@@ -10,10 +10,10 @@ https://unmarred-teeth-fc0.notion.site/Tupaia-447ca72c5e2b4f9d9d5c13754ed74bb4?p
 
 # client
 - tech stack
-  - 
+  - Next.js, React, Javascript, Docker
 # server
 - tech stack
-  - Spring book, Java, Mybatis, JPA, Junit5, Mysql, Naver Cloud Platform
+  - Spring boot, Java, Mybatis, JPA, Junit5, Mysql, Naver Cloud Platform
 - 개발 방향
   - ERD설계, API 명세서 작성 과 공유
   - N+1 예방 조치.
