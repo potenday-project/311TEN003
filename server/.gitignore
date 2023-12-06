@@ -269,15 +269,14 @@ gradle-app.setting
 
 src/main/generated/**
 
-src/main/resources/application-prd.yml
-src/main/resources/application.properties
+application-prd.yml
+application-swagger.yml
+application.properties
 
 
 ## logs ##
 logs/
 
-### security information
-application.yml
 
 ### operation log
 replay_pid.*.log

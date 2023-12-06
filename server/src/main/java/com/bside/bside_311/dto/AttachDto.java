@@ -17,7 +17,7 @@ import java.util.List;
 public class AttachDto {
   @Schema(example = "1", description = "첨부 번호")
   private Long attachNo;
-  @Schema(example = "http://www.naver.com", description = "프로필 사진 링크.")
+  @Schema(example = "http://www.naver.com", description = "첨부 사진 링크.")
   private String attachUrl;
   @Schema(example = "profile", description = "첨부 타입")
   private String attachType;

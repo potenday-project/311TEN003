@@ -1,7 +1,5 @@
 package com.bside.bside_311.service;
 
-import com.bside.bside_311.dto.AddAlcoholRequestDto;
-import com.bside.bside_311.dto.AddAlcoholResponseDto;
 import com.bside.bside_311.dto.AddCommentRequestDto;
 import com.bside.bside_311.dto.AddCommentResponseDto;
 import com.bside.bside_311.dto.AddPostResponseDto;
@@ -12,9 +10,12 @@ import com.bside.bside_311.dto.GetPostCommentsResponseDto;
 import com.bside.bside_311.dto.GetPostResponseDto;
 import com.bside.bside_311.dto.GetPostVo;
 import com.bside.bside_311.dto.GetPostsMvo;
+import com.bside.bside_311.dto.GetPostsToOneMvo;
 import com.bside.bside_311.dto.GetQuotesByPostResponseDto;
 import com.bside.bside_311.dto.PostResponseDto;
+import com.bside.bside_311.dto.PostSearchCondition;
 import com.bside.bside_311.entity.Alcohol;
+import com.bside.bside_311.entity.Attach;
 import com.bside.bside_311.entity.AttachType;
 import com.bside.bside_311.entity.Comment;
 import com.bside.bside_311.entity.Post;
@@ -36,23 +37,29 @@ import com.bside.bside_311.repository.TagRepository;
 import com.bside.bside_311.repository.UserFollowRepository;
 import com.bside.bside_311.repository.UserRepository;
 import com.bside.bside_311.util.AuthUtil;
+import com.bside.bside_311.util.MessageUtil;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
+
+import static com.bside.bside_311.util.ValidateUtil.resourceChangeableCheckByThisRequestToken;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
 public class PostService {
-  private final AlcoholService alcoholService;
   private final TagService tagService;
   private final UserRepository userRepository;
   private final PostLikeRepository postLikeRepository;
@@ -68,7 +75,7 @@ public class PostService {
 
   public AddPostResponseDto addPost(
       Post post, Long alcoholNo, String alcoholFeature,
-      List<String> tagStrList, AddAlcoholRequestDto alcoholInfo) {
+      List<String> tagStrList) {
     log.info(">>> PostService.addPost");
 
     postRepository.save(post);
@@ -78,15 +85,8 @@ public class PostService {
     }
 
     postRepository.save(post);
-    if (alcoholInfo != null) {
-      if (StringUtils.isEmpty(alcoholInfo.getAlcoholName())) {
-        throw new IllegalArgumentException("술 이름은 필수입니다.");
-      }
-      AddAlcoholResponseDto addAlcoholResponseDto = alcoholService.addAlcohol(alcoholInfo);
-      alcoholNo = addAlcoholResponseDto.getAlcoholNo();
-    }
 
-    if (alcoholNo != null && alcoholFeature != null) {
+    if (alcoholNo != null) {
       Alcohol alcohol = alcoholRepository.findByIdAndDelYnIs(alcoholNo, YesOrNo.N).orElseThrow(
           () -> new IllegalArgumentException("술이 존재하지 않습니다."));
       PostAlcohol postAlcohol = PostAlcohol.of(post, alcohol, alcoholFeature);
@@ -100,7 +100,17 @@ public class PostService {
 
   public void editPost(Long postNo, EditPostRequestDto editPostRequestDto) {
     Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
+    resourceChangeableCheckByThisRequestToken(post);
+    if (StringUtils.isNotEmpty(editPostRequestDto.getPostContent())) {
+      post.setContent(editPostRequestDto.getPostContent());
+    }
+    if (StringUtils.isNotEmpty(editPostRequestDto.getPostType())) {
+      post.setContent(editPostRequestDto.getPostType());
+    }
+    if (StringUtils.isNotEmpty(editPostRequestDto.getPositionInfo())) {
+      post.setContent(editPostRequestDto.getPositionInfo());
+    }
     postRepository.save(post);
 
     List<String> tagStrList = editPostRequestDto.getTagList();
@@ -114,15 +124,6 @@ public class PostService {
     }
     postRepository.save(post);
 
-    AddAlcoholRequestDto alcoholInfo = editPostRequestDto.getAlcoholInfo();
-    if (alcoholInfo != null) {
-      if (StringUtils.isEmpty(alcoholInfo.getAlcoholName())) {
-        throw new IllegalArgumentException("술 이름은 필수입니다.");
-      }
-      AddAlcoholResponseDto addAlcoholResponseDto = alcoholService.addAlcohol(alcoholInfo);
-      alcoholNo = addAlcoholResponseDto.getAlcoholNo();
-    }
-
     if (alcoholNo != null && alcoholFeature != null) {
       Alcohol alcohol = alcoholRepository.findByIdAndDelYnIs(alcoholNo, YesOrNo.N).orElseThrow(
           () -> new IllegalArgumentException("술이 존재하지 않습니다."));
@@ -133,47 +134,29 @@ public class PostService {
 
   public void deletePost(Long postNo) {
     Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
+    resourceChangeableCheckByThisRequestToken(post);
     post.setDelYn(YesOrNo.Y);
   }
 
-//  private void addOrSetPost(Post post, Long alcoholNo, String alcoholFeature,
-//                            List<String> tagList) {
-//    postRepository.save(post);
-//    if (CollectionUtils.isNotEmpty(tagList)) {
-//      for (String tagName : tagList) {
-//        Tag tag = tagRepository.findByNameAndDelYnIs(tagName, YesOrNo.N).orElse(Tag.of());
-//        tagRepository.save(tag);
-//      }
-//    }
-//    if (alcoholNo != null && alcoholFeature != null) {
-//      Alcohol alcohol = alcoholRepository.findByIdAndDelYnIs(alcoholNo, YesOrNo.N).orElseThrow(
-//          () -> new IllegalArgumentException("술이 존재하지 않습니다."));
-//      PostAlcohol postAlcohol = PostAlcohol.of(post, alcohol, alcoholFeature);
-//      post.addPostAlcohol(postAlcohol);
-//      alcohol.addPostAlcohol(postAlcohol);
-//    }
-//  }
-
-
   public PostResponseDto getPostDetail(Long postNo, List<AttachDto> attachDtos) {
     Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
     Long userNo = post.getCreatedBy();
     User user = null;
     if (userNo != null) {
       user = userRepository.findByIdAndDelYnIs(userNo, YesOrNo.N).orElseThrow(
-          () -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+          () -> new IllegalArgumentException(MessageUtil.USER_NOT_FOUND_MSG));
     }
     Alcohol alcohol = null;
     List<PostAlcohol> postAlcohols = post.getPostAlcohols();
     if (CollectionUtils.isNotEmpty(postAlcohols)) {
-      alcohol = postAlcohols.get(0).getAlcohol();
+      alcohol = postAlcohols.stream().filter(postAlcohol -> postAlcohol.getDelYn() == YesOrNo.N)
+                            .map(PostAlcohol::getAlcohol).findFirst().orElse(null);
     }
 
     List<PostTag> nonDeletedPostTags =
-        post.getPostTags().stream().filter(postTag -> postTag.getDelYn() == YesOrNo.N).collect(
-            Collectors.toList());
+        post.getPostTags().stream().filter(postTag -> postTag.getDelYn() == YesOrNo.N).toList();
 
     List<Tag> tags = tagRepository.findByPostTagsInAndDelYnIs(nonDeletedPostTags, YesOrNo.N);
     List<Comment> comments = commentRepository.findByPostAndDelYnIs(post, YesOrNo.N);
@@ -208,7 +191,7 @@ public class PostService {
   }
 
   public GetPostResponseDto getPosts(Long page, Long size, String orderColumn, String orderType,
-                                     String searchKeyword) {
+                                     String searchKeyword, List<Long> searchUserNoList) {
     GetPostVo getPostVo = GetPostVo.builder()
                                    .page(page)
                                    .offset(page * size)
@@ -216,20 +199,74 @@ public class PostService {
                                    .orderColumn(orderColumn)
                                    .orderType(orderType)
                                    .searchKeyword(searchKeyword)
+                                   .searchUserNoList(searchUserNoList)
                                    .build();
     List<GetPostsMvo> getPostsMvos = postMybatisRepository.getPosts(getPostVo);
     Long totalCount = postMybatisRepository.getPostsCount(getPostVo);
-    List<Post> posts = getPostsMvos.stream().map(Post::of).collect(Collectors.toList());
+    List<Post> posts = getPostsMvos.stream().map(Post::of).toList();
     List<PostResponseDto> list =
-        posts.stream().map(post -> getPostDetail(post.getId())).collect(Collectors.toList());
+        posts.stream().map(post -> getPostDetail(post.getId())).toList();
     // FIXME
     // 추구 여기서 첨부파일 개수 쿼리 최적화.
     return GetPostResponseDto.of(list, totalCount);
   }
 
+  public Page<PostResponseDto> getPostsV2(Pageable pageable,
+                                          String searchKeyword, List<Long> searchUserNoList,
+                                          Boolean isLikedByMe, Boolean isCommentedByMe) {
+    Page<Post> posts =
+        postRepository.searchPageSimple(PostSearchCondition.builder().searchKeyword(searchKeyword)
+                                                           .searchUserNoList(searchUserNoList)
+                                                           .isLikedByMe(isLikedByMe)
+                                                           .isCommentedByMe(isCommentedByMe)
+                                                           .myUserNo(
+                                                               AuthUtil.getUserNoFromAuthentication())
+                                                           .build(), pageable);
+    List<Long> postNos = posts.stream().map(Post::getId).toList();
+    List<GetPostsToOneMvo> postsToOneList =
+        CollectionUtils.isNotEmpty(postNos) ? postMybatisRepository.getPostsToOne(postNos) :
+            List.of();
+    Map<Long, GetPostsToOneMvo> postsToOneMap = new HashMap<>();
+    for (GetPostsToOneMvo getPostsToOneMvo : postsToOneList) {
+      postsToOneMap.put(getPostsToOneMvo.getPostNo(), getPostsToOneMvo);
+    }
+
+    List<Attach> postAttachList =
+        attachRepository.findByRefNoInAndAttachTypeIsAndDelYnIs(postNos, AttachType.POST,
+            YesOrNo.N);
+    Map<Long, List<AttachDto>> pToAMap = new HashMap<>();
+    for (Attach attach : postAttachList) {
+      if (!pToAMap.containsKey(attach.getRefNo())) {
+        pToAMap.put(attach.getRefNo(), new ArrayList<>());
+      }
+      List<AttachDto> attachDtos = pToAMap.get(attach.getRefNo());
+      attachDtos.add(AttachDto.of(attach));
+    }
+
+    List<Long> postCreatedBys = posts.stream().map(Post::getCreatedBy).toList();
+    List<Attach> userAttachList =
+        attachRepository.findByRefNoInAndAttachTypeIsAndDelYnIs(postCreatedBys, AttachType.PROFILE,
+            YesOrNo.N);
+    Map<Long, List<AttachDto>> uToAMap = new HashMap<>();
+    for (Attach attach : userAttachList) {
+      if (!uToAMap.containsKey(attach.getRefNo())) {
+        uToAMap.put(attach.getRefNo(), new ArrayList<>());
+      }
+      List<AttachDto> attachDtos = uToAMap.get(attach.getRefNo());
+      attachDtos.add(AttachDto.of(attach));
+    }
+
+    return posts.map(post -> {
+      GetPostsToOneMvo getPostsToOneMvo = postsToOneMap.get(post.getId());
+      List<AttachDto> postAttachDtos = pToAMap.getOrDefault(post.getId(), new ArrayList<>());
+      List<AttachDto> userAttachDtos = uToAMap.getOrDefault(post.getCreatedBy(), new ArrayList<>());
+      return PostResponseDto.of(post, getPostsToOneMvo, postAttachDtos, userAttachDtos);
+    });
+  }
+
   public AddCommentResponseDto addComment(Long postNo, AddCommentRequestDto addCommentRequestDto) {
     Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
     Comment comment = Comment.of(post, addCommentRequestDto.getCommentContent());
     post.addComment(comment);
     commentRepository.save(comment);
@@ -239,19 +276,41 @@ public class PostService {
 
   public GetPostCommentsResponseDto getPostComments(Long postNo) {
     Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
     List<Comment> comments =
-        post.getComments().stream().filter(comment -> comment.getDelYn() == YesOrNo.N).collect(
-            Collectors.toList());
-    return GetPostCommentsResponseDto.of(comments);
+        post.getComments().stream().filter(comment -> comment.getDelYn() == YesOrNo.N).toList();
+    // FIXME 최적화. 추후 페이징 처리할것.
+    List<Long> commentCreatedList = comments.stream().map(Comment::getCreatedBy).toList();
+    List<User> userList =
+        userRepository.findAllByIdInAndDelYnIs(commentCreatedList, YesOrNo.N);
+    Map<Long, User> createdByToUser = new HashMap<>();
+    for (User user : userList) {
+      createdByToUser.put(user.getId(), user);
+    }
+
+    List<Attach> attachList =
+        attachRepository.findByRefNoInAndAttachTypeIsAndDelYnIs(commentCreatedList,
+            AttachType.PROFILE,
+            YesOrNo.N);
+    Map<Long, List<AttachDto>> uToAMap = new HashMap<>();
+    for (Attach attach : attachList) {
+      if (!uToAMap.containsKey(attach.getRefNo())) {
+        uToAMap.put(attach.getRefNo(), new ArrayList<>());
+      }
+      List<AttachDto> attachDtos = uToAMap.get(attach.getRefNo());
+      attachDtos.add(AttachDto.of(attach));
+    }
+
+    return GetPostCommentsResponseDto.of(comments, createdByToUser, uToAMap);
   }
 
   public void editComment(Long postNo, Long commentNo,
                           EditCommentRequestDto editCommentRequestDto) {
-    Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+    postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
+        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
     Comment comment = commentRepository.findByIdAndDelYnIs(commentNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
+    resourceChangeableCheckByThisRequestToken(comment);
     if (!ObjectUtils.isEmpty(editCommentRequestDto) &&
             StringUtils.isNotBlank(editCommentRequestDto.getCommentContent())) {
       comment.setContent(editCommentRequestDto.getCommentContent());
@@ -259,16 +318,17 @@ public class PostService {
   }
 
   public void deleteComment(Long postNo, Long commentNo) {
-    Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+    postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
+        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
     Comment comment = commentRepository.findByIdAndDelYnIs(commentNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
+    resourceChangeableCheckByThisRequestToken(comment);
     comment.setDelYn(YesOrNo.Y);
   }
 
   public PostQuote addQuote(Long postNo, Long quotedPostNo) {
     Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
 
     Post quotedPost = postRepository.findByIdAndDelYnIs(quotedPostNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException("인용할 게시글이 존재하지 않습니다."));
@@ -282,38 +342,39 @@ public class PostService {
   public void deleteQuote(Long quoteNo) {
     PostQuote postQuote = postQuoteRepository.findByIdAndDelYnIs(quoteNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException("인용이 존재하지 않습니다."));
+    resourceChangeableCheckByThisRequestToken(postQuote);
     postQuote.setDelYn(YesOrNo.Y);
   }
 
   public GetQuotesByPostResponseDto getQuotesByPost(Long postNo) {
     Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
     List<PostQuote> postQuotes = postQuoteRepository.findByPostAndDelYnIs(post, YesOrNo.N);
     return GetQuotesByPostResponseDto.of(postQuotes);
   }
 
   public void likePost(Long userNo, Long postNo) {
     User user = userRepository.findByIdAndDelYnIs(userNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+        () -> new IllegalArgumentException(MessageUtil.USER_NOT_FOUND_MSG));
     Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
 
     PostLike postLike =
         postLikeRepository.findByUserAndPostAndDelYnIs(user, post, YesOrNo.N).orElse(
             PostLike.of(user, post));
     postLikeRepository.save(postLike);
-    return;
   }
 
   public void likeCancelPost(Long userNo, Long postNo) {
     User user = userRepository.findByIdAndDelYnIs(userNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+        () -> new IllegalArgumentException(MessageUtil.USER_NOT_FOUND_MSG));
     Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
 
     PostLike postLike =
         postLikeRepository.findByUserAndPostAndDelYnIs(user, post, YesOrNo.N).orElseThrow(
             () -> new IllegalArgumentException("좋아요가 존재하지 않습니다."));
+    resourceChangeableCheckByThisRequestToken(postLike);
     postLike.setDelYn(YesOrNo.Y);
   }
 }

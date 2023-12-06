@@ -5,11 +5,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@AllArgsConstructor
 @Getter
 public class UserSignupRequestDto {
   @Schema(example = "test@example.com", description = "유저 이메일")
@@ -26,11 +29,6 @@ public class UserSignupRequestDto {
   @NotBlank
   String nickname;
 
-  @Builder
-  public UserSignupRequestDto(String email, String password, String id, String nickname) {
-    this.email = email;
-    this.password = password;
-    this.id = id;
-    this.nickname = nickname;
-  }
+  @Schema(example = "자기소개입니다", description = "자기소개 이다.")
+  String introduction;
 }

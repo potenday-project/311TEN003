@@ -7,12 +7,12 @@ import com.bside.bside_311.dto.LoginResponseDto;
 import com.bside.bside_311.dto.MyInfoResponseDto;
 import com.bside.bside_311.dto.UserFollowResponseDto;
 import com.bside.bside_311.dto.UserLoginRequestDto;
+import com.bside.bside_311.dto.UserResponseDto;
 import com.bside.bside_311.dto.UserSignupRequestDto;
 import com.bside.bside_311.dto.UserSignupResponseDto;
 import com.bside.bside_311.dto.UserUpdateRequestDto;
 import com.bside.bside_311.entity.Role;
 import com.bside.bside_311.entity.User;
-import com.bside.bside_311.repository.UserMybatisRepository;
 import com.bside.bside_311.service.UserService;
 import com.bside.bside_311.util.AuthUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,8 +20,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -39,7 +40,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "유저", description = "유저 API")
 public class UserController {
   private final UserService userService;
-  private final UserMybatisRepository userMybatisRepository;
 
   @Operation(summary = "[o]일반 유저 등록", description = "일반 유저 등록 API")
   @PostMapping("/signup")
@@ -94,7 +94,6 @@ public class UserController {
   @Operation(summary = "[o]유저 정보 변경")
   @PatchMapping()
   @UserRequired
-  @PreAuthorize("hasAnyRole('ROLE_USER')")
   public void updateUser(@RequestBody @Valid UserUpdateRequestDto userUpdateRequestDto) {
     Long userNo = AuthUtil.getUserNoFromAuthentication();
     userService.updateUser(userNo, userUpdateRequestDto);
@@ -120,6 +119,24 @@ public class UserController {
     return userService.getMyInfo(myUserNo);
   }
 
+  @Operation(summary = "[o]내가 팔로잉하는 유저 조회", description = "내가 팔로잉하는 유저 정보 조회 API")
+  @UserRequired
+  @GetMapping("/my-following-users")
+  public Page<UserResponseDto> getMyFollowingUsers(Pageable pageable) {
+    Long myUserNo = AuthUtil.getUserNoFromAuthentication();
+    log.info(">>> UserController.getMyFollowingUsers");
+    return userService.getMyFollowingUsers(myUserNo, pageable);
+  }
+
+  @Operation(summary = "[o]나를 팔로잉하는 유저 조회", description = "나를 팔로잉하는 유저 조회")
+  @UserRequired
+  @GetMapping("/users-of-following-me")
+  public Page<UserResponseDto> getUsersOfFollowingMe(Pageable pageable) {
+    Long myUserNo = AuthUtil.getUserNoFromAuthentication();
+    log.info(">>> UserController.getMyFollowingUsers");
+    return userService.getUsersOfFollowingMe(myUserNo, pageable);
+  }
+
   @Operation(summary = "[o]유저 정보 조회", description = "유저 정보 조회 API")
   @GetMapping("/{userNo}/summary")
   public GetUserInfoResponseDto getUserInfo(@PathVariable("userNo") Long userNo) {
@@ -139,7 +156,7 @@ public class UserController {
   @Operation(summary = "[o]유저 팔로우하기", description = "유저 팔로우하기 API")
   @PostMapping("/follow/{userNo}")
   @UserRequired
-  UserFollowResponseDto followUser(@PathVariable("userNo") Long userNo) {
+  public UserFollowResponseDto followUser(@PathVariable("userNo") Long userNo) {
     log.info(">>> UserController.followUser");
     Long myUserNo = AuthUtil.getUserNoFromAuthentication();
     return UserFollowResponseDto.of(userService.followUser(myUserNo, userNo));
@@ -148,7 +165,7 @@ public class UserController {
   @Operation(summary = "[o]유저 언팔로우하기", description = "유저 언팔로우하기 API")
   @PostMapping("/unfollow/{userNo}")
   @UserRequired
-  void unfollowUser(@PathVariable("userNo") Long userNo) {
+  public void unfollowUser(@PathVariable("userNo") Long userNo) {
     log.info(">>> UserController.unfollowUser");
     Long myUserNo = AuthUtil.getUserNoFromAuthentication();
     userService.unfollowUser(myUserNo, userNo);

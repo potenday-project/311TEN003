@@ -61,14 +61,14 @@ dependencies {
     // https://mvnrepository.com/artifact/org.apache.commons/commons-collections4
     implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
 
+    implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.4'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.4'
 
 //	if (profile == "localh2") {
 //		runtimeOnly 'com.h2database:h2'
 //	}else {
 //		runtimeOnly 'com.mysql:mysql-connector-j'
 //	}
-    runtimeOnly 'com.mysql:mysql-connector-j'
-
     runtimeOnly 'com.mysql:mysql-connector-j'
 
     annotationProcessor 'org.projectlombok:lombok'
@@ -82,7 +82,8 @@ dependencies {
     // p6spy : sql 로그 남기기(바인딩된 파라미터 간편 확인.)
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
 
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+//    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.2'
 }
 

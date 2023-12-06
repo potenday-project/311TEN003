@@ -1,0 +1,35 @@
+spring:
+  profiles:
+    active: test
+
+mybatis:
+  type-aliases-package: com.bside.bside_311.entity;com.bside.bside_311.dto;java.lang;
+  mapper-locations: mybatis/mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
+p6spy:
+  detail: false
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
+
+springdoc:
+  version: '0.0.1'
+  api-docs:
+    groups:
+      enabled: true
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  swagger-ui:
+    path: /
+    disable-swagger-default-url: true
+    display-request-duration: true
+    operations-sorter: method
+    tags-sorter: alpha
+    displayRequestDuration: true
+    #    doc-expansion: none
+    groups-order: DESC
+    persistAuthorization: true

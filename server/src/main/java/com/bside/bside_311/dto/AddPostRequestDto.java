@@ -1,7 +1,6 @@
 package com.bside.bside_311.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,9 +17,6 @@ import java.util.List;
 public class AddPostRequestDto {
   @Schema(example = "1", description = "선택 주류 번호")
   private Long alcoholNo;
-
-  @Schema(description = "등록 알코올 정보.(선택. 입력시 술 조회 후 추가.)")
-  AddAlcoholRequestDto alcoholInfo;
   @Schema(example = "산뜻함. 달콤함.", description = "주류 특징")
   private String alcoholFeature;
   @Schema(example = "게시글 내용", description = "게시글 내용")

@@ -22,7 +22,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +37,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @Validated
@@ -51,8 +58,7 @@ public class PostController {
   public AddPostResponseDto addPost(@RequestBody @Valid AddPostRequestDto addPostRequestDto) {
     log.info(">>> PostController.addPost");
     return postService.addPost(Post.of(addPostRequestDto), addPostRequestDto.getAlcoholNo(),
-        addPostRequestDto.getAlcoholFeature(), addPostRequestDto.getTagList(),
-        addPostRequestDto.getAlcoholInfo());
+        addPostRequestDto.getAlcoholFeature(), addPostRequestDto.getTagList());
   }
 
   @Operation(summary = "[o]게시글 수정", description = "게시글 수정 API")
@@ -74,7 +80,7 @@ public class PostController {
     postService.deletePost(postNo);
   }
 
-  @Operation(summary = "[o]게시글 목록 조회", description = "게시글 조회 API")
+  @Operation(summary = "[o]게시글 목록 조회(v1)", description = "게시글 조회 API")
   @GetMapping
   public GetPostResponseDto getPosts(@RequestParam(name = "page", defaultValue = "0")
                                      @Schema(description = "페이지번호(0부터), 기본값 0.", example = "0")
@@ -83,16 +89,69 @@ public class PostController {
                                      @Schema(description = "사이즈, 기본값 10.", example = "10")
                                      Long size,
                                      @RequestParam(required = false, name = "orderColumn")
-                                     @Schema(description = "정렬 컬럼", example = "alcohol_no")
+                                     @Schema(description = "정렬 컬럼", example = "post_no")
                                      String orderColumn,
                                      @RequestParam(required = false, name = "orderType")
                                      @Schema(description = "정렬 타입", example = "DESC")
                                      String orderType,
                                      @RequestParam(required = false, name = "searchKeyword")
                                      @Schema(description = "키워드", example = "키워드")
-                                     String searchKeyword) {
+                                     String searchKeyword,
+                                     @RequestParam(required = false, name = "searchUserNos")
+                                     @Schema(description = "검색 유저 번호들.", example = "1,2,4")
+                                     String searchUserNos
+
+  ) {
     log.info(">>> PostController.getPost");
-    return postService.getPosts(page, size, orderColumn, orderType, searchKeyword);
+    List<Long> searchUserNoList = new ArrayList<>();
+    try {
+      searchUserNoList =
+          Arrays.stream(searchUserNos.split(",")).map(Long::parseLong).toList();
+    } catch (NumberFormatException e) {
+      log.error(">>> PostController.getPost searchUserNos 파싱 에러 NumberFormatException", e);
+    } catch (Exception e) {
+      log.error(">>> PostController.getPost searchUserNos 파싱 에러 Exception", e);
+    }
+    return postService.getPosts(page, size, orderColumn, orderType, searchKeyword,
+        searchUserNoList);
+  }
+
+  @Operation(summary = "[o]게시글 목록 조회(v2)", description = "게시글 조회 API Page, size 사용법. <br> ex1) /posts/v2?page=0&size=10&sort=id,desc <br> ex2) /posts/v2?page=0&size=10&sort=id,desc&sort=content,asc&searchKeyword=키워드&searchUserNos=1,2,4")
+  @GetMapping("/v2")
+  public Page<PostResponseDto> getPostsV2(
+//                                        @Schema(description = "페이지 번호와 사이즈.정렬 까지.(0부터) ex)[1]page=0&size=5&sort=id,desc [2]page=1&size=15&sort=id,desc&sort=content,asc", example = "0")
+      Pageable pageable,
+      @RequestParam(required = false, name = "searchKeyword")
+      @Schema(description = "키워드", example = "키워드")
+      String searchKeyword,
+      @RequestParam(required = false, name = "searchUserNos")
+      @Schema(description = "검색 유저 번호들.", example = "1,2,4")
+      String searchUserNos,
+      @RequestParam(required = false, name = "isLikedByMe")
+      @Schema(description = "나에 의해서 좋아하는 게시글 필터 여부(true or false).", example = "false")
+      Boolean isLikedByMe,
+      @RequestParam(required = false, name = "isCommentedByMe")
+      @Schema(description = "내가 댓글을 단 게시글 필터 여부.(true or false)", example = "false")
+      Boolean isCommentedByMe
+
+  ) {
+    log.info(">>> PostController.getPost");
+    List<Long> searchUserNoList = new ArrayList<>();
+    if (StringUtils.hasText(searchUserNos)) {
+      try {
+        searchUserNoList =
+            Arrays.stream(searchUserNos.split(",")).map(Long::parseLong).toList();
+      } catch (NumberFormatException e) {
+        log.error(">>> PostController.getPost searchUserNos 파싱 에러 NumberFormatException", e);
+        throw new IllegalArgumentException("searchUserNos 파싱 에러 NumberFormatException", e);
+      } catch (Exception e) {
+        log.error(">>> PostController.getPost searchUserNos 파싱 에러 Exception", e);
+        throw new IllegalArgumentException("searchUserNos 파싱 에러 Exception", e);
+      }
+    }
+
+    return postService.getPostsV2(pageable, searchKeyword, searchUserNoList, isLikedByMe,
+        isCommentedByMe);
   }
 
   @Operation(summary = "[o]게시글 상세 조회", description = "게시글 상세 조회 API")

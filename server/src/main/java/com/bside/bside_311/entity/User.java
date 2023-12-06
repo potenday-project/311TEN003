@@ -14,6 +14,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.util.ObjectUtils;
@@ -27,6 +28,7 @@ import java.util.List;
 @DynamicInsert
 @DynamicUpdate
 @Builder
+@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseEntity {
   @Id
@@ -80,6 +82,7 @@ public class User extends BaseEntity {
                .userId(userSignupRequestDto.getId())
                .nickname(userSignupRequestDto.getNickname())
                .role(role)
+               .introduction(userSignupRequestDto.getIntroduction())
                .build();
   }
 

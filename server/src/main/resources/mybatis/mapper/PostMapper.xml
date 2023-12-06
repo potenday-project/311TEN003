@@ -7,6 +7,12 @@
         <if test='searchKeyword != null and !searchKeyword.equalsIgnoreCase("")'>
             and p.content like CONCAT('%', #{searchKeyword},'%')
         </if>
+        <if test="searchUserNoList != null and searchUserNoList.size() > 0">
+            and p.created_by in
+            <foreach collection="searchUserNoList" item="userNo" open="(" separator="," close=")">
+                #{userNo}
+            </foreach>
+        </if>
     </sql>
 
     <select id="getPosts" resultType="GetPostsMvo" parameterType="GetPostVo">
@@ -36,5 +42,35 @@
         <where>
             <include refid="getPostsWhereSql"/>
         </where>
+    </select>
+
+    <select id="getPostsToOne" resultType="GetPostsToOneMvo">
+        select p.post_no
+             , u.nickname
+             , u.user_id
+             , if(uf.user_follow_no is not null, true, false) as is_followed_by_me
+             , uf.user_follow_no
+             , if(pl.post_like_no is not null, true, false) as is_liked_by_me
+             , pl.post_like_no
+             , a.alcohol_no
+             , a.name as alcohol_name
+             , at2.name  as alcohol_type
+        from post p
+                 left outer join user u
+                                 on p.created_by  = u.user_no
+                                     and p.del_yn = 'N' and u.del_yn = 'N'
+                 left outer join user_follow uf
+                                 on u.user_no = uf.`following` and p.created_by = uf.followed and u.del_yn ='N' and uf.del_yn = 'N'
+                 left outer join post_like pl
+                                 on pl.post_no = p.post_no  and pl.user_no  = u.user_no and u.del_yn ='N' and pl.del_yn = 'N'
+                 left outer join post_alcohol pa
+                                 on pa.post_no = p.post_no and p.del_yn = 'N' and pa.del_yn = 'N'
+                 left outer join alcohol a
+                                 on pa.post_no  = p.post_no  and pa.alcohol_no = a.alcohol_no  and pa.del_yn = 'N' and a.del_yn = 'N'
+                 left outer join alcohol_type at2
+                                 on a.alcohol_type_no = at2.alcohol_type_no and a.del_yn = 'N' and at2.del_yn = 'N'
+        where p.del_yn = 'N' and p.post_no in <foreach collection="list" item="postNo" open="(" separator="," close=")">
+        #{postNo}
+    </foreach>
     </select>
 </mapper>

@@ -6,6 +6,7 @@ import com.bside.bside_311.dto.GetUserInfoResponseDto;
 import com.bside.bside_311.dto.LoginResponseDto;
 import com.bside.bside_311.dto.MyInfoResponseDto;
 import com.bside.bside_311.dto.UserLoginRequestDto;
+import com.bside.bside_311.dto.UserResponseDto;
 import com.bside.bside_311.dto.UserSignupResponseDto;
 import com.bside.bside_311.dto.UserUpdateRequestDto;
 import com.bside.bside_311.entity.Attach;
@@ -21,6 +22,8 @@ import com.bside.bside_311.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,11 +32,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 import static com.bside.bside_311.util.JwtUtil.NORMAL_TOKEN;
 import static com.bside.bside_311.util.JwtUtil.normalValidity;
+import static com.bside.bside_311.util.ValidateUtil.resourceChangeableCheckByThisRequestToken;
 
 @Service
 @Slf4j
@@ -76,6 +82,8 @@ public class UserService {
   public void updateUser(Long userNo, UserUpdateRequestDto userUpdateRequestDto) {
     User user = userRepository.findByIdAndDelYnIs(userNo, YesOrNo.N)
                               .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+    // resourceChangeableCheckByThisRequestToken(user);
+    // 리소스 변경 예외. 유저 생성시에는  createdBy정보가 없음.
     if (userUpdateRequestDto != null) {
       if (userUpdateRequestDto.getIntroduction() != null) {
         user.setIntroduction(userUpdateRequestDto.getIntroduction());
@@ -92,15 +100,19 @@ public class UserService {
             YesOrNo.N);
     Long followerCount =
         userFollowRepository.countByFollowedAndDelYnIs(user.of(userNo), YesOrNo.N);
+    Long followingCount =
+        userFollowRepository.countByFollowingAndDelYnIs(user.of(userNo), YesOrNo.N);
     Boolean isFollowing = null;
     Long myUserNo = AuthUtil.getUserNoFromAuthentication();
     if (myUserNo != null) {
       isFollowing = userFollowRepository.findByFollowingAndFollowedAndDelYnIs(user.of(myUserNo),
-                              user.of(userNo), YesOrNo.N)
-                          .isPresent();
+                                            user.of(userNo), YesOrNo.N)
+                                        .isPresent();
     }
 
-    return GetUserInfoResponseDto.of(MyInfoResponseDto.of(user, AttachDto.of(profileAttachList), followerCount), isFollowing);
+    return GetUserInfoResponseDto.of(
+        MyInfoResponseDto.of(user, AttachDto.of(profileAttachList), followerCount, followingCount),
+        isFollowing);
   }
 
   public MyInfoResponseDto getMyInfo(Long myUserNo) {
@@ -111,12 +123,17 @@ public class UserService {
             YesOrNo.N);
     Long followerCount =
         userFollowRepository.countByFollowedAndDelYnIs(user.of(myUserNo), YesOrNo.N);
-    return MyInfoResponseDto.of(user, AttachDto.of(profileAttachList), followerCount);
+    Long followingCount =
+        userFollowRepository.countByFollowingAndDelYnIs(user.of(myUserNo), YesOrNo.N);
+    return MyInfoResponseDto.of(user, AttachDto.of(profileAttachList), followerCount,
+        followingCount);
   }
 
   public void withdraw(Long myUserNo) {
     User user = userRepository.findByIdAndDelYnIs(myUserNo, YesOrNo.N)
                               .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+    // resourceChangeableCheckByThisRequestToken(user);
+    // 리소스 변경 예외. 유저 생성시에는  createdBy정보가 없음.
     user.setDelYn(YesOrNo.Y);
     userRepository.save(user);
   }
@@ -129,6 +146,8 @@ public class UserService {
     }
     User me = userRepository.findByIdAndDelYnIs(myUserNo, YesOrNo.N)
                             .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+    //    resourceChangeableCheckByThisRequestToken(me);
+    // 리소스 변경 예외. 유저 생성시에는  createdBy정보가 없음.
     if (!passwordEncoder.matches(changePasswordRequestDto.getPassword(), me.getPassword())) {
       throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
     }
@@ -160,6 +179,45 @@ public class UserService {
     UserFollow userFollow =
         userFollowRepository.findByFollowingAndFollowedAndDelYnIs(me, followingUser, YesOrNo.N)
                             .orElseThrow(() -> new IllegalArgumentException("팔로우하지 않은 유저입니다."));
+    resourceChangeableCheckByThisRequestToken(userFollow);
     userFollow.setDelYn(YesOrNo.Y);
+  }
+
+  public Page<UserResponseDto> getMyFollowingUsers(Long myUserNo, Pageable pageable) {
+    Page<User> users = userRepository.getMyFollowingUsersPage(myUserNo, pageable);
+    List<Long> userNos = users.stream().map(User::getId).toList();
+    Map<Long, List<AttachDto>> uToAMap = getUserAttachInfos(userNos);
+
+    return users.map(user -> {
+      List<AttachDto> attachDtos = uToAMap.getOrDefault(user.getId(), List.of());
+      return UserResponseDto.of(user, attachDtos);
+    });
+  }
+
+  public Page<UserResponseDto> getUsersOfFollowingMe(Long myUserNo, Pageable pageable) {
+    Page<User> users = userRepository.getUsersOfFollowingMePage(myUserNo, pageable);
+    List<Long> userNos = users.stream().map(User::getId).toList();
+    Map<Long, List<AttachDto>> uToAMap = getUserAttachInfos(userNos);
+
+    return users.map(user -> {
+      List<AttachDto> attachDtos = uToAMap.getOrDefault(user.getId(), List.of());
+      return UserResponseDto.of(user, attachDtos);
+    });
+  }
+
+  public Map<Long, List<AttachDto>> getUserAttachInfos(List<Long> userNos) {
+
+    List<Attach> userAttachList =
+        attachRepository.findByRefNoInAndAttachTypeIsAndDelYnIs(userNos, AttachType.PROFILE,
+            YesOrNo.N);
+    Map<Long, List<AttachDto>> uToAMap = new HashMap<>();
+    for (Attach attach : userAttachList) {
+      if (!uToAMap.containsKey(attach.getRefNo())) {
+        uToAMap.put(attach.getRefNo(), new ArrayList<>());
+      }
+      List<AttachDto> attachDtos = uToAMap.get(attach.getRefNo());
+      attachDtos.add(AttachDto.of(attach));
+    }
+    return uToAMap;
   }
 }

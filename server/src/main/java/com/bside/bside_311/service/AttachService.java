@@ -13,10 +13,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+
+import static com.bside.bside_311.util.ValidateUtil.resourceChangeableCheckByThisRequestToken;
 
 @Service
 @Slf4j
@@ -73,10 +74,7 @@ public class AttachService {
     Attach attach = attachRepository.findByIdAndDelYnIs(attachNo, YesOrNo.N)
                                     .orElseThrow(
                                         () -> new IllegalArgumentException("존재하지 않는 첨부파일입니다."));
-
-    if (!ObjectUtils.nullSafeEquals(myUserNo, attach.getCreatedBy())) {
-      throw new IllegalArgumentException("자신의 자원만 삭제할 수 있습니다.");
-    }
+    resourceChangeableCheckByThisRequestToken(attach);
     // delete attach
     attach.setDelYn(YesOrNo.Y);
 
