@@ -9,10 +9,11 @@ import { sanitize } from "isomorphic-dompurify";
 
 interface NewPostTextEditorInterface {
   onContentChange: (props: { content: string; tagList: string[] }) => void;
+  maxLength?:number
 }
 
-const NewPostTextEditor = ({ onContentChange }: NewPostTextEditorInterface) => {
-  const [mentioningValue, setMentioningValue] = useState("");
+const NewPostTextEditor = ({ onContentChange,maxLength=200 }: NewPostTextEditorInterface) => {
+  const [_mentioningValue, setMentioningValue] = useState("");
 
   const [tagList, setTagList] = useState<string[]>([]);
 
@@ -84,8 +85,8 @@ const NewPostTextEditor = ({ onContentChange }: NewPostTextEditorInterface) => {
           component="span"
         >
           {textLength}
-        </Typography>{" "}
-        / 200자
+        </Typography>
+        / {maxLength}자
       </Typography>
     </>
   );
