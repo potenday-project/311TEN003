@@ -3,3 +3,9 @@ export default interface AttachInterface {
   attachUrl: string;
   attachType: string;
 }
+
+export interface ImageSize {
+  width: number;
+  height: number;
+}
+

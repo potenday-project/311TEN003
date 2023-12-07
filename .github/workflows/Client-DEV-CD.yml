@@ -23,7 +23,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build Docker Image
-        run: docker buildx build --platform linux/arm64,linux/amd64 -f Dockerfile --build-arg NEXT_PUBLIC_BASE_URL=${{secrets.NEXT_PUBLIC_BASE_URL}}  --build-arg NEXT_PUBLIC_CLIENT_BASE_URL=${{secrets.NEXT_PUBLIC_CLIENT_BASE_URL}} --build-arg PORT=${{secrets.CLIENT_DEV_PORT}} -t ${{ secrets.CLIENT_STORYBOOK_REPO }}/${{ secrets.CLIENT_DEV_SERVICE_NAME }}:latest --push .
+        run: docker buildx build --platform linux/arm64,linux/amd64 -f Dockerfile --build-arg NEXT_PUBLIC_IMAGE_COMPRESS_URL=${{secrets.NEXT_PUBLIC_IMAGE_COMPRESS_URL}} --build-arg NEXT_PUBLIC_BASE_URL=${{secrets.NEXT_PUBLIC_BASE_URL}}  --build-arg NEXT_PUBLIC_CLIENT_BASE_URL=${{secrets.NEXT_PUBLIC_CLIENT_BASE_URL}} --build-arg PORT=${{secrets.CLIENT_DEV_PORT}} -t ${{ secrets.CLIENT_STORYBOOK_REPO }}/${{ secrets.CLIENT_DEV_SERVICE_NAME }}:latest --push .
         working-directory: ./client
 
       - name: executing remote ssh commands using password

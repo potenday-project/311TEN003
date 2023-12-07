@@ -67,7 +67,8 @@ export type ATTACH_FILE_ResourceType = "POST" | "PROFILE" | "ALCOHOL";
 export const ATTACH_FILE = (
   type: ATTACH_FILE_ResourceType,
   resourcePk: number
-) => `/attach/resources/${type}/${resourcePk}` as const;
+) => `/${type}/${resourcePk}` as const;
+// ) => `/attach/resources/${type}/${resourcePk}` as const;
 
 /**
  * 파일PK 를 입력받아 해당 파일을 제거하는 URL
