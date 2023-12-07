@@ -10,7 +10,7 @@ https://unmarred-teeth-fc0.notion.site/Tupaia-447ca72c5e2b4f9d9d5c13754ed74bb4?p
 
 # client
 - tech stack
-  - Next.js, React, Javascript, Docker
+  - Next.js, Typescript, Docker
 # server
 - tech stack
   - Spring boot, Java, Mybatis, JPA, Junit5, Mysql, Naver Cloud Platform
