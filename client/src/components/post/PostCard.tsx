@@ -53,7 +53,7 @@ const PostCard = ({
 }: PostInterface) => {
   const openPostDetailPage = useOpenPostDetailPage();
   const router = useRouter();
-  
+
   const hasImage = useMemo(() => postAttachUrls.length !== 0, [postAttachUrls]);
 
   const searchContext = useContext(postcardContext);
@@ -72,7 +72,7 @@ const PostCard = ({
       router.push(HOME);
     }
   };
-  
+
   const { data: currentUser } = useMyInfoQuery();
 
   const isMyPost = useMemo(
@@ -151,7 +151,6 @@ const PostCard = ({
           <CardMedia
             data-testid="postImg"
             component="img"
-            height="142"
             onClick={() => openPostDetailPage(id, String(postNo))}
             image={postAttachUrls[0].attachUrl}
             alt={`${id}의 포스트`}
@@ -159,6 +158,7 @@ const PostCard = ({
               borderRadius: 2,
               bgcolor: "background.default",
               cursor: "pointer",
+              aspectRatio: 2.36
             }}
           />
         )}

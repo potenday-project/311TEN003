@@ -18,6 +18,7 @@ import { useGlobalLoadingStore } from "./../../../../store/useGlobalLoadingStore
 import usePatchUserInfoMutation from "@/queries/user/usePatchUserInfoMutation";
 import useRenderAsDataUrl from "@/hooks/useRenderAsDataUrl";
 import SingleImageInput from "@/components/SingleImageInput";
+import { PROFILE_IMAGE_SIZE } from "@/const/imageSize";
 
 const UserInfoEditingForm = () => {
   const { setIsEditing } = useContext(UserPageContext);
@@ -43,6 +44,7 @@ const UserInfoEditingForm = () => {
       await attachFile({
         file: file,
         url: { type: "PROFILE", pk: Number(data?.userNo) },
+        size: PROFILE_IMAGE_SIZE,
       });
     },
     [data]
@@ -52,9 +54,11 @@ const UserInfoEditingForm = () => {
     setLoading(true);
     await patchUserInfo({ introduction });
     if (file) {
-      data?.profileImages.forEach(async (profile) => {
-        await removeFile(String(profile.attachNo));
-      });
+      Promise.all([
+        data?.profileImages.forEach(async (profile) => {
+          return removeFile(String(profile.attachNo));
+        }),
+      ]);
       await submitFileHandler(file);
     }
     setIsEditing(false);

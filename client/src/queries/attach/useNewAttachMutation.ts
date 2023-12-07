@@ -6,13 +6,17 @@ import { postDetailQueryKey } from "../post/useGetPostDetailQuery";
 import { MyInfoQueryKeys } from "../auth/useMyInfoQuery";
 import { UserInfoQueryKey } from "../user/useUserInfoQuery";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
+import { ImageSize } from "@/types/attach/attachInterface";
 
 export const useNewAttachMutation = () => {
   const errorHandler = useErrorHandler();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (param: { file: File; url: NewAttatchRequestUrl }) =>
-      await postImageFn(param.file, param.url),
+    mutationFn: async (param: {
+      file: File;
+      url: NewAttatchRequestUrl;
+      size?: ImageSize;
+    }) => await postImageFn(param.file, param.url, param.size),
     onMutate: (variables) => {
       return variables;
     },
@@ -57,9 +61,10 @@ interface NewAttatchRequestUrl {
  */
 export const postImageFn = async (
   file: File,
-  { type, pk }: NewAttatchRequestUrl
+  { type, pk }: NewAttatchRequestUrl,
+  size?: ImageSize
 ) => {
-  const axiosPrivate = useAxiosPrivate()
+  const axiosPrivate = useAxiosPrivate();
   const formData = new FormData();
   formData.append("image", file);
 
@@ -67,6 +72,7 @@ export const postImageFn = async (
     ATTACH_FILE(type, pk),
     formData,
     {
+      params: size,
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -75,6 +81,7 @@ export const postImageFn = async (
           return formData;
         },
       ],
+      baseURL: process.env.NEXT_PUBLIC_IMAGE_COMPRESS_URL,
     }
   );
   return data;

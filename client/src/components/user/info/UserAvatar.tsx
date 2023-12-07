@@ -5,10 +5,10 @@ interface UserAvatarProps extends AvatarProps {
   fallback: ReactNode;
 }
 
-const UserAvatar = ({ src, fallback,sx,...others }: UserAvatarProps) => {
+const UserAvatar = ({ src, fallback, sx, ...others }: UserAvatarProps) => {
   return (
     <Avatar
-      sx={{...sx, bgcolor: "secondary.main" }}
+      sx={{ ...sx, bgcolor: src ? "background.paper" : "secondary.main" }}
       src={src}
       data-testid="avatar"
       {...others}

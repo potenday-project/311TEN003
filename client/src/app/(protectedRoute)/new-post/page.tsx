@@ -23,6 +23,7 @@ import PreviewImageByURL from "@/components/PreviewImageByURL";
 import NewPostTextEditor from "@/components/newpost/NewPostTextEditor";
 import useRenderAsDataUrl from "@/hooks/useRenderAsDataUrl";
 import SingleImageInput from "@/components/SingleImageInput";
+import { POST_IMAGE_SIZE } from "@/const/imageSize";
 
 export default function NewpostPage() {
   const { setLoading } = useGlobalLoadingStore();
@@ -60,6 +61,7 @@ export default function NewpostPage() {
             await attachFileHandler({
               file,
               url: { pk: postNo, type: "POST" },
+              size: POST_IMAGE_SIZE,
             });
           } catch {
             deletePostHandler(postNo);
@@ -85,7 +87,7 @@ export default function NewpostPage() {
         title="포스팅"
         appendButton="공유"
         disableAppend={isSuccess}
-        onClickAppend={()=>submitHandler({...formValue,alcoholNo},file)}
+        onClickAppend={() => submitHandler({ ...formValue, alcoholNo }, file)}
       />
 
       <Container sx={{ p: { xs: 0, sm: 4 } }} maxWidth={"lg"}>
