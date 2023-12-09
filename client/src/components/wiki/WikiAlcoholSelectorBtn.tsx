@@ -31,7 +31,7 @@ const WikiAlcoholSelectorBtn = ({
         >
           {iconComponent}
         </Stack>
-        <Typography sx={{ p: 1 }}>{title}</Typography>
+        <Typography sx={{ py: 1 }}>{title}</Typography>
       </Stack>
     </ButtonBase>
   );
