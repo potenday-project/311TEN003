@@ -24,7 +24,7 @@ interface SearchAlcoholInputInterface {
 }
 const SearchAlcoholInput = ({ setAlcoholNo }: SearchAlcoholInputInterface) => {
   // 유저가 검색한 키워드
-  const [searchKeyword, setSearchKeyword] = useState("");
+  const [searchKeyword, setSearchKeyword] = useState<string>();
   // 검색한 키워드의 Debounced 값
   const debouncedValue = useDebounce(searchKeyword, 300);
   const [isSearchingAlcohol, setIsSearchingAlCohol] = useState(false);
@@ -36,7 +36,7 @@ const SearchAlcoholInput = ({ setAlcoholNo }: SearchAlcoholInputInterface) => {
     useState<AlcoholDetailInterface>();
 
   useEffect(() => {
-    setSearchKeyword(selectedAlcohol?.alcoholName ?? "");
+    setSearchKeyword(selectedAlcohol?.alcoholName);
     setAlcoholNo(selectedAlcohol?.alcoholNo);
   }, [selectedAlcohol]);
 
@@ -68,7 +68,7 @@ const SearchAlcoholInput = ({ setAlcoholNo }: SearchAlcoholInputInterface) => {
         autoComplete="off"
       />
       {/* FIXME List 컴포넌트로 분리 */}
-      {isSearchingAlcohol && (
+      {isSearchingAlcohol && data && (
         <Box sx={WrapperStyle}>
           <List sx={ListStyle}>
             {isSuccess &&
