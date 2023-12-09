@@ -27,15 +27,11 @@ export const useMyInfoQuery = () => {
         throw Error();
       }
     },
+    enabled: !!getTokenFromLocalStorage(),
   });
 };
 
 export const getMyInfoByLocalStorage = async () => {
-  const accessToken = getTokenFromLocalStorage();
-
-  if (!accessToken) {
-    return null;
-  }
   const axiosPrivate = useAxiosPrivate();
   const { data } = await axiosPrivate.get<MyInfoInterface>(MY_INFO);
   return data;
