@@ -5,8 +5,9 @@ import { getPostListInfiniteQueryKey } from "./../post/useGetPostListInfiniteQue
 import { postDetailQueryKey } from "../post/useGetPostDetailQuery";
 import { MyInfoQueryKeys } from "../auth/useMyInfoQuery";
 import { UserInfoQueryKey } from "../user/useUserInfoQuery";
-import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import { ImageSize } from "@/types/attach/attachInterface";
+import axios from "axios";
+import getTokenFromLocalStorage from "@/utils/getTokenFromLocalStorage";
 
 export const useNewAttachMutation = () => {
   const errorHandler = useErrorHandler();
@@ -64,17 +65,17 @@ export const postImageFn = async (
   { type, pk }: NewAttatchRequestUrl,
   size?: ImageSize
 ) => {
-  const axiosPrivate = useAxiosPrivate();
   const formData = new FormData();
   formData.append("image", file);
 
-  const { data } = await axiosPrivate.post<{ attachNo: number }>(
+  const { data } = await axios.post<{ attachNo: number }>(
     ATTACH_FILE(type, pk),
     formData,
     {
       params: size,
       headers: {
         "Content-Type": "multipart/form-data",
+        Authorization: getTokenFromLocalStorage(),
       },
       transformRequest: [
         function () {

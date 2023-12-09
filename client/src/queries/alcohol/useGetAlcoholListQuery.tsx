@@ -7,13 +7,11 @@ const useGetAlcoholListQuery = (keyword?: string) => {
   return useQuery({
     queryKey: AlcohilListQueryKey.byKeyword(keyword),
     queryFn: async () => await getAlcoholListByKeyword(keyword),
+    enabled: keyword!=undefined,
   });
 };
 
 export const getAlcoholListByKeyword = async (keyword?: string) => {
-  if (keyword === "") {
-    return { list: [], totalCount: 0 };
-  }
   const { data } = await axios.get<{
     list: AlcoholDetailInterface[];
     totalCount: number;
@@ -23,7 +21,7 @@ export const getAlcoholListByKeyword = async (keyword?: string) => {
       size: 5,
       searchKeyword: keyword,
     },
-  });
+  }); 
   return data;
 };
 

@@ -5,7 +5,7 @@ import { Pagination, Stack } from "@mui/material";
 import usePushToWikiDetail from "@/hooks/wiki/usePushToWikiDetail";
 
 const AlcoholPagenation = () => {
-  const { data: alcohols } = useGetAlcoholListQuery();
+  const { data: alcohols } = useGetAlcoholListQuery("");
   const onClickElementHandler = usePushToWikiDetail();
   return (
     <Stack alignItems="center" gap={2}>
