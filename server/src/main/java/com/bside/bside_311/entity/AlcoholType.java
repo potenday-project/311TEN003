@@ -29,5 +29,6 @@ public class AlcoholType extends BaseEntity {
 
   private String description;
 
+  @Column(unique = true)
   private String name;
 }

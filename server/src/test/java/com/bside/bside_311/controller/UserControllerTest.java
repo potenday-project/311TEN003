@@ -249,7 +249,8 @@ class UserControllerTest extends ControllerTest {
   @DisplayName("내가 팔로잉하는 유저 조회. 성공.")
   void getMyFollowingUsers_success() throws Exception {
     //given
-    Page<UserResponseDto> pagedResponse = new PageImpl<>(List.of(UserResponseDto.of(normalUser)));
+    Page<UserResponseDto> pagedResponse =
+        new PageImpl<>(List.of(UserResponseDto.of(normalUser, null)));
     given(userService.getMyFollowingUsers(eq(normalUser.getId()),
         ArgumentMatchers.any(Pageable.class)))
         .willReturn(pagedResponse);
@@ -263,7 +264,8 @@ class UserControllerTest extends ControllerTest {
   @DisplayName("나를 팔로잉하는 유저 조회. 성공.")
   void getUsersOfFollowingMePage_success() throws Exception {
     //given
-    Page<UserResponseDto> pagedResponse = new PageImpl<>(List.of(UserResponseDto.of(normalUser)));
+    Page<UserResponseDto> pagedResponse =
+        new PageImpl<>(List.of(UserResponseDto.of(normalUser, null)));
     given(userService.getUsersOfFollowingMe(eq(normalUser.getId()),
         ArgumentMatchers.any(Pageable.class)))
         .willReturn(pagedResponse);

@@ -8,6 +8,7 @@ import com.bside.bside_311.dto.EditAlcoholRequestDto;
 import com.bside.bside_311.dto.GetAlcoholResponseDto;
 import com.bside.bside_311.dto.GetAlcoholTypesResponseDto;
 import com.bside.bside_311.service.AlcoholService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 @Slf4j
 @Validated
@@ -51,7 +54,8 @@ public class AlcoholController {
   @UserRequired
   @ResponseStatus(HttpStatus.CREATED)
   public AddAlcoholResponseDto addAlcohol(
-      @RequestBody @Valid AddAlcoholRequestDto addAlcoholRequestDto) {
+      @RequestBody @Valid AddAlcoholRequestDto addAlcoholRequestDto)
+      throws JsonProcessingException {
     log.info(">>> AlcoholController.addAlcohol");
     return alcoholService.addAlcohol(addAlcoholRequestDto);
   }
@@ -95,7 +99,9 @@ public class AlcoholController {
   public Page<AlcoholResponseDto> getAlcoholV2(
 //      @Schema(description = "페이지 번호와 사이즈.정렬 까지.(0부터) ex)[1]page=0&size=5&sort=id,desc [2]page=1&size=15&sort=id,desc&sort=content,asc", example = "0")
       Pageable pageable,
-      @Schema(description = "알코올 키워드", example = "키워드") String searchKeyword) {
+      @RequestParam(required = false, name = "searchKeyword")
+      @Schema(description = "키워드", example = "키워드")
+      String searchKeyword) {
     log.info(">>> AlcoholController.getAlcohol");
     return alcoholService.getAlcoholV2(pageable, searchKeyword);
   }
@@ -105,6 +111,13 @@ public class AlcoholController {
   public AlcoholResponseDto getAlcoholDetail(@PathVariable("alcoholNo") Long alcoholNo) {
     log.info(">>> AlcoholController.getAlcoholDetail");
     return alcoholService.getAlcoholDetail(alcoholNo);
+  }
+
+  @Operation(summary = "술타입 MAP 조회", description = "술타입 MAP 조회 API")
+  @GetMapping("/types/map")
+  public Map<String, Long> getAlcoholTypeMap() {
+    log.info(">>> AlcoholController.getAlcoholTypeMap");
+    return alcoholService.getAlcoholTypeMap();
   }
 
 }

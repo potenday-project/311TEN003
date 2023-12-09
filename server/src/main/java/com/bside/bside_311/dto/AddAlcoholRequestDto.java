@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
@@ -52,6 +53,13 @@ public class AddAlcoholRequestDto {
   @Schema(example = "700", description = "용량(ml)")
   @Positive
   private Long volume;
+
+  @Schema(example = " {\n" +
+                        "      \"Aroma\": \"과일, 다채로운\",\n" +
+                        "      \"Taste\": \"과일, 오크, 초콜릿, 산미\",\n" +
+                        "      \"Finish\": \"우아한\"\n" +
+                        "    }")
+  private Map<String, String> taste;
 
   @Builder.Default
   @Schema(description = "태그 리스트. 해당 문자열 없을경우 데이터 생성.")
