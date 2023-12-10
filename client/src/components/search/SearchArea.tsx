@@ -1,5 +1,5 @@
 "use client";
-import { Paper, TextField } from "@mui/material";
+import { Box, TextField } from "@mui/material";
 import React, { useState, useMemo } from "react";
 import PostCardList from "@/components/post/PostCardList";
 import { AugmentedGetPostListResponse } from "@/queries/post/useGetPostListInfiniteQuery";
@@ -18,34 +18,45 @@ const SearchArea = ({ initialData, searchKeyword }: Props) => {
   const MemoidInitailData = useMemo(() => initialData, []);
 
   return (
-    <Paper
-      sx={{
-        minHeight: "calc(100vh - 56px)",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <motion.div
-        style={{ display: "flex", flexDirection: "column", overflow: "hidden" }}
-        initial={{ height: 0 }}
-        animate={{ height: "auto" }}
+    <>
+      <Box
+        height= {72}
+        sx={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          p: 2,
+          zIndex: 2,
+          backgroundColor: "background.paper",
+        }}
       >
-        <TextField
-          label="검색어를 입력해주세요"
-          autoFocus
-          value={keyword}
-          onChange={({ target }) => setKeyword(target.value)}
-          sx={{ m: 2 }}
-          InputProps={{
-            endAdornment: <InputSearchIcon />,
+        <motion.div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden",
           }}
-        />
-      </motion.div>
+          initial={{ height: 0 }}
+          animate={{ height: "auto" }}
+        >
+          <TextField
+            placeholder="검색어를 입력해주세요"
+            autoFocus
+            value={keyword}
+            size="small"
+            onChange={({ target }) => setKeyword(target.value)}
+            InputProps={{
+              endAdornment: <InputSearchIcon />,
+            }}
+          />
+        </motion.div>
+      </Box>
       <PostCardList
         initialData={!keyword ? MemoidInitailData : undefined}
         searchKeyword={debouncedValue}
       />
-    </Paper>
+    </>
   );
 };
 

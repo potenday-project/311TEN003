@@ -1,10 +1,10 @@
 "use client";
-import CustomAppbar from "@/components/CustomAppbar";
+import CustomAppbar from "@/components/layout/CustomAppbar";
+import CustomContainer from "@/components/layout/CustomContainer";
 import UserInfoEditingDrawer from "@/components/user/info/drawer/UserInfoEditingDrawer";
 import { SETTING_PAGE } from "@/const/clientPath";
 import { useMyInfoQuery } from "@/queries/auth/useMyInfoQuery";
 import UserPageContext from "@/store/user/UserPageContext";
-import { Container, Paper } from "@mui/material";
 import { useRouter } from "next/navigation";
 import React, { useMemo, useState } from "react";
 
@@ -20,7 +20,7 @@ const UserInfoPageLayout = ({ children, params }: Props) => {
     [userInfo, params.userId]
   );
   const [isEditing, setIsEditing] = useState(false);
-  const router = useRouter()
+  const router = useRouter();
 
   return (
     <UserPageContext.Provider value={{ isEditing, setIsEditing }}>
@@ -30,23 +30,13 @@ const UserInfoPageLayout = ({ children, params }: Props) => {
           if (!isMyProfile) {
             return;
           }
-          router.push(SETTING_PAGE)
+          router.push(SETTING_PAGE);
         }}
       />
-      <Container sx={{ px: { xs: 0, sm: 4 } }} maxWidth={"lg"}>
-        <Paper
-          sx={{
-            display: "flex",
-            position: "relative",
-            flexDirection: "column",
-            gap: 2,
-            p: 2,
-          }}
-        >
-          <UserInfoEditingDrawer />
-          {children}
-        </Paper>
-      </Container>
+      <CustomContainer>
+        <UserInfoEditingDrawer />
+        {children}
+      </CustomContainer>
     </UserPageContext.Provider>
   );
 };

@@ -2,7 +2,6 @@
 import SearchArea from "@/components/search/SearchArea";
 import { getPostListQueryFn } from "@/queries/post/useGetPostListInfiniteQuery";
 import getTokenFromCookies from "@/utils/getTokenFromCookies";
-import { Container } from "@mui/material";
 
 const SearchPage = async ({
   searchParams,
@@ -14,13 +13,14 @@ const SearchPage = async ({
     searchKeyword: searchParams?.keyword,
     headers: { Authorization: accessToken },
   });
+
   return (
-    <Container sx={{ px: { xs: 0, sm: 4 } }} maxWidth={"lg"}>
+    <>
       <SearchArea
         initialData={initialData}
         searchKeyword={searchParams?.keyword}
       />
-    </Container>
+    </>
   );
 };
 

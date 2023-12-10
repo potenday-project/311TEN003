@@ -6,7 +6,7 @@ import SignupPageContext from "@/store/auth/SignupPageContext";
 import useMultistepForm from "@/hooks/useMultistepForm";
 import SignupStep from "@/components/auth/signup/SignupStep";
 import { TextField, LinearProgress } from "@mui/material";
-import CustomAppbar from "@/components/CustomAppbar";
+import CustomAppbar from "@/components/layout/CustomAppbar";
 import { useRouter } from "next/navigation";
 import HOME from "@/const/clientPath";
 import { HomeOutlined } from "@mui/icons-material";
