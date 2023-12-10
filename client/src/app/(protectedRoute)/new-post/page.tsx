@@ -17,13 +17,14 @@ import {
   NewPostRequestAlCohol,
 } from "@/types/newPost/NewPostInterface";
 import SearchAlcoholInput from "@/components/newpost/SearchAlcoholInput";
-import CustomAppbar from "@/components/CustomAppbar";
+import CustomAppbar from "@/components/layout/CustomAppbar";
 import SquareIconButton from "@/components/SquareIconButton";
 import PreviewImageByURL from "@/components/PreviewImageByURL";
 import NewPostTextEditor from "@/components/newpost/NewPostTextEditor";
 import useRenderAsDataUrl from "@/hooks/useRenderAsDataUrl";
 import SingleImageInput from "@/components/SingleImageInput";
 import { POST_IMAGE_SIZE } from "@/const/imageSize";
+import CustomContainer from "@/components/layout/CustomContainer";
 
 export default function NewpostPage() {
   const { setLoading } = useGlobalLoadingStore();
@@ -90,48 +91,38 @@ export default function NewpostPage() {
         onClickAppend={() => submitHandler({ ...formValue, alcoholNo }, file)}
       />
 
-      <Container sx={{ p: { xs: 0, sm: 4 } }} maxWidth={"lg"}>
-        <Paper
-          sx={{
-            display: "flex",
-            position: "relative",
-            flexDirection: "column",
-            gap: 2,
-            p: 2,
-          }}
-        >
-          {/* 검색창 */}
-          <SearchAlcoholInput setAlcoholNo={setAlcoholNo} />
-          {/* 내용 */}
-          <NewPostTextEditor
-            onContentChange={({ content, tagList }) =>
-              setFormValue((prev) => ({
-                ...prev,
-                postContent: content,
-                tagList,
-              }))
-            }
-          />
-          {/* 파일 미리보기 */}
-          {fileUrl && <PreviewImageByURL fileUrl={fileUrl} />}
-          {/* 버튼 그룹 */}
-          <Box sx={{ display: "flex", gap: 2 }}>
-            {/* 사진 */}
-            <Tooltip title="사진 첨부">
-              <SquareIconButton
-                component={"label"}
-                iconComponent={<PictureIcon />}
-              >
-                <SingleImageInput onChange={(file) => setFile(file)} />
-              </SquareIconButton>
-            </Tooltip>
-            {/* 위치 */}
-            <Tooltip title="위치 추가">
-              <SquareIconButton iconComponent={<PinIcon />} />
-            </Tooltip>
-          </Box>
-        </Paper>
-      </Container>
+      <CustomContainer>
+        {/* 검색창 */}
+        <SearchAlcoholInput setAlcoholNo={setAlcoholNo} />
+        {/* 내용 */}
+        <NewPostTextEditor
+          onContentChange={({ content, tagList }) =>
+            setFormValue((prev) => ({
+              ...prev,
+              postContent: content,
+              tagList,
+            }))
+          }
+        />
+        {/* 파일 미리보기 */}
+        {fileUrl && <PreviewImageByURL fileUrl={fileUrl} />}
+        {/* 버튼 그룹 */}
+        <Box sx={{ display: "flex", gap: 2 }}>
+          {/* 사진 */}
+          <Tooltip title="사진 첨부">
+            <SquareIconButton
+              component={"label"}
+              iconComponent={<PictureIcon />}
+            >
+              <SingleImageInput onChange={(file) => setFile(file)} />
+            </SquareIconButton>
+          </Tooltip>
+          {/* 위치 */}
+          <Tooltip title="위치 추가">
+            <SquareIconButton iconComponent={<PinIcon />} />
+          </Tooltip>
+        </Box>
+      </CustomContainer>
     </Paper>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
-import CustomAppbar from "@/components/CustomAppbar";
+
+import CustomAppbar from "@/components/layout/CustomAppbar";
 import { Container, Stack } from "@mui/material";
 import { ReactNode } from "react";
 

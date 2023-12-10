@@ -41,7 +41,7 @@ const NavigationBar = () => {
       },
       {
         iconComponent: <BeverageIcon />,
-        label: "술과사전",
+        label: "술백과",
         href: WIKI,
       },
       {

@@ -1,8 +1,8 @@
 "use client";
 
+import CustomContainer from "@/components/layout/CustomContainer";
 import SignupPageContext from "@/store/auth/SignupPageContext";
 import { SignupRequirement } from "@/types/auth/signupRequirement";
-import { Container, Paper } from "@mui/material";
 import { ReactNode, useState } from "react";
 
 type layoutProps = {
@@ -18,19 +18,10 @@ const SignupLayout = ({ children }: layoutProps) => {
     nickname: "",
   });
   return (
-    <SignupPageContext.Provider value={{ formData, setFormData, disableBtn, setDisableBtn }}>
-      <Container sx={{ px: { xs: 0, sm: 4 } }} maxWidth={"lg"}>
-        <Paper
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            minHeight: "calc(100vh - 56px)",
-            overflowX:'hidden'
-          }}
-        >
-          {children}
-        </Paper>
-      </Container>
+    <SignupPageContext.Provider
+      value={{ formData, setFormData, disableBtn, setDisableBtn }}
+    >
+      <CustomContainer>{children}</CustomContainer>
     </SignupPageContext.Provider>
   );
 };

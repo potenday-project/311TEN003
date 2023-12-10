@@ -2,7 +2,7 @@ import { Stack } from "@mui/material";
 import { useContext } from "react";
 import WikiPageContext from "@/store/wiki/WikiPageContext";
 import WikiSerachArea from "@/components/wiki/searchDrawer/WikiSerachArea";
-import CustomSwipeableDrawer from "@/components/CustomSwipeableDrawer";
+import CustomSwipeableDrawer from "@/components/layout/CustomSwipeableDrawer";
 
 const WikiSearchDrawer = () => {
   const { isSearching, setIsSearching } = useContext(WikiPageContext);

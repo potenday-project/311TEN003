@@ -2,9 +2,9 @@
 import PostDetail from "@/components/post/detail/PostDetail";
 import { getPostDetailQueryFn } from "@/queries/post/useGetPostDetailQuery";
 import getTokenFromCookies from "@/utils/getTokenFromCookies";
-import { Paper, Container } from "@mui/material";
 import { redirect } from "next/navigation";
-import CustomAppbar from "@/components/CustomAppbar";
+import CustomAppbar from "@/components/layout/CustomAppbar";
+import CustomContainer from "@/components/layout/CustomContainer";
 
 const PostDetailPage = async ({ params }: { params: { postId: string } }) => {
   const parsedPostId = params.postId;
@@ -20,17 +20,9 @@ const PostDetailPage = async ({ params }: { params: { postId: string } }) => {
   return (
     <>
       <CustomAppbar title={`${initialData.nickname}님의 리뷰`} />
-      <Container sx={{ px: { xs: 0, sm: 4 }, pb: "132px" }} maxWidth={"lg"}>
-        <Paper
-          sx={{
-            display: "flex",
-            position: "relative",
-            flexDirection: "column",
-          }}
-        >
-          <PostDetail postNo={parsedPostId} initialData={initialData} />
-        </Paper>
-      </Container>
+      <CustomContainer sx={{ pb: "132px" }}>
+        <PostDetail postNo={parsedPostId} initialData={initialData} />
+      </CustomContainer>
     </>
   );
 };
