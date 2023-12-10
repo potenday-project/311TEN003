@@ -32,7 +32,7 @@ const CustomAppbar = ({
   const router = useRouter();
 
   return (
-    <AppBar position={"static"}>
+    <AppBar position={"fixed"}>
       <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
         {/* 프리팬드 버튼 */}
         {prependButton ? (

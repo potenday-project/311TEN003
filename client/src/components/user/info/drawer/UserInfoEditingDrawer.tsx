@@ -1,4 +1,4 @@
-import CustomSwipeableDrawer from "@/components/CustomSwipeableDrawer";
+import CustomSwipeableDrawer from "@/components/layout/CustomSwipeableDrawer";
 import UserPageContext from "@/store/user/UserPageContext";
 import { useContext } from "react";
 import UserInfoEditingForm from "./UserInfoEditingForm";

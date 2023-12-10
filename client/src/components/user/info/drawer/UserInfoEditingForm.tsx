@@ -13,7 +13,7 @@ import { useCallback, useContext, useState } from "react";
 import useNewAttachMutation from "@/queries/attach/useNewAttachMutation";
 import useDeleteAttachMutation from "@/queries/attach/useDeleteAttachMutation";
 import UserPageContext from "@/store/user/UserPageContext";
-import CustomAppbar from "@/components/CustomAppbar";
+import CustomAppbar from "@/components/layout/CustomAppbar";
 import { useGlobalLoadingStore } from "./../../../../store/useGlobalLoadingStore";
 import usePatchUserInfoMutation from "@/queries/user/usePatchUserInfoMutation";
 import useRenderAsDataUrl from "@/hooks/useRenderAsDataUrl";

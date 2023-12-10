@@ -1,5 +1,5 @@
 "use client";
-import CustomAppbar from "@/components/CustomAppbar";
+import CustomAppbar from "@/components/layout/CustomAppbar";
 import SearchIcon from "@/assets/icons/SearchIcon.svg";
 import { memo, useContext } from "react";
 import WikiPageContext from "@/store/wiki/WikiPageContext";
