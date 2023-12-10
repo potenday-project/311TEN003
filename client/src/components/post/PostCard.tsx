@@ -64,15 +64,6 @@ const PostCard = ({
   const { mutateAsync: deletePost } = useDeletePostMutation();
   const { mutateAsync: deleteFile } = useDeleteAttachMutation();
 
-  const deleteHandler = async () => {
-    if (confirm("정말 삭제하시겠습니까?")) {
-      await deletePost(postNo);
-      postAttachUrls?.[0].attachUrl &&
-        (await deleteFile(postAttachUrls?.[0].attachUrl));
-      router.push(HOME);
-    }
-  };
-
   const { data: currentUser } = useMyInfoQuery();
 
   const isMyPost = useMemo(

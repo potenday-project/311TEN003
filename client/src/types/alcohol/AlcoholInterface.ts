@@ -9,6 +9,7 @@ export interface AlcoholDetailInterface {
   description: string;
   degree: number;
   period: number;
+  taste: AlcoholTasteNoteInterface;
   productionYear: number;
   volume: number;
   tagList: string[];
@@ -18,4 +19,10 @@ export interface AlcoholAttachUrlsInterface {
   attachNo: number;
   attachUrl: string;
   attachType: string;
+}
+
+export interface AlcoholTasteNoteInterface {
+  Taste: string[];
+  Aroma: string[];
+  Finish: string[];
 }

@@ -4,7 +4,6 @@ import { Metadata } from "next";
 import AlcoholDetailPage from "./(components)/AlcoholDetailPage";
 import CustomAppbar from "@/components/layout/CustomAppbar";
 import CustomContainer from "@/components/layout/CustomContainer";
-import PostCardList from "@/components/post/PostCardList";
 
 type Props = {
   params: { alcoholNo: string };
@@ -54,7 +53,6 @@ const page = async ({ params }: Props) => {
         >
           {/* 포스트리스트자리 */}
           {/* FIXME */}
-          {/* <PostCardList searchKeyword={searchKeyword}/> */}
         </AlcoholDetailPage>
       </CustomContainer>
     </>
