@@ -1,6 +1,7 @@
 "use client";
 import {
   AppBar,
+  AppBarProps,
   Button,
   IconButton,
   Toolbar,
@@ -11,7 +12,7 @@ import GoBackIcon from "@/assets/icons/GoBackIcon.svg";
 import { MouseEventHandler, ReactNode, memo } from "react";
 import { useRouter } from "next/navigation";
 
-interface CustomAppbarInterface {
+interface CustomAppbarInterface extends AppBarProps {
   title?: string;
   prependButton?: ReactNode;
   onClickPrepend?: MouseEventHandler<HTMLButtonElement>;
@@ -28,11 +29,12 @@ const CustomAppbar = ({
   onClickPrepend,
   disableAppend,
   onClickAppend,
+  position,
 }: CustomAppbarInterface) => {
   const router = useRouter();
 
   return (
-    <AppBar position={"fixed"}>
+    <AppBar position={position ? position : "fixed"}>
       <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
         {/* 프리팬드 버튼 */}
         {prependButton ? (
