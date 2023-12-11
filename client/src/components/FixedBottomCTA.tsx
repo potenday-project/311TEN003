@@ -5,7 +5,7 @@ const FixedBottomCTA = ({ ...props }: ButtonProps) => {
     <>
       <Button
         sx={{
-          position: "absolute",
+          position: "fixed",
           bottom: 0,
           left: 0,
           right: 0,
@@ -18,7 +18,7 @@ const FixedBottomCTA = ({ ...props }: ButtonProps) => {
       />
       <Paper
         sx={{
-          position: "absolute",
+          position: "fixed",
           bottom: 0,
           left: 0,
           right: 0,

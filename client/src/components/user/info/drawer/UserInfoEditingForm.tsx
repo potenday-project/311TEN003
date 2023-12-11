@@ -74,6 +74,7 @@ const UserInfoEditingForm = () => {
         onClickAppend={submitHandler}
         appendButton={"저장"}
         disableAppend={isLoading}
+        position={'static'}
       />
       <Stack
         component="form"
