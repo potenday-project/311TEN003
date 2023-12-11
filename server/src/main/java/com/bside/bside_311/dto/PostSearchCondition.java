@@ -23,4 +23,6 @@ public class PostSearchCondition {
   Boolean isCommentedByMe;
   @Schema(description = "나의 유저 정보.(null, or 1L, 2L ...)", example = "1")
   Long myUserNo;
+  @Schema(description = "검색 술 번호들.", example = "1,2,4")
+  List<Long> searchAlcoholNoList;
 }

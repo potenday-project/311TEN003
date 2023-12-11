@@ -18,8 +18,10 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 import java.util.function.Function;
 
+import static com.bside.bside_311.entity.QAlcohol.alcohol;
 import static com.bside.bside_311.entity.QComment.comment;
 import static com.bside.bside_311.entity.QPost.post;
+import static com.bside.bside_311.entity.QPostAlcohol.postAlcohol;
 import static com.bside.bside_311.entity.QPostLike.postLike;
 import static com.bside.bside_311.entity.QUser.user;
 
@@ -51,7 +53,8 @@ public class PostRepositoryImpl extends Querydsl4RepositorySupport
                      .where(contentLike(condition.getSearchKeyword()),
                          createdByIn(condition.getSearchUserNoList()),
                          isCommentedByMe(condition.getMyUserNo(), condition.getIsCommentedByMe()),
-                         notDeleted());
+                         notDeleted(),
+                         postNosRelatedWithAlcohols(condition.getSearchAlcoholNoList()));
         };
     return applyPagination(pageable, jpaQueryFactoryJPAQueryFunction
     );
@@ -78,5 +81,31 @@ public class PostRepositoryImpl extends Querydsl4RepositorySupport
                                     .fetch());
     }
     return null;
+  }
+
+  private BooleanExpression postNosRelatedWithAlcohols(List<Long> searchALcoholNos) {
+    return !Collections.isEmpty(searchALcoholNos) ?
+               post.id.in(queryFactory.select(postAlcohol.post.id)
+                                      .from(postAlcohol)
+                                      .innerJoin(alcohol)
+                                      .on(postAlcohol.alcohol.eq(
+                                                         alcohol)
+                                                             .and(
+                                                                 postAlcohol.delYn.eq(
+                                                                     YesOrNo.N))
+                                                             .and(
+                                                                 alcohol.delYn.eq(
+                                                                     YesOrNo.N))
+                                                             .and(
+                                                                 alcohol.id.in(
+                                                                     searchALcoholNos)))
+
+                                      .where(
+                                          postAlcohol.delYn.eq(
+                                              YesOrNo.N).and(
+                                              alcohol
+                                                  .delYn.eq(
+                                                      YesOrNo.N)))
+                                      .fetch()) : null;
   }
 }

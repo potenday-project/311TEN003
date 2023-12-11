@@ -132,7 +132,10 @@ public class PostController {
       Boolean isLikedByMe,
       @RequestParam(required = false, name = "isCommentedByMe")
       @Schema(description = "내가 댓글을 단 게시글 필터 여부.(true or false)", example = "false")
-      Boolean isCommentedByMe
+      Boolean isCommentedByMe,
+      @RequestParam(required = false, name = "searchAlcoholNos")
+      @Schema(description = "검색 술 번호들.", example = "1,2,4")
+      String searchAlcoholNos
 
   ) {
     log.info(">>> PostController.getPost");
@@ -150,8 +153,22 @@ public class PostController {
       }
     }
 
+    List<Long> searchAlcoholNoList = new ArrayList<>();
+    if (StringUtils.hasText(searchAlcoholNos)) {
+      try {
+        searchAlcoholNoList =
+            Arrays.stream(searchAlcoholNos.split(",")).map(Long::parseLong).toList();
+      } catch (NumberFormatException e) {
+        log.error(">>> PostController.getPost searchAlcoholNos 파싱 에러 NumberFormatException", e);
+        throw new IllegalArgumentException("searchAlcoholNos 파싱 에러 NumberFormatException", e);
+      } catch (Exception e) {
+        log.error(">>> PostController.getPost searchAlcoholNos 파싱 에러 Exception", e);
+        throw new IllegalArgumentException("searchAlcoholNos 파싱 에러 Exception", e);
+      }
+    }
+
     return postService.getPostsV2(pageable, searchKeyword, searchUserNoList, isLikedByMe,
-        isCommentedByMe);
+        isCommentedByMe, searchAlcoholNoList);
   }
 
   @Operation(summary = "[o]게시글 상세 조회", description = "게시글 상세 조회 API")

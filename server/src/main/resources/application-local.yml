@@ -21,6 +21,7 @@ spring:
       hibernate:
         # show_sql: true
         format_sql: true
+        # jpql 쿼리를 보는 설정. mysql 쿼리를 확실히 보려면 끄는게 좋음.
         use_sql_comments: true
         default_batch_fetch_size: 1000
 

@@ -2,8 +2,6 @@ package com.bside.bside_311.dto;
 
 import lombok.Data;
 
-import java.time.LocalDateTime;
-
 @Data
 public class GetPostsToOneMvo {
   Long postNo;
@@ -15,4 +13,5 @@ public class GetPostsToOneMvo {
   Long postLikeNo;
   Long alcoholNo;
   String alcoholType;
+  String alcoholName;
 }

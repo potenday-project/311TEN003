@@ -131,7 +131,7 @@ public class PostResponseDto {
                        .positionInfo(post.getPosition())
                        .alcoholNo(getPostsToOneMvo.getAlcoholNo())
                        .alcoholType(getPostsToOneMvo.getAlcoholType())
-                       .alcoholName(getPostsToOneMvo.getAlcoholType())
+                       .alcoholName(getPostsToOneMvo.getAlcoholName())
                        .postAttachUrls(postAttachDtos)
                        .profileImgUrls(userAttachDtos)
                        .tagList(tagList)
