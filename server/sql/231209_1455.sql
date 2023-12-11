@@ -1,5 +1,5 @@
 insert ignore
-into alcohol_type (created_date, description, last_modified_date, name)
+into bside.alcohol_type (created_date, description, last_modified_date, name)
 values (NOW(), '고구마 소주', NOW(), '고구마 소주'),
        (NOW(), '고량주', NOW(), '고량주'),
        (NOW(), '그라파', NOW(), '그라파'),
