@@ -15,6 +15,8 @@ https://unmarred-teeth-fc0.notion.site/Tupaia-447ca72c5e2b4f9d9d5c13754ed74bb4?p
 - 필름이 끊기더라도, 마셨던 술에 대한 느낌은 가져가고 싶지 않나요?
 
 # client
+![image](https://github.com/potenday-project/311TEN003/assets/100949102/0f4bd8f3-981d-4d86-91e8-f12f9810ae41)
+
 - tech stack
   - Next.js, Typescript, Docker
 # server
