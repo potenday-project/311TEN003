@@ -15,8 +15,11 @@ https://unmarred-teeth-fc0.notion.site/Tupaia-447ca72c5e2b4f9d9d5c13754ed74bb4?p
 - 필름이 끊기더라도, 마셨던 술에 대한 느낌은 가져가고 싶지 않나요?
 
 # client
+![image](https://github.com/potenday-project/311TEN003/assets/100949102/a6ee5913-ad3f-466e-a60c-170712925cfa)
+
 - tech stack
   - Next.js, Typescript, Docker
+
 # server
 - tech stack
   - Spring boot, Java, Mybatis, JPA, Junit5, Mysql, Naver Cloud Platform
