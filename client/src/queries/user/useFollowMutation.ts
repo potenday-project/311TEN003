@@ -7,7 +7,6 @@ import { UserInfoInterface } from "@/types/user/userInfoInterface";
 import { MyInfoQueryKeys } from "../auth/useMyInfoQuery";
 import { MyInfoInterface } from "@/types/auth/myInfo";
 import { useErrorHandler } from "@/utils/errorHandler";
-import { followerUserQueryKey } from "./useFollowerUserInfiniteQuery";
 
 const useFollowMutation = () => {
   const queryClient = useQueryClient();
@@ -60,8 +59,6 @@ const useFollowMutation = () => {
         queryClient.invalidateQueries({
           queryKey: UserInfoQueryKey.byId(userInfo?.userNo),
         });
-      // TODO 낙관적업데이트 구현
-      queryClient.invalidateQueries({ queryKey: followerUserQueryKey.all });
     },
   });
 };

@@ -33,9 +33,3 @@ interface PageableInterface {
   paged: boolean;
   unpaged: boolean;
 }
-
-export interface PagenationParams {
-  page?: number;
-  size?: number;
-  sort?: string;
-}
