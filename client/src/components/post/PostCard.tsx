@@ -19,20 +19,18 @@ import ShareIcon from "@/assets/icons/ShareIcon.svg";
 import LikeIcon from "@/assets/icons/LikeIcon.svg";
 import CommentIcon from "@/assets/icons/CommentIcon.svg";
 import AlcoholNameTag from "@/components/wiki/AlcoholNameTag";
-import dayjs from "dayjs";
 import useLikePostMutation from "@/queries/post/useLikePostMutation";
 import useUnLikePostMutation from "@/queries/post/useUnLikePostMutation";
 import "../newpost/quill.mention.css";
 import { sanitize } from "isomorphic-dompurify";
 import UserAvatar from "../user/info/UserAvatar";
 import Link from "next/link";
-import HOME, { USER_PAGE } from "@/const/clientPath";
+import { USER_PAGE } from "@/const/clientPath";
 import { useMyInfoQuery } from "@/queries/auth/useMyInfoQuery";
 import PostCardOptionDropdown from "./PostCardOptionDropdown";
 import { postcardContext } from "@/store/post/PostCardContext";
-import { useDeletePostMutation } from "@/queries/post/useDeletePostMutation";
-import useDeleteAttachMutation from "@/queries/attach/useDeleteAttachMutation";
 import { useRouter } from "next/navigation";
+import formatTime from "@/utils/formatTime";
 
 const PostCard = ({
   postAttachUrls,
@@ -52,7 +50,6 @@ const PostCard = ({
   alcoholNo,
 }: PostInterface) => {
   const openPostDetailPage = useOpenPostDetailPage();
-  const router = useRouter();
 
   const hasImage = useMemo(() => postAttachUrls.length !== 0, [postAttachUrls]);
 
@@ -60,9 +57,6 @@ const PostCard = ({
 
   const { mutate: likeHandler } = useLikePostMutation(searchContext);
   const { mutate: unLikeHandler } = useUnLikePostMutation(searchContext);
-
-  const { mutateAsync: deletePost } = useDeletePostMutation();
-  const { mutateAsync: deleteFile } = useDeleteAttachMutation();
 
   const { data: currentUser } = useMyInfoQuery();
 
@@ -106,7 +100,7 @@ const PostCard = ({
               >{`@${id}`}</Typography>
             </Link>
             <Typography variant="label" color={"text.secondary"}>
-              {dayjs(lastModifiedDate).format("MM.DD")}
+              {formatTime(lastModifiedDate)}
             </Typography>
           </Stack>
 
@@ -149,7 +143,7 @@ const PostCard = ({
               borderRadius: 2,
               bgcolor: "background.default",
               cursor: "pointer",
-              aspectRatio: 2.36
+              aspectRatio: 2.36,
             }}
           />
         )}

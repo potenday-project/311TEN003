@@ -11,7 +11,7 @@ export interface PostInterface {
   /**
    * 업데이트 된 날짜
    */
-  lastModifiedDate?: string;
+  lastModifiedDate: string;
   /**
   * 해당 게시글을 생성한유저PK
   */
