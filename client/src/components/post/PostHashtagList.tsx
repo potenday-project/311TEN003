@@ -1,26 +1,25 @@
 import { SEARCH_BY_KEYWORD } from "@/const/clientPath";
 import { PostInterface } from "@/types/post/PostInterface";
-import { Box, BoxProps, Typography } from "@mui/material";
+import { Stack, StackProps, Typography } from "@mui/material";
 import Link from "next/link";
 
-interface TagListInterface extends BoxProps {
-  tags: PostInterface['tagList'];
+interface TagListInterface extends StackProps {
+  tags: PostInterface["tagList"];
 }
 const PostHashTagList = ({ tags, ...others }: TagListInterface) => {
+  const uniqueSet = Array.from(new Set(tags));
   return (
     <>
-      {tags?.length > 0 && (
-        <Box
+      {uniqueSet?.length > 0 && (
+        <Stack
           data-testid="tags"
-          sx={{
-            pt: 2,
-            display: "flex",
-            flexDirection: "row",
-            gap: "8px",
-          }}
+          pt={2}
+          flexDirection={"row"}
+          columnGap={1}
+          flexWrap={"wrap"}
           {...others}
         >
-          {tags.map((tag,i) => (
+          {uniqueSet.map((tag, i) => (
             <Link href={SEARCH_BY_KEYWORD(tag)} key={i}>
               <Typography
                 component={"span"}
@@ -31,7 +30,7 @@ const PostHashTagList = ({ tags, ...others }: TagListInterface) => {
               </Typography>
             </Link>
           ))}
-        </Box>
+        </Stack>
       )}
     </>
   );
