@@ -9,6 +9,8 @@ import { useMyInfoQuery } from "@/queries/auth/useMyInfoQuery";
 import { useContext, useMemo } from "react";
 import UserPageContext from "@/store/user/UserPageContext";
 import UserInfoCardSkeleton from "./UserInfoCardSkeleton";
+import { useRouter } from "next/navigation";
+import { USER_FOLLOW_LIST } from "@/const/clientPath";
 
 type Props = {
   initialData?: UserInfoInterface;
@@ -24,6 +26,7 @@ const UserInfo = ({ initialData, userId }: Props) => {
   );
 
   const token = getTokenFromLocalStorage();
+  const router = useRouter();
   const { setIsEditing } = useContext(UserPageContext);
 
   const { data } = useUserInfoQuery({
@@ -33,7 +36,7 @@ const UserInfo = ({ initialData, userId }: Props) => {
   });
 
   if (!data) {
-    return <UserInfoCardSkeleton/>;
+    return <UserInfoCardSkeleton />;
   }
 
   const {
@@ -64,7 +67,14 @@ const UserInfo = ({ initialData, userId }: Props) => {
           {introduction ?? "자기소개가 없습니다"}
         </Typography>
       </Box>
-      <Stack direction="row" gap={1}>
+      <Stack
+        direction="row"
+        gap={1}
+        sx={{cursor:'pointer'}}
+        onClick={() => {
+          isMyProfile && router.push(USER_FOLLOW_LIST);
+        }}
+      >
         <Typography fontWeight="bold">{followerCount}</Typography>
         <Typography color="text.secondary">팔로워</Typography>
         <Typography fontWeight="bold">{followingCount}</Typography>
