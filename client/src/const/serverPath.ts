@@ -84,8 +84,7 @@ export const GET_ALCOHOL_LIST = "/alcohols" as const;
 /**
  * 알콜 디테일을 받아오는 URL
  */
-export const GET_ALCOHOL_DETAIL = (id: string) =>
-  `${GET_ALCOHOL_LIST}/${id}` as const;
+export const GET_ALCOHOL_DETAIL = (id: string) => `${GET_ALCOHOL_LIST}/${id}` as const;
 
 /**
  * 포스트의 PK를 입력받아 해당 PK의 게시글의 좋아요 취소를 요청
@@ -99,15 +98,6 @@ export const POST_UN_LIKE_URL = (id: string) =>
  * @returns
  */
 export const USER_SUMMARY = (id: string) => `/user/${id}/summary` as const;
-/**
- * 내가 팔로우 하고 있는 유저를 불러오는 URL
- */
-export const FOLLOWING_USER = "/user/my-following-users";
-
-/**
- * 나를 팔로우 하고 있는 유저를 불러오는 URL
- */
-export const FOLLOWER_USER = "/user/users-of-following-me";
 
 /**
  * 유저 ID 를 입력받아 해당 유저를 팔로우 하는 URL

@@ -59,7 +59,7 @@ function PostCardList(props: UseGetPostListQueryInterface) {
           <PostCardSkeleton />
         ) : (
           // 인터섹션옵저버
-          hasNextPage&&<div style={{ height: 60 }} ref={ref}></div>
+          <div style={{ height: 60 }} ref={ref}></div>
         )}
       </div>
     </postcardContext.Provider>

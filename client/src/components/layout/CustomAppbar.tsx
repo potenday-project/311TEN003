@@ -11,7 +11,6 @@ import {
 import GoBackIcon from "@/assets/icons/GoBackIcon.svg";
 import { MouseEventHandler, ReactNode, memo } from "react";
 import { useRouter } from "next/navigation";
-import { appbarHeight } from "@/const/uiSizes";
 
 interface CustomAppbarInterface extends AppBarProps {
   title?: string;
@@ -35,7 +34,7 @@ const CustomAppbar = ({
   const router = useRouter();
 
   return (
-    <AppBar sx={{ height: appbarHeight }} position={position ? position : "fixed"}>
+    <AppBar position={position ? position : "fixed"}>
       <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
         {/* 프리팬드 버튼 */}
         {prependButton ? (
