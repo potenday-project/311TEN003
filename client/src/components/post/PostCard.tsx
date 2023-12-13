@@ -19,7 +19,6 @@ import ShareIcon from "@/assets/icons/ShareIcon.svg";
 import LikeIcon from "@/assets/icons/LikeIcon.svg";
 import CommentIcon from "@/assets/icons/CommentIcon.svg";
 import AlcoholNameTag from "@/components/wiki/AlcoholNameTag";
-import dayjs from "dayjs";
 import useLikePostMutation from "@/queries/post/useLikePostMutation";
 import useUnLikePostMutation from "@/queries/post/useUnLikePostMutation";
 import "../newpost/quill.mention.css";
