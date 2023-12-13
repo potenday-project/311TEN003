@@ -18,12 +18,17 @@ export const MY_PROFILE = "/user" as const;
 /**
  * 유저의 PK를 입력받아 해당유저의 프로필 페이지로 이동하는 URL
  */
-export const USER_PAGE = (pk: string | number) => `/user/${pk}`;
+export const USER_PAGE = (pk: string | number) => `${MY_PROFILE}/${pk}`;
+
+/**
+ * 유저가 팔로잉/팔로워 리스트페이지로 이동하는 라우트
+ */
+export const USER_FOLLOW_LIST = `${MY_PROFILE}/follow-list`
 
 /**
  * 유저정보 세팅 페이지로 이동하는 라우트
  */
-export const SETTING_PAGE = '/user/setting' as const
+export const SETTING_PAGE = `${MY_PROFILE}/setting` as const
 
 /**
  * 술과사전 페이지 라우트
