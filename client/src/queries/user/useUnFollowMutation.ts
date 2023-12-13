@@ -7,11 +7,12 @@ import { UserInfoInterface } from "@/types/user/userInfoInterface";
 import { MyInfoQueryKeys } from "../auth/useMyInfoQuery";
 import { MyInfoInterface } from "@/types/auth/myInfo";
 import { useErrorHandler } from "@/utils/errorHandler";
+import { followingUserQueryKey } from "./useFollowingUserInfiniteQuery";
 
 const useUnFollowMutation = () => {
   const queryClient = useQueryClient();
   const errorHandler = useErrorHandler();
-  
+
   return useMutation({
     mutationFn: async (userNo: string) => await followUserMutationFn(userNo),
     /**
@@ -46,7 +47,7 @@ const useUnFollowMutation = () => {
      * Mutation 실패시 원래 QuerySnapShot정보로 롤백
      */
     onError: (err, queryFnParams, context) => {
-      errorHandler(err)
+      errorHandler(err);
       if (!context) {
         return;
       }
@@ -63,6 +64,8 @@ const useUnFollowMutation = () => {
         queryClient.invalidateQueries({
           queryKey: UserInfoQueryKey.byId(userInfo?.userNo),
         });
+      // TODO 낙관적업데이트 구현
+      queryClient.invalidateQueries({ queryKey: followingUserQueryKey.all });
     },
   });
 };
