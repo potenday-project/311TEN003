@@ -19,11 +19,12 @@ const FollowerList = () => {
   return (
     <>
       {data.pages.map((page) =>
-        page.content.map(({ nickname, id, introduction }) => (
+        page.content.map(({ nickname, id, introduction,userNo }) => (
           <FollowUserCard
             key={id}
             nickName={nickname}
             userId={id}
+            userPk={userNo}
             content={introduction}
           />
         ))
