@@ -1,5 +1,8 @@
 package com.bside.bside_311.service;
 
+import com.bside.bside_311.component.AlcoholManager;
+import com.bside.bside_311.component.PostManager;
+import com.bside.bside_311.component.TagManager;
 import com.bside.bside_311.dto.AddCommentRequestDto;
 import com.bside.bside_311.dto.AddCommentResponseDto;
 import com.bside.bside_311.dto.AddPostResponseDto;
@@ -60,9 +63,12 @@ import static com.bside.bside_311.util.ValidateUtil.resourceChangeableCheckByThi
 @RequiredArgsConstructor
 @Transactional
 public class PostService {
+  private final TagManager tagManager;
   private final TagService tagService;
+  private final AlcoholManager alcoholManager;
   private final UserRepository userRepository;
   private final PostLikeRepository postLikeRepository;
+  private final PostManager postManager;
   private final PostRepository postRepository;
   private final PostMybatisRepository postMybatisRepository;
   private final TagRepository tagRepository;
@@ -77,21 +83,12 @@ public class PostService {
       Post post, Long alcoholNo, String alcoholFeature,
       List<String> tagStrList) {
     log.info(">>> PostService.addPost");
-
-    postRepository.save(post);
     if (CollectionUtils.isNotEmpty(tagStrList)) {
-      List<Tag> tags = tagService.addOrSetTags(tagStrList);
-      post.removeAllPostTagsAndAddNewPostTags(tags);
+      tagManager.registerTagsToPost(post, tagStrList);
     }
-
-    postRepository.save(post);
-
+    postManager.savePost(post);
     if (alcoholNo != null) {
-      Alcohol alcohol = alcoholRepository.findByIdAndDelYnIs(alcoholNo, YesOrNo.N).orElseThrow(
-          () -> new IllegalArgumentException("술이 존재하지 않습니다."));
-      PostAlcohol postAlcohol = PostAlcohol.of(post, alcohol, alcoholFeature);
-      post.addPostAlcohol(postAlcohol);
-      alcohol.addPostAlcohol(postAlcohol);
+      alcoholManager.connectAlcoholWithPost(alcoholNo, alcoholFeature, post);
     }
 
     return AddPostResponseDto.of(post);

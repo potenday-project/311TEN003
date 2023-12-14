@@ -20,16 +20,19 @@ public class UserResponseDto {
   private Long userNo;
   private String introduction;
   private Long createdBy;
+  private Boolean isFollowedByMe;
   @Builder.Default
   private List<AttachDto> profileImgUrls = new ArrayList<>();
 
-  public static UserResponseDto of(User user, List<AttachDto> userAttachDtos) {
+  public static UserResponseDto of(User user, List<AttachDto> userAttachDtos,
+                                   Boolean isFollowedByMe) {
     return UserResponseDto.builder()
                           .nickname(user.getNickname())
                           .id(user.getUserId())
                           .userNo(user.getId())
                           .introduction(user.getIntroduction())
                           .createdBy(user.getCreatedBy())
+                          .isFollowedByMe(isFollowedByMe)
                           .profileImgUrls(userAttachDtos)
                           .build();
   }

@@ -149,10 +149,17 @@ public class Initializer {
 
     // following
     // 1L -> 3L
+    // 1L -> 4L
     // 2L -> 3L
     // 4L -> 2L
+    // 5L -> 2L
+    // 2L -> 4L
     setSecurityContextUserNo(1L);
     userController.followUser(3L);
+    securityContextHolderClear();
+
+    setSecurityContextUserNo(1L);
+    userController.followUser(4L);
     securityContextHolderClear();
 
     setSecurityContextUserNo(2L);
@@ -161,6 +168,14 @@ public class Initializer {
 
     setSecurityContextUserNo(4L);
     userController.followUser(2L);
+    securityContextHolderClear();
+
+    setSecurityContextUserNo(5L);
+    userController.followUser(2L);
+    securityContextHolderClear();
+
+    setSecurityContextUserNo(2L);
+    userController.followUser(4L);
     securityContextHolderClear();
 
     // post Like
