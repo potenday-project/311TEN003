@@ -9,15 +9,20 @@ import { sanitize } from "isomorphic-dompurify";
 
 interface NewPostTextEditorInterface {
   onContentChange: (props: { content: string; tagList: string[] }) => void;
-  maxLength?:number
+  initialValue?: string;
+  maxLength?: number;
 }
 
-const NewPostTextEditor = ({ onContentChange,maxLength=200 }: NewPostTextEditorInterface) => {
+const NewPostTextEditor = ({
+  onContentChange,
+  maxLength = 200,
+  initialValue,
+}: NewPostTextEditorInterface) => {
   const [_mentioningValue, setMentioningValue] = useState("");
 
   const [tagList, setTagList] = useState<string[]>([]);
 
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState(initialValue ?? "");
   const [textLength, setTextLength] = useState(0);
 
   useEffect(() => {
@@ -60,6 +65,7 @@ const NewPostTextEditor = ({ onContentChange,maxLength=200 }: NewPostTextEditorI
         modules={modules}
         placeholder="입력해주세요"
         onChange={(content, _d, _s, editor) => {
+          const textLength = editor.getLength() - 1;
           const parsedTags = editor
             .getContents()
             .filter((op) => op.insert?.mention?.value)
@@ -68,8 +74,18 @@ const NewPostTextEditor = ({ onContentChange,maxLength=200 }: NewPostTextEditorI
               []
             );
           setTagList(parsedTags);
-          setContent(content);
-          setTextLength(editor.getLength() - 1);
+          setTextLength((prev) => {
+            if (textLength < maxLength) {
+              return textLength;
+            }
+            return prev;
+          });
+          setContent((prev) => {
+            if (textLength < maxLength) {
+              return content;
+            }
+            return prev;
+          });
         }}
         value={content}
       />
