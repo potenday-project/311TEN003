@@ -13,6 +13,13 @@ const formatTime = (timestamp: string, now?: string) => {
   const postTime = dayjs(timestamp);
   const currentTime = dayjs(now || new Date());
 
+  if (
+    currentTime.diff(postTime, "day") < 7 &&
+    currentTime.diff(postTime, "day") >= 1
+  ) {
+    return `${currentTime.diff(postTime, "day")}일 전`;
+  }
+
   // 1주 ~ 1달 까지는 n주 전 으로 표기
   if (
     currentTime.diff(postTime, "day") >= 7 &&
