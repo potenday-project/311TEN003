@@ -23,12 +23,12 @@ export const USER_PAGE = (pk: string | number) => `${MY_PROFILE}/${pk}`;
 /**
  * 유저가 팔로잉/팔로워 리스트페이지로 이동하는 라우트
  */
-export const USER_FOLLOW_LIST = `${MY_PROFILE}/follow-list`
+export const USER_FOLLOW_LIST = `${MY_PROFILE}/follow-list`;
 
 /**
  * 유저정보 세팅 페이지로 이동하는 라우트
  */
-export const SETTING_PAGE = `${MY_PROFILE}/setting` as const
+export const SETTING_PAGE = `${MY_PROFILE}/setting` as const;
 
 /**
  * 술과사전 페이지 라우트
@@ -68,5 +68,10 @@ export const POST_DETAIL = (userId: string, postId: string) => {
  * 새로운 포스트를 작성하는 페이지
  */
 export const NEW_POST = "/new-post";
+
+/**
+ * 포스트ID 를 입력받아 해당 포스트틀 수정하는 링크로 이동
+ */
+export const EDIT_POST = (postId: string) => `/edit-post/${postId}`;
 
 export default HOME;
