@@ -14,13 +14,13 @@ const PreviewImageByURL = (
       sx={{
         backgroundImage: `url(${fileUrl})`,
         width: "100%",
-        height: 142,
         borderRadius: 4,
         border: "1px solid",
         borderColor: "gray.secondary",
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
         backgroundPosition: "center",
+        aspectRatio: 2.36,
         ...sx,
       }}
       ref={ref}

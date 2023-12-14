@@ -10,7 +10,7 @@ import {
   Typography,
   InputAdornment,
 } from "@mui/material";
-import { Dispatch, SetStateAction, memo, useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import AlcholeSearchIcon from "@/assets/icons/AlcholeSearchIcon.svg";
 import InputSearchIcon from "@/assets/icons/InputSearchIcon.svg";
 import useGetAlcoholListQuery from "@/queries/alcohol/useGetAlcoholListQuery";
@@ -20,11 +20,18 @@ import useDebounce from "@/hooks/useDebounce";
 import { NewPostRequestAlCohol } from "@/types/newPost/NewPostInterface";
 
 interface SearchAlcoholInputInterface {
-  setAlcoholNo: Dispatch<SetStateAction<NewPostRequestAlCohol["alcoholNo"]>>;
+  setAlcoholNo: (alcoholNo: NewPostRequestAlCohol["alcoholNo"]) => void;
+  initialValue?: Pick<
+    AlcoholDetailInterface,
+    "alcoholName" | "alcoholNo" | "alcoholType"
+  >;
 }
-const SearchAlcoholInput = ({ setAlcoholNo }: SearchAlcoholInputInterface) => {
+const SearchAlcoholInput = ({
+  setAlcoholNo,
+  initialValue,
+}: SearchAlcoholInputInterface) => {
   // 유저가 검색한 키워드
-  const [searchKeyword, setSearchKeyword] = useState<string>();
+  const [searchKeyword, setSearchKeyword] = useState<string>("");
   // 검색한 키워드의 Debounced 값
   const debouncedValue = useDebounce(searchKeyword, 300);
   const [isSearchingAlcohol, setIsSearchingAlCohol] = useState(false);
@@ -32,11 +39,13 @@ const SearchAlcoholInput = ({ setAlcoholNo }: SearchAlcoholInputInterface) => {
   // 검색결과
   const { data, isLoading, isSuccess } = useGetAlcoholListQuery(debouncedValue);
   // 유저가 검색후 최종적으로 선택한 값
-  const [selectedAlcohol, setSelectedAlcohol] =
-    useState<AlcoholDetailInterface>();
+  const [selectedAlcohol, setSelectedAlcohol] = useState<
+    | Pick<AlcoholDetailInterface, "alcoholName" | "alcoholNo" | "alcoholType">
+    | undefined
+  >(initialValue);
 
   useEffect(() => {
-    setSearchKeyword(selectedAlcohol?.alcoholName);
+    setSearchKeyword(selectedAlcohol?.alcoholName ?? "");
     setAlcoholNo(selectedAlcohol?.alcoholNo);
   }, [selectedAlcohol]);
 

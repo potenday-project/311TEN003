@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import axios from "@/libs/axios";
 import { PostInterface } from "@/types/post/PostInterface";
 import { AxiosRequestConfig } from "axios";
@@ -33,6 +33,12 @@ export const getPostDetailQueryFn = async (
 export const postDetailQueryKey = {
   all: ["post"] as const,
   byId: (id: string) => ["post", id] as const,
+};
+
+export const useInvalidatePostDetail = () => {
+  const queryclient = useQueryClient();
+  return (id: string) =>
+    queryclient.invalidateQueries({ queryKey: postDetailQueryKey.byId(id) });
 };
 
 export default useGetPostDetailQuery;

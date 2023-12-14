@@ -1,10 +1,7 @@
-import React, { useState } from "react";
-import { MoreVertOutlined } from "@mui/icons-material";
-import { ButtonBase, Menu, MenuItem } from "@mui/material";
 import { useDeletePostMutation } from "@/queries/post/useDeletePostMutation";
 import useDeleteAttachMutation from "@/queries/attach/useDeleteAttachMutation";
 import { useRouter } from "next/navigation";
-import HOME from "@/const/clientPath";
+import HOME, { EDIT_POST } from "@/const/clientPath";
 import DeleteEditDropdown from "../DeleteEditDropdown";
 
 type PostCardOptionDropdownProps = {
@@ -17,6 +14,7 @@ const PostCardOptionDropdown = ({
   filePk,
 }: PostCardOptionDropdownProps) => {
   const router = useRouter();
+
   const { mutateAsync: deletePost } = useDeletePostMutation();
   const { mutateAsync: deleteFile } = useDeleteAttachMutation();
 
@@ -27,8 +25,11 @@ const PostCardOptionDropdown = ({
       router.push(HOME);
     }
   };
+  const editHandler = () => {
+    router.push(EDIT_POST(String(postId)));
+  };
 
-  return <DeleteEditDropdown onDelete={deleteHandler} />;
+  return <DeleteEditDropdown onDelete={deleteHandler} onEdit={editHandler}/>;
 };
 
 export default PostCardOptionDropdown;

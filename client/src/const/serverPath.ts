@@ -52,6 +52,12 @@ export const POST_LIST_V2 = "/posts/v2" as const;
  * ID(pk) 를 입력받아 해당 포스트를 지우는 URL
  */
 export const REMOVE_POST = (pk: number) => `${POST_LIST}/${pk}` as const;
+
+/**
+ * ID(pk) 를 입력받아 해당 포스트를 수정하는 URL
+ */
+export const EDIT_POST = (pk: string) => `${POST_LIST}/${pk}` as const;
+
 /**
  * 포스트의 PK를 입력받아 해당 PK의 게시글의 좋아요를 요청
  * @param id 게시글의 PK
