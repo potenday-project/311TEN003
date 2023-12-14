@@ -26,6 +26,7 @@ import com.bside.bside_311.entity.PostAlcohol;
 import com.bside.bside_311.entity.PostLike;
 import com.bside.bside_311.entity.PostQuote;
 import com.bside.bside_311.entity.PostTag;
+import com.bside.bside_311.entity.PostType;
 import com.bside.bside_311.entity.Tag;
 import com.bside.bside_311.entity.User;
 import com.bside.bside_311.entity.YesOrNo;
@@ -103,10 +104,10 @@ public class PostService {
       post.setContent(editPostRequestDto.getPostContent());
     }
     if (StringUtils.isNotEmpty(editPostRequestDto.getPostType())) {
-      post.setContent(editPostRequestDto.getPostType());
+      post.setPostType(PostType.valueOf(editPostRequestDto.getPostType()));
     }
     if (StringUtils.isNotEmpty(editPostRequestDto.getPositionInfo())) {
-      post.setContent(editPostRequestDto.getPositionInfo());
+      post.setPosition(editPostRequestDto.getPositionInfo());
     }
     postRepository.save(post);
 
