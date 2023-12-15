@@ -179,7 +179,7 @@ class UserControllerTest extends ControllerTest {
   @Test
   @DisplayName("유저 정보 수정 성공.")
   void userEditSuccess() throws Exception {
-    UserUpdateRequestDto userUpdateRequestDto = new UserUpdateRequestDto("안녕하세요~~~");
+    UserUpdateRequestDto userUpdateRequestDto = new UserUpdateRequestDto("test", "안녕하세요~~~");
 
     mockMvc.perform(patch("/user")
                         .header(HttpHeaders.AUTHORIZATION, JwtUtil.BEARER_PREFIX + userAccessToken)
@@ -192,7 +192,7 @@ class UserControllerTest extends ControllerTest {
   @Test
   @DisplayName("유저 비밀번호 변경 성공.")
   void userChangePassword() throws Exception {
-    UserUpdateRequestDto userUpdateRequestDto = new UserUpdateRequestDto("안녕하세요~~~");
+    UserUpdateRequestDto userUpdateRequestDto = new UserUpdateRequestDto("test", "안녕하세요~~~");
 
     mockMvc.perform(patch("/user/pwd/change")
                         .header(HttpHeaders.AUTHORIZATION, JwtUtil.BEARER_PREFIX + userAccessToken)

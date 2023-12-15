@@ -40,8 +40,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.bside.bside_311.util.ValidateUtil.resourceChangeableCheckByThisRequestToken;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -86,7 +84,6 @@ public class AlcoholService {
   public void editAlcohol(Long alcoholNo, EditAlcoholRequestDto editAlcoholRequestDto) {
     Alcohol alcohol = alcoholRepository.findByIdAndDelYnIs(alcoholNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException("술이 존재하지 않습니다."));
-    resourceChangeableCheckByThisRequestToken(alcohol);
     if (editAlcoholRequestDto != null) {
       if (editAlcoholRequestDto.getAlcoholName() != null) {
         alcohol.setName(editAlcoholRequestDto.getAlcoholName());
@@ -134,7 +131,6 @@ public class AlcoholService {
   public void deleteAlcohol(Long alcoholNo) {
     Alcohol alcohol = alcoholRepository.findByIdAndDelYnIs(alcoholNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException("술이 존재하지 않습니다."));
-    resourceChangeableCheckByThisRequestToken(alcohol);
     alcohol.setDelYn(YesOrNo.Y);
     alcoholRepository.save(alcohol);
   }

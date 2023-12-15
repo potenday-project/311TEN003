@@ -14,6 +14,7 @@ public interface AttachRepository extends JpaRepository<Attach, Long> {
   //  Long<Attach> findByIdAndDelYnIs(Long attachNo, YesOrNo delYn);
   List<Attach> findByRefNoAndAttachTypeIsAndDelYnIs(Long refNo, AttachType attachType,
                                                     YesOrNo delYn);
+
   List<Attach> findByRefNoInAndAttachTypeIsAndDelYnIs(List<Long> refNo, AttachType attachType,
-                                                    YesOrNo delYn);
+                                                      YesOrNo delYn);
 }

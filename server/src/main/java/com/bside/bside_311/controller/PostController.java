@@ -69,7 +69,6 @@ public class PostController {
     log.info(">>> PostController.editPost");
 
     postService.editPost(postNo, editPostRequestDto);
-    return;
   }
 
   @Operation(summary = "[o]게시글 삭제", description = "게시글 삭제 API")

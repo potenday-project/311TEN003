@@ -16,6 +16,9 @@ public class ValidateUtil {
       throw new IllegalArgumentException("본인이 작성한 리소스만 변경 가능합니다.");
     }
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (ObjectUtils.isEmpty(authentication)) {
+      throw new IllegalArgumentException("본인이 작성한 리소스만 변경 가능합니다.");
+    }
     Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
     if (authorities.stream().anyMatch(o -> o.getAuthority().equals(Role.ROLE_ADMIN.name()))) {
       // 관리자는 모든 리소스에 대해 변경 가능

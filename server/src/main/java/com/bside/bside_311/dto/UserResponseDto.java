@@ -24,6 +24,14 @@ public class UserResponseDto {
   @Builder.Default
   private List<AttachDto> profileImgUrls = new ArrayList<>();
 
+  public static UserResponseDto of(User user) {
+    return UserResponseDto.of(user, null);
+  }
+
+  public static UserResponseDto of(User user, List<AttachDto> userAttachDtos) {
+    return UserResponseDto.of(user, userAttachDtos, null);
+  }
+
   public static UserResponseDto of(User user, List<AttachDto> userAttachDtos,
                                    Boolean isFollowedByMe) {
     return UserResponseDto.builder()
