@@ -87,7 +87,7 @@ public class Initializer {
     initPostQuotes();
 //     1번부터 5번까지 게시글 첨부파일 등록
 //     1번부터 5번까지 내 프로필 등록.
-    attachPhoto();
+//    attachPhoto();
 
   }
 
