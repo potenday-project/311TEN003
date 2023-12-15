@@ -1,6 +1,6 @@
 "use server";
-import CustomContainer from "@/components/layout/CustomContainer";
-import PostCardList from "@/components/post/PostCardList";
+
+import MainPagePostList from "@/components/post/MainPagePostList";
 import { getPostListQueryFn } from "@/queries/post/useGetPostListInfiniteQuery";
 import getTokenFromCookies from "@/utils/getTokenFromCookies";
 
@@ -13,9 +13,5 @@ export default async function Home() {
     headers: { Authorization: accessToken },
   });
 
-  return (
-    <CustomContainer>
-      <PostCardList initialData={initialData} />
-    </CustomContainer>
-  );
+  return <MainPagePostList initialData={initialData} />;
 }

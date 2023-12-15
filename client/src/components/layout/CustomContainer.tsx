@@ -2,17 +2,17 @@ import { appbarHeight, navbarHeight } from "@/const/uiSizes";
 import { Container, ContainerProps, Paper } from "@mui/material";
 
 interface CustomContainerInterface extends ContainerProps {
-  disableMt?: boolean;
+  mt?: number;
 }
 
 const CustomContainer = ({
   sx,
-  disableMt,
+  mt,
   children,
 }: CustomContainerInterface) => {
   return (
     <Container
-      sx={{ ...sx, px: { xs: 0, sm: 4 }, mt: disableMt ? 0 : 8 }}
+      sx={{ ...sx, px: { xs: 0, sm: 4 }, mt: mt!==undefined ? mt : 8 }}
       maxWidth={"lg"}
     >
       <Paper

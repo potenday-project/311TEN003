@@ -16,6 +16,9 @@ export const useGetPostListInfiniteQuery = ({
   size,
   searchKeyword,
   searchUserNos,
+  isLikedByMe,
+  isCommentedByMe,
+  searchAlcoholNos,
   sort,
   headers,
 }: UseGetPostListQueryInterface) => {
@@ -23,6 +26,9 @@ export const useGetPostListInfiniteQuery = ({
     queryKey: getPostListInfiniteQueryKey.byKeyword({
       searchKeyword,
       searchUserNos,
+      isLikedByMe,
+      isCommentedByMe,
+      searchAlcoholNos,
       sort,
     }),
 
@@ -32,6 +38,9 @@ export const useGetPostListInfiniteQuery = ({
         size,
         searchKeyword,
         searchUserNos,
+        isLikedByMe,
+        isCommentedByMe,
+        searchAlcoholNos,
         sort,
         headers: headers?.Authorization
           ? headers
@@ -61,6 +70,9 @@ export interface GetPostListOptions {
   sort?: string;
   searchKeyword?: string;
   searchUserNos?: string;
+  isLikedByMe?: boolean;
+  isCommentedByMe?: boolean;
+  searchAlcoholNos?: number;
 }
 /**
  * 서버응답값 + 무한스크롤을 위해 증강된 값
@@ -75,6 +87,9 @@ export const getPostListQueryFn = async ({
   size = 10,
   searchKeyword,
   searchUserNos,
+  isLikedByMe,
+  isCommentedByMe,
+  searchAlcoholNos,
   sort,
   headers,
 }: GetPostListOptions & {
@@ -90,6 +105,9 @@ export const getPostListQueryFn = async ({
         size,
         searchKeyword,
         searchUserNos,
+        isLikedByMe,
+        isCommentedByMe,
+        searchAlcoholNos,
         sort: sort ?? "lastModifiedDate,desc",
       },
       headers,
@@ -105,6 +123,9 @@ export const getPostListQueryFn = async ({
 export interface PostListInfiniteQueryKey {
   keyword?: string;
   userNo?: string;
+  isLikedByMe?: boolean;
+  isCommentedByMe?: boolean;
+  searchAlcoholNos?: number;
   sort?: string;
 }
 
@@ -113,9 +134,22 @@ export const getPostListInfiniteQueryKey = {
   byKeyword: ({
     searchKeyword,
     searchUserNos,
+    isLikedByMe,
+    isCommentedByMe,
+    searchAlcoholNos,
     sort,
   }: Omit<GetPostListOptions, "page" | "size">) =>
-    ["posts", { searchKeyword, searchUserNos, sort }] as const,
+    [
+      "posts",
+      {
+        searchKeyword,
+        searchUserNos,
+        sort,
+        isLikedByMe,
+        isCommentedByMe,
+        searchAlcoholNos,
+      },
+    ] as const,
 };
 
 /**
