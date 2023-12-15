@@ -66,7 +66,7 @@ const PostCard = ({
   );
 
   return (
-    <Card sx={{ display: "flex", gap: 2, p: 2 }}>
+    <Card sx={{ display: "flex", gap: 2, py:2 }} elevation={0}>
       <Link href={USER_PAGE(createdBy)}>
         <UserAvatar
           src={profileImgUrls[0]?.attachUrl}
