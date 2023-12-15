@@ -19,12 +19,13 @@ const FollowingList = () => {
   return (
     <>
       {data.pages.map((page) =>
-        page.content.map(({ nickname, id, introduction, profileImgUrls, userNo }) => (
+        page.content.map(({ nickname, id, introduction, profileImgUrls, userNo,isFollowedByMe }) => (
           <FollowUserCard
             key={id}
             nickName={nickname}
             userId={id}
             userPk={userNo}
+            isFollowedByMe={isFollowedByMe}
             imageUrl={profileImgUrls[0]?.attachUrl}
             content={introduction}
           />

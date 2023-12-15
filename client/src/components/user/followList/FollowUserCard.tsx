@@ -4,6 +4,7 @@ import UserAvatar from "@/components/user/info/UserAvatar";
 import { useRouter } from "next/navigation";
 import { USER_PAGE } from "@/const/clientPath";
 import useUnFollowMutation from "@/queries/user/useUnFollowMutation";
+import useFollowMutation from "@/queries/user/useFollowMutation";
 
 type Props = {
   imageUrl?: string;
@@ -11,6 +12,7 @@ type Props = {
   userId: string;
   content: string;
   userPk: number;
+  isFollowedByMe?: boolean;
 };
 
 const FollowUserCard = ({
@@ -19,10 +21,11 @@ const FollowUserCard = ({
   nickName,
   userId,
   content,
+  isFollowedByMe,
 }: Props) => {
   const router = useRouter();
   const { mutate: unfollowHandler } = useUnFollowMutation();
-
+  const { mutate: followHandler } = useFollowMutation();
   return (
     <Stack direction="row" gap={1} py={1}>
       <UserAvatar
@@ -45,12 +48,22 @@ const FollowUserCard = ({
               @{userId}
             </Typography>
           </Stack>
-          <Button
-            variant="outlined"
-            onClick={() => unfollowHandler(String(userPk))}
-          >
-            언팔로우
-          </Button>
+
+          {isFollowedByMe ? (
+            <Button
+              variant="outlined"
+              onClick={() => unfollowHandler(String(userPk))}
+            >
+              언팔로우
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              onClick={() => followHandler(String(userPk))}
+            >
+              팔로우
+            </Button>
+          )}
         </Stack>
         <Typography>{content}</Typography>
       </Stack>

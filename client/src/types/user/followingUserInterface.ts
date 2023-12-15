@@ -5,6 +5,7 @@ interface FollowingUserInterface {
   id: string;
   userNo: number;
   introduction: string;
+  isFollowedByMe:boolean;
   createdBy: number;
   profileImgUrls: AttachInterface[];
 }
