@@ -19,15 +19,18 @@ const FollowerList = () => {
   return (
     <>
       {data.pages.map((page) =>
-        page.content.map(({ nickname, id, introduction, userNo }) => (
-          <FollowUserCard
-            key={id}
-            nickName={nickname}
-            userId={id}
-            userPk={userNo}
-            content={introduction}
-          />
-        ))
+        page.content.map(
+          ({ nickname, id, introduction, userNo, isFollowedByMe }) => (
+            <FollowUserCard
+              key={id}
+              nickName={nickname}
+              userId={id}
+              userPk={userNo}
+              isFollowedByMe={isFollowedByMe}
+              content={introduction}
+            />
+          )
+        )
       )}
       {isFetchingNextPage ? (
         <ComponentRepeater count={5}>
