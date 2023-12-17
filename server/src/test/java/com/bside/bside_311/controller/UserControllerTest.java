@@ -240,7 +240,7 @@ class UserControllerTest extends ControllerTest {
   @Test
   @DisplayName("유저 언팔로우. 성공.")
   void user_unfollow_success() throws Exception {
-    mockMvc.perform(post(String.format("/user/follow/%d", 2))
+    mockMvc.perform(post(String.format("/user/unfollow/%d", 2))
                         .header("Authorization", "Bearer " + userAccessToken))
            .andExpect(status().isOk());
   }
