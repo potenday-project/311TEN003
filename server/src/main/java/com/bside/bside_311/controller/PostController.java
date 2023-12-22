@@ -13,7 +13,6 @@ import com.bside.bside_311.dto.GetPostResponseDto;
 import com.bside.bside_311.dto.GetQuotesByPostResponseDto;
 import com.bside.bside_311.dto.PostResponseDto;
 import com.bside.bside_311.entity.Post;
-import com.bside.bside_311.service.AttachService;
 import com.bside.bside_311.service.PostService;
 import com.bside.bside_311.util.AuthUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -50,11 +49,11 @@ import java.util.List;
 @Tag(name = "게시글", description = "게시글 API")
 public class PostController {
   private final PostService postService;
-  private final AttachService attachService;
 
   @Operation(summary = "[o]게시글 등록 ", description = "게시글 등록 API")
   @UserRequired
   @PostMapping
+  @ResponseStatus(HttpStatus.CREATED)
   public AddPostResponseDto addPost(@RequestBody @Valid AddPostRequestDto addPostRequestDto) {
     log.info(">>> PostController.addPost");
     return postService.addPost(Post.of(addPostRequestDto), addPostRequestDto.getAlcoholNo(),
