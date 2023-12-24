@@ -44,7 +44,7 @@ public class AlcoholController {
 
   @Operation(summary = "[o]술 종류 조회 ", description = "술 종류 조회 API")
   @GetMapping("/types")
-  @ResponseStatus(HttpStatus.CREATED)
+  @ResponseStatus(HttpStatus.OK)
   public GetAlcoholTypesResponseDto getAlcoholTypes() {
     log.info(">>> AlcoholController.getAlcoholTypes");
     return alcoholService.getAlcoholTypes();

@@ -215,7 +215,8 @@ public class AlcoholService {
   }
 
   public GetAlcoholTypesResponseDto getAlcoholTypes() {
-    List<AlcoholType> alcoholTypes = alcoholTypeRepository.findAll();
+    List<AlcoholType> alcoholTypes =
+        alcoholTypeRepository.findByDelYnIsOrderByDisplayOrderAsc(YesOrNo.N);
     return GetAlcoholTypesResponseDto.of(alcoholTypes);
   }
 

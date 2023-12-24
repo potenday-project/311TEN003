@@ -257,10 +257,24 @@ public class Initializer {
   }
 
   private void initAlcoholType() {
-    alcoholTypeRepository.save(AlcoholType.builder().name("소주").description("소주다.").build());
-    alcoholTypeRepository.save(AlcoholType.builder().name("맥주").description("맥주다.").build());
-    alcoholTypeRepository.save(AlcoholType.builder().name("와인").description("와인이다.").build());
-    alcoholTypeRepository.save(AlcoholType.builder().name("막걸리").description("와인이다.").build());
+    alcoholTypeRepository.save(
+        AlcoholType.builder().name("포도주").description("포도주다.").displayOrder(1L).build());
+    alcoholTypeRepository.save(
+        AlcoholType.builder().name("브랜디").description("브랜디다.").displayOrder(2L).build());
+    alcoholTypeRepository.save(
+        AlcoholType.builder().name("위스키").description("위스키다.").displayOrder(3L).build());
+    alcoholTypeRepository.save(
+        AlcoholType.builder().name("리큐르").description("리큐르다.").displayOrder(4L).build());
+    alcoholTypeRepository.save(
+        AlcoholType.builder().name("맥주").description("맥주다.").displayOrder(5L).build());
+    alcoholTypeRepository.save(
+        AlcoholType.builder().name("우리술").description("우리술이다.").displayOrder(6L).build());
+    alcoholTypeRepository.save(
+        AlcoholType.builder().name("사케").description("사케다.").displayOrder(7L).build());
+    alcoholTypeRepository.save(
+        AlcoholType.builder().name("럼").description("럼이다.").displayOrder(8L).build());
+    alcoholTypeRepository.save(
+        AlcoholType.builder().name("미분류").description("미분류다.").displayOrder(9L).build());
   }
 
   private void attachPhoto() {
