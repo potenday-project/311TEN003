@@ -1,0 +1,2 @@
+ALTER TABLE alcohol
+    ADD COLUMN taste LONGTEXT;

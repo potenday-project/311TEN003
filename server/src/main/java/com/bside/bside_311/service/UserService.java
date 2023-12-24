@@ -88,6 +88,9 @@ public class UserService {
       if (userUpdateRequestDto.getIntroduction() != null) {
         user.setIntroduction(userUpdateRequestDto.getIntroduction());
       }
+      if (userUpdateRequestDto.getNickname() != null) {
+        user.setNickname(userUpdateRequestDto.getNickname());
+      }
     }
     userRepository.save(user);
   }
@@ -190,19 +193,41 @@ public class UserService {
 
     return users.map(user -> {
       List<AttachDto> attachDtos = uToAMap.getOrDefault(user.getId(), List.of());
-      return UserResponseDto.of(user, attachDtos);
+      // isFollowedByMe는 true로 고정
+      return UserResponseDto.of(user, attachDtos, true);
     });
   }
 
   public Page<UserResponseDto> getUsersOfFollowingMe(Long myUserNo, Pageable pageable) {
     Page<User> users = userRepository.getUsersOfFollowingMePage(myUserNo, pageable);
     List<Long> userNos = users.stream().map(User::getId).toList();
+    List<User> userList = users.stream().toList();
+    Map<Long, List<UserFollow>> uToUFMap =
+        getUserFollowInfoFollowingIsAndFollowedIsIn(myUserNo, userList);
     Map<Long, List<AttachDto>> uToAMap = getUserAttachInfos(userNos);
-
     return users.map(user -> {
       List<AttachDto> attachDtos = uToAMap.getOrDefault(user.getId(), List.of());
-      return UserResponseDto.of(user, attachDtos);
+      Boolean isFollowedByMe = uToUFMap.containsKey(user.getId());
+      return UserResponseDto.of(user, attachDtos, isFollowedByMe);
     });
+  }
+
+  public Map<Long, List<UserFollow>> getUserFollowInfoFollowingIsAndFollowedIsIn(Long myUserNo,
+                                                                                 List<User> followedUserList) {
+    List<UserFollow> userFollowList =
+        userFollowRepository.findByFollowingIsAndFollowedIsInAndDelYnIs(User.of(myUserNo),
+            followedUserList,
+            YesOrNo.N);
+    Map<Long, List<UserFollow>> uToFMap = new HashMap<>();
+    for (UserFollow userFollow : userFollowList) {
+      Long targetUserNo = userFollow.getFollowed().getId();
+      if (!uToFMap.containsKey(targetUserNo)) {
+        uToFMap.put(targetUserNo, new ArrayList<>());
+      }
+      List<UserFollow> userFollows = uToFMap.get(targetUserNo);
+      userFollows.add(userFollow);
+    }
+    return uToFMap;
   }
 
   public Map<Long, List<AttachDto>> getUserAttachInfos(List<Long> userNos) {

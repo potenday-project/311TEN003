@@ -2,9 +2,9 @@ package com.bside.bside_311.dto;
 
 import com.bside.bside_311.entity.Alcohol;
 import com.bside.bside_311.entity.AlcoholTag;
-import com.bside.bside_311.entity.PostTag;
 import com.bside.bside_311.entity.Tag;
 import com.bside.bside_311.entity.YesOrNo;
+import com.bside.bside_311.util.JsonParseUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -15,6 +15,7 @@ import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -49,6 +50,9 @@ public class AlcoholResponseDto {
   @Schema(example = "산미가 강한 와인.", description = "설명.")
   private String description;
 
+  @Schema(example = "json문자열.", description = "tastingNote(맛, 기타 등등.)")
+  private Map<String, Object> taste;
+
   @Schema(example = "17.5", description = "알코올 도수")
   private Float degree;
 
@@ -79,6 +83,7 @@ public class AlcoholResponseDto {
                                      .toList())
                           .manufacturer(alcohol.getManufacturer())
                           .description(alcohol.getDescription())
+                          .taste(JsonParseUtil.tasteMapProcessing(alcohol.getTaste()))
                           .degree(alcohol.getDegree())
                           .period(alcohol.getPeriod())
                           .productionYear(
@@ -92,7 +97,7 @@ public class AlcoholResponseDto {
           tags.stream().map(Tag::getName).toList());
     }
     return alcoholResponseDtoBuilder
-        .build();
+               .build();
   }
 
   public static AlcoholResponseDto of(Alcohol alcohol, List<AttachDto> attachDtos) {
@@ -118,6 +123,7 @@ public class AlcoholResponseDto {
                                         .toList())
                              .manufacturer(alcohol.getManufacturer())
                              .description(alcohol.getDescription())
+                             .taste(JsonParseUtil.tasteMapProcessing(alcohol.getTaste()))
                              .degree(alcohol.getDegree())
                              .period(alcohol.getPeriod())
                              .productionYear(

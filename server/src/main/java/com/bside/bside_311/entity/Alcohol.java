@@ -2,6 +2,7 @@ package com.bside.bside_311.entity;
 
 import com.bside.bside_311.dto.AddAlcoholRequestDto;
 import com.bside.bside_311.dto.GetAlcoholsMvo;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,6 +23,8 @@ import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.bside.bside_311.util.JsonParseUtil.tastePreProcessing;
 
 @Entity
 @Getter
@@ -58,16 +61,20 @@ public class Alcohol extends BaseEntity {
 
   private String manufacturer;
   private String description;
+  @Column(columnDefinition = "LONGTEXT")
+  private String taste;
   private Float degree;
   private Long period;
   private Long productionYear;
   private Long volume;
 
-  public static Alcohol of(AddAlcoholRequestDto addAlcoholRequestDto, AlcoholType alcoholType) {
+  public static Alcohol of(AddAlcoholRequestDto addAlcoholRequestDto, AlcoholType alcoholType)
+      throws JsonProcessingException {
     Alcohol alcohol = Alcohol.builder()
                              .name(addAlcoholRequestDto.getAlcoholName())
                              .alcoholNicknames(new ArrayList<>())
                              .description(addAlcoholRequestDto.getDescription())
+                             .taste(tastePreProcessing(addAlcoholRequestDto.getTaste()))
                              .manufacturer(addAlcoholRequestDto.getManufacturer())
                              .degree(addAlcoholRequestDto.getDegree())
                              .period(addAlcoholRequestDto.getPeriod())
@@ -78,6 +85,7 @@ public class Alcohol extends BaseEntity {
     AlcoholNickname.of(addAlcoholRequestDto.getNickNames()).forEach(alcohol::addAlcoholNickname);
     return alcohol;
   }
+
 
   public static Alcohol of(GetAlcoholsMvo getAlcoholsMvo) {
     Alcohol alcohol = Alcohol.builder()

@@ -1,5 +1,6 @@
 package com.bside.bside_311.controller;
 
+import com.bside.bside_311.config.security.AdminRequired;
 import com.bside.bside_311.config.security.UserRequired;
 import com.bside.bside_311.dto.AddAlcoholRequestDto;
 import com.bside.bside_311.dto.AddAlcoholResponseDto;
@@ -8,6 +9,7 @@ import com.bside.bside_311.dto.EditAlcoholRequestDto;
 import com.bside.bside_311.dto.GetAlcoholResponseDto;
 import com.bside.bside_311.dto.GetAlcoholTypesResponseDto;
 import com.bside.bside_311.service.AlcoholService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,6 +31,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @Slf4j
 @Validated
 @RestController
@@ -40,7 +44,7 @@ public class AlcoholController {
 
   @Operation(summary = "[o]술 종류 조회 ", description = "술 종류 조회 API")
   @GetMapping("/types")
-  @ResponseStatus(HttpStatus.CREATED)
+  @ResponseStatus(HttpStatus.OK)
   public GetAlcoholTypesResponseDto getAlcoholTypes() {
     log.info(">>> AlcoholController.getAlcoholTypes");
     return alcoholService.getAlcoholTypes();
@@ -51,14 +55,15 @@ public class AlcoholController {
   @UserRequired
   @ResponseStatus(HttpStatus.CREATED)
   public AddAlcoholResponseDto addAlcohol(
-      @RequestBody @Valid AddAlcoholRequestDto addAlcoholRequestDto) {
+      @RequestBody @Valid AddAlcoholRequestDto addAlcoholRequestDto)
+      throws JsonProcessingException {
     log.info(">>> AlcoholController.addAlcohol");
     return alcoholService.addAlcohol(addAlcoholRequestDto);
   }
 
   @Operation(summary = "[o]술 수정", description = "술 수정 API")
   @PatchMapping("/{alcoholNo}")
-  @UserRequired
+  @AdminRequired
   public void editAlcohol(@PathVariable("alcoholNo") Long alcoholNo,
                           @RequestBody @Valid EditAlcoholRequestDto editAlcoholRequestDto) {
     log.info(">>> AlcoholController.editAlcohol");
@@ -67,7 +72,7 @@ public class AlcoholController {
 
   @Operation(summary = "[o]술 삭제", description = "술 삭제 API")
   @DeleteMapping("/{alcoholNo}")
-  @UserRequired
+  @AdminRequired
   public void deleteAlcohol(@PathVariable("alcoholNo") Long alcoholNo) {
     log.info(">>> AlcoholController.deleteAlcohol");
     alcoholService.deleteAlcohol(alcoholNo);
@@ -95,7 +100,9 @@ public class AlcoholController {
   public Page<AlcoholResponseDto> getAlcoholV2(
 //      @Schema(description = "페이지 번호와 사이즈.정렬 까지.(0부터) ex)[1]page=0&size=5&sort=id,desc [2]page=1&size=15&sort=id,desc&sort=content,asc", example = "0")
       Pageable pageable,
-      @Schema(description = "알코올 키워드", example = "키워드") String searchKeyword) {
+      @RequestParam(required = false, name = "searchKeyword")
+      @Schema(description = "키워드", example = "키워드")
+      String searchKeyword) {
     log.info(">>> AlcoholController.getAlcohol");
     return alcoholService.getAlcoholV2(pageable, searchKeyword);
   }
@@ -105,6 +112,13 @@ public class AlcoholController {
   public AlcoholResponseDto getAlcoholDetail(@PathVariable("alcoholNo") Long alcoholNo) {
     log.info(">>> AlcoholController.getAlcoholDetail");
     return alcoholService.getAlcoholDetail(alcoholNo);
+  }
+
+  @Operation(summary = "술타입 MAP 조회", description = "술타입 MAP 조회 API")
+  @GetMapping("/types/map")
+  public Map<String, Long> getAlcoholTypeMap() {
+    log.info(">>> AlcoholController.getAlcoholTypeMap");
+    return alcoholService.getAlcoholTypeMap();
   }
 
 }

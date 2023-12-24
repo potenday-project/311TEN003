@@ -1,5 +1,11 @@
 package com.bside.bside_311.service;
 
+import com.bside.bside_311.component.AlcoholManager;
+import com.bside.bside_311.component.AttachManager;
+import com.bside.bside_311.component.PostAlcoholManager;
+import com.bside.bside_311.component.PostManager;
+import com.bside.bside_311.component.PostTagManager;
+import com.bside.bside_311.component.TagManager;
 import com.bside.bside_311.dto.AddCommentRequestDto;
 import com.bside.bside_311.dto.AddCommentResponseDto;
 import com.bside.bside_311.dto.AddPostResponseDto;
@@ -23,6 +29,7 @@ import com.bside.bside_311.entity.PostAlcohol;
 import com.bside.bside_311.entity.PostLike;
 import com.bside.bside_311.entity.PostQuote;
 import com.bside.bside_311.entity.PostTag;
+import com.bside.bside_311.entity.PostType;
 import com.bside.bside_311.entity.Tag;
 import com.bside.bside_311.entity.User;
 import com.bside.bside_311.entity.YesOrNo;
@@ -60,9 +67,15 @@ import static com.bside.bside_311.util.ValidateUtil.resourceChangeableCheckByThi
 @RequiredArgsConstructor
 @Transactional
 public class PostService {
+  private final TagManager tagManager;
+  private final AttachManager attachManager;
+  private final PostTagManager postTagManager;
+  private final PostAlcoholManager postAlcoholManager;
   private final TagService tagService;
+  private final AlcoholManager alcoholManager;
   private final UserRepository userRepository;
   private final PostLikeRepository postLikeRepository;
+  private final PostManager postManager;
   private final PostRepository postRepository;
   private final PostMybatisRepository postMybatisRepository;
   private final TagRepository tagRepository;
@@ -77,21 +90,12 @@ public class PostService {
       Post post, Long alcoholNo, String alcoholFeature,
       List<String> tagStrList) {
     log.info(">>> PostService.addPost");
-
-    postRepository.save(post);
     if (CollectionUtils.isNotEmpty(tagStrList)) {
-      List<Tag> tags = tagService.addOrSetTags(tagStrList);
-      post.removeAllPostTagsAndAddNewPostTags(tags);
+      tagManager.registerTagsToPost(post, tagStrList);
     }
-
-    postRepository.save(post);
-
+    postManager.savePost(post);
     if (alcoholNo != null) {
-      Alcohol alcohol = alcoholRepository.findByIdAndDelYnIs(alcoholNo, YesOrNo.N).orElseThrow(
-          () -> new IllegalArgumentException("술이 존재하지 않습니다."));
-      PostAlcohol postAlcohol = PostAlcohol.of(post, alcohol, alcoholFeature);
-      post.addPostAlcohol(postAlcohol);
-      alcohol.addPostAlcohol(postAlcohol);
+      alcoholManager.connectAlcoholWithPost(alcoholNo, alcoholFeature, post);
     }
 
     return AddPostResponseDto.of(post);
@@ -99,17 +103,16 @@ public class PostService {
 
 
   public void editPost(Long postNo, EditPostRequestDto editPostRequestDto) {
-    Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
+    Post post = postManager.findPost(postNo);
     resourceChangeableCheckByThisRequestToken(post);
     if (StringUtils.isNotEmpty(editPostRequestDto.getPostContent())) {
       post.setContent(editPostRequestDto.getPostContent());
     }
     if (StringUtils.isNotEmpty(editPostRequestDto.getPostType())) {
-      post.setContent(editPostRequestDto.getPostType());
+      post.setPostType(PostType.valueOf(editPostRequestDto.getPostType()));
     }
     if (StringUtils.isNotEmpty(editPostRequestDto.getPositionInfo())) {
-      post.setContent(editPostRequestDto.getPositionInfo());
+      post.setPosition(editPostRequestDto.getPositionInfo());
     }
     postRepository.save(post);
 
@@ -124,7 +127,7 @@ public class PostService {
     }
     postRepository.save(post);
 
-    if (alcoholNo != null && alcoholFeature != null) {
+    if (alcoholNo != null) {
       Alcohol alcohol = alcoholRepository.findByIdAndDelYnIs(alcoholNo, YesOrNo.N).orElseThrow(
           () -> new IllegalArgumentException("술이 존재하지 않습니다."));
       post.removeAllPostAlcoholsAndAddNewPostAlcohols(List.of(alcohol), alcoholFeature);
@@ -133,15 +136,17 @@ public class PostService {
 
 
   public void deletePost(Long postNo) {
-    Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
+    Post post = postManager.findPost(postNo);
     resourceChangeableCheckByThisRequestToken(post);
-    post.setDelYn(YesOrNo.Y);
+    postManager.deletePost(post);
+    postTagManager.deletePostTagByPost(post);
+    postAlcoholManager.deletePostAlcoholByPost(post);
+    attachManager.deleteAttachesByRefNoAndAttachType(postNo, AttachType.POST);
   }
 
+
   public PostResponseDto getPostDetail(Long postNo, List<AttachDto> attachDtos) {
-    Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
+    Post post = postManager.findPost(postNo);
     Long userNo = post.getCreatedBy();
     User user = null;
     if (userNo != null) {
@@ -213,7 +218,8 @@ public class PostService {
 
   public Page<PostResponseDto> getPostsV2(Pageable pageable,
                                           String searchKeyword, List<Long> searchUserNoList,
-                                          Boolean isLikedByMe, Boolean isCommentedByMe) {
+                                          Boolean isLikedByMe, Boolean isCommentedByMe,
+                                          List<Long> searchAlcoholNoList) {
     Page<Post> posts =
         postRepository.searchPageSimple(PostSearchCondition.builder().searchKeyword(searchKeyword)
                                                            .searchUserNoList(searchUserNoList)
@@ -221,6 +227,7 @@ public class PostService {
                                                            .isCommentedByMe(isCommentedByMe)
                                                            .myUserNo(
                                                                AuthUtil.getUserNoFromAuthentication())
+                                                           .searchAlcoholNoList(searchAlcoholNoList)
                                                            .build(), pageable);
     List<Long> postNos = posts.stream().map(Post::getId).toList();
     List<GetPostsToOneMvo> postsToOneList =
@@ -265,8 +272,7 @@ public class PostService {
   }
 
   public AddCommentResponseDto addComment(Long postNo, AddCommentRequestDto addCommentRequestDto) {
-    Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
+    Post post = postManager.findPost(postNo);
     Comment comment = Comment.of(post, addCommentRequestDto.getCommentContent());
     post.addComment(comment);
     commentRepository.save(comment);
@@ -275,8 +281,7 @@ public class PostService {
   }
 
   public GetPostCommentsResponseDto getPostComments(Long postNo) {
-    Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
+    Post post = postManager.findPost(postNo);
     List<Comment> comments =
         post.getComments().stream().filter(comment -> comment.getDelYn() == YesOrNo.N).toList();
     // FIXME 최적화. 추후 페이징 처리할것.
@@ -306,8 +311,7 @@ public class PostService {
 
   public void editComment(Long postNo, Long commentNo,
                           EditCommentRequestDto editCommentRequestDto) {
-    postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
+    postManager.findPost(postNo);
     Comment comment = commentRepository.findByIdAndDelYnIs(commentNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
     resourceChangeableCheckByThisRequestToken(comment);
@@ -318,8 +322,7 @@ public class PostService {
   }
 
   public void deleteComment(Long postNo, Long commentNo) {
-    postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
+    postManager.findPost(postNo);
     Comment comment = commentRepository.findByIdAndDelYnIs(commentNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
     resourceChangeableCheckByThisRequestToken(comment);
@@ -327,8 +330,7 @@ public class PostService {
   }
 
   public PostQuote addQuote(Long postNo, Long quotedPostNo) {
-    Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
+    Post post = postManager.findPost(postNo);
 
     Post quotedPost = postRepository.findByIdAndDelYnIs(quotedPostNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException("인용할 게시글이 존재하지 않습니다."));
@@ -347,8 +349,7 @@ public class PostService {
   }
 
   public GetQuotesByPostResponseDto getQuotesByPost(Long postNo) {
-    Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
+    Post post = postManager.findPost(postNo);
     List<PostQuote> postQuotes = postQuoteRepository.findByPostAndDelYnIs(post, YesOrNo.N);
     return GetQuotesByPostResponseDto.of(postQuotes);
   }
@@ -356,8 +357,7 @@ public class PostService {
   public void likePost(Long userNo, Long postNo) {
     User user = userRepository.findByIdAndDelYnIs(userNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException(MessageUtil.USER_NOT_FOUND_MSG));
-    Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
+    Post post = postManager.findPost(postNo);
 
     PostLike postLike =
         postLikeRepository.findByUserAndPostAndDelYnIs(user, post, YesOrNo.N).orElse(
@@ -368,8 +368,7 @@ public class PostService {
   public void likeCancelPost(Long userNo, Long postNo) {
     User user = userRepository.findByIdAndDelYnIs(userNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException(MessageUtil.USER_NOT_FOUND_MSG));
-    Post post = postRepository.findByIdAndDelYnIs(postNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException(MessageUtil.POST_NOT_FOUND_MSG));
+    Post post = postManager.findPost(postNo);
 
     PostLike postLike =
         postLikeRepository.findByUserAndPostAndDelYnIs(user, post, YesOrNo.N).orElseThrow(

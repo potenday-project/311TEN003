@@ -78,11 +78,149 @@ public class Initializer {
 
   @PostConstruct
   public void init() throws JsonProcessingException {
-    alcoholTypeRepository.save(AlcoholType.builder().name("소주").description("소주다.").build());
-    alcoholTypeRepository.save(AlcoholType.builder().name("맥주").description("맥주다.").build());
-    alcoholTypeRepository.save(AlcoholType.builder().name("와인").description("와인이다.").build());
-    alcoholTypeRepository.save(AlcoholType.builder().name("막걸리").description("와인이다.").build());
+    initAlcoholType();
+    initSignUpUsers();
+    initAlcoholsAndPosts();
+    initFollowingRelation();
+    initPostLikeRelation();
+    initPostComments();
+    initPostQuotes();
+//     1번부터 5번까지 게시글 첨부파일 등록
+//     1번부터 5번까지 내 프로필 등록.
+//    attachPhoto();
 
+  }
+
+  private void initPostQuotes() {
+    // 인용하기.
+    // 2번 게시글이 1번 게시글을 인용.
+    // 3번 게시글이 1번 게시글을 인용.
+    // 5번 게시글이 3번 게시글을 인용.
+    setSecutiryContextDoSomethingAndClear(2L, () -> {
+      postController.addQuote(2L, 1L);
+    });
+    setSecutiryContextDoSomethingAndClear(3L, () -> {
+      postController.addQuote(3L, 1L);
+    });
+    setSecutiryContextDoSomethingAndClear(5L, () -> {
+      postController.addQuote(5L, 3L);
+    });
+  }
+
+  private void initPostComments() {
+    // comment
+    // 1L -> 2L 포스트에. 정말 웃기다 크크.
+    // 3L -> 2L 포스트에. 오 저기는 꼭 가봐야겠어.
+    // 5L -> 1L 포스트에 와 이건 뭐임.
+    // 4L -> 1L 포스트에. 이건 뭐임.
+    // 2L -> 2L 포스트에. ㅋㅋ 신기하긴 함.
+    setSecutiryContextDoSomethingAndClear(1L, () -> {
+      postController.addComment(2L, new AddCommentRequestDto("정말 웃기다 크크."));
+    });
+    setSecutiryContextDoSomethingAndClear(3L, () -> {
+      postController.addComment(2L, new AddCommentRequestDto("오 저기는 꼭 가봐야겠어."));
+    });
+    setSecutiryContextDoSomethingAndClear(5L, () -> {
+      postController.addComment(1L, new AddCommentRequestDto("와 이건 뭐임."));
+    });
+    setSecutiryContextDoSomethingAndClear(4L, () -> {
+      postController.addComment(1L, new AddCommentRequestDto("오 ㅋㅋㅋ"));
+    });
+    setSecutiryContextDoSomethingAndClear(2L, () -> {
+      postController.addComment(2L, new AddCommentRequestDto("ㅋㅋㅋ ㄹㅇ 강추해요."));
+    });
+
+    setSecutiryContextDoSomethingAndClear(2L, () -> {
+      postController.addComment(2L, new AddCommentRequestDto("ㅋㅋㅋ ㄹㅇ 강추해요."));
+    });
+  }
+
+  private void initPostLikeRelation() {
+    // post Like
+    // 5L -> 2L
+    setSecutiryContextDoSomethingAndClear(5L, () -> {
+      postController.likePost(2L);
+    });
+    // 4L -> 2L
+    setSecutiryContextDoSomethingAndClear(4L, () -> {
+      postController.likePost(2L);
+    });
+    // 1L -> 3L
+    setSecutiryContextDoSomethingAndClear(1L, () -> {
+      postController.likePost(3L);
+    });
+  }
+
+  private void initFollowingRelation() {
+    // 1L -> 3L
+    // 1L -> 4L
+    // 2L -> 3L
+    // 4L -> 2L
+    // 5L -> 2L
+    // 2L -> 4L
+    setSecurityContextUserNo(1L);
+    setSecutiryContextDoSomethingAndClear(1L, () -> {
+      userController.followUser(3L);
+    });
+    setSecutiryContextDoSomethingAndClear(1L, () -> {
+      userController.followUser(4L);
+    });
+    setSecutiryContextDoSomethingAndClear(2L, () -> {
+      userController.followUser(3L);
+    });
+    setSecutiryContextDoSomethingAndClear(4L, () -> {
+      userController.followUser(2L);
+    });
+    setSecutiryContextDoSomethingAndClear(5L, () -> {
+      userController.followUser(2L);
+    });
+    setSecutiryContextDoSomethingAndClear(2L, () -> {
+      userController.followUser(4L);
+    });
+  }
+
+  private void initAlcoholsAndPosts() {
+    for (int i = 0; i < 5; i++) {
+      int finalI = i;
+      setSecutiryContextDoSomethingAndClear((long) (i + 1), () -> {
+        try {
+          alcoholController.
+              addAlcohol(AddAlcoholRequestDto.builder()
+                                             .alcoholName(String.format("test%d", finalI))
+                                             .alcoholTypeNo((long) (finalI % 4 + 1))
+                                             .nickNames(
+                                                 List.of(String.format("testNickName%d", finalI),
+                                                     String.format("testNickName23453%d", finalI)))
+                                             .manufacturer(String.format("testNmanufacturer%d",
+                                                 finalI))
+                                             .description(
+                                                 String.format("testDescription%d", finalI))
+                                             .degree((float) (finalI + 0.5))
+                                             .period(20L + finalI)
+                                             .productionYear(1990L + finalI)
+                                             .tagList(List.of(String.format("testTag%d", finalI),
+                                                 String.format("testTag23453%d", finalI)))
+                                             .volume(700L + finalI).build());
+        } catch (JsonProcessingException e) {
+          throw new RuntimeException(e);
+        }
+        postController.addPost(AddPostRequestDto.builder()
+                                                .alcoholNo((long) (finalI + 1))
+                                                .alcoholFeature(String.format("testFeature%d",
+                                                    finalI))
+                                                .postContent(String.format("testContent%d", finalI))
+                                                .postType(PostType.BASIC.name())
+                                                .positionInfo(String.format("testPositionInfo%d",
+                                                    finalI)
+                                                )
+                                                .tagList(List.of(String.format("testTag%d", finalI),
+                                                    String.format("testTag23453%d", finalI)))
+                                                .build());
+      });
+    }
+  }
+
+  private void initSignUpUsers() throws JsonProcessingException {
     String signupAdminBody = """
         {
           "email": "admin@example.com",
@@ -116,112 +254,27 @@ public class Initializer {
     }
     securityContextHolderClear();
     SecurityContextHolder.getContext().setAuthentication(null);
+  }
 
-    for (int i = 0; i < 5; i++) {
-      SecurityContextHolder.getContext()
-                           .setAuthentication(easyUserRoleAuthenticationFactory((long) (i + 1)));
-      alcoholController.
-          addAlcohol(AddAlcoholRequestDto.builder()
-                                         .alcoholName(String.format("test%d", i))
-                                         .alcoholTypeNo((long) (i % 4 + 1))
-                                         .nickNames(
-                                             List.of(String.format("testNickName%d", i),
-                                                 String.format("testNickName23453%d", i)))
-                                         .manufacturer(String.format("testNmanufacturer%d", i))
-                                         .description(String.format("testDescription%d", i))
-                                         .degree((float) (i + 0.5))
-                                         .period(20L + i)
-                                         .productionYear(1990L + i)
-                                         .tagList(List.of(String.format("testTag%d", i),
-                                             String.format("testTag23453%d", i)))
-                                         .volume(700L + i).build());
-      postController.addPost(AddPostRequestDto.builder()
-                                              .alcoholNo((long) (i + 1))
-                                              .alcoholFeature(String.format("testFeature%d", i))
-                                              .postContent(String.format("testContent%d", i))
-                                              .postType(PostType.BASIC.name())
-                                              .positionInfo(String.format("testPositionInfo%d", i)
-                                              ).tagList(List.of(String.format("testTag%d", i),
-              String.format("testTag23453%d", i)))
-                                              .build());
-      SecurityContextHolder.getContext().setAuthentication(null);
-    }
-
-    // following
-    // 1L -> 3L
-    // 2L -> 3L
-    // 4L -> 2L
-    setSecurityContextUserNo(1L);
-    userController.followUser(3L);
-    securityContextHolderClear();
-
-    setSecurityContextUserNo(2L);
-    userController.followUser(3L);
-    securityContextHolderClear();
-
-    setSecurityContextUserNo(4L);
-    userController.followUser(2L);
-    securityContextHolderClear();
-
-    // post Like
-    // 5L -> 2L
-    setSecutiryContextDoSomethingAndClear(5L, () -> {
-      postController.likePost(2L);
-    });
-    // 4L -> 2L
-    setSecutiryContextDoSomethingAndClear(4L, () -> {
-      postController.likePost(2L);
-    });
-    // 1L -> 3L
-    setSecutiryContextDoSomethingAndClear(1L, () -> {
-      postController.likePost(3L);
-    });
-
-    // comment
-    // 1L -> 2L 포스트에. 정말 웃기다 크크.
-    // 3L -> 2L 포스트에. 오 저기는 꼭 가봐야겠어.
-    // 5L -> 1L 포스트에 와 이건 뭐임.
-    // 4L -> 1L 포스트에. 이건 뭐임.
-    // 2L -> 2L 포스트에. ㅋㅋ 신기하긴 함.
-    setSecutiryContextDoSomethingAndClear(1L, () -> {
-      postController.addComment(2L, new AddCommentRequestDto("정말 웃기다 크크."));
-    });
-    setSecutiryContextDoSomethingAndClear(3L, () -> {
-      postController.addComment(2L, new AddCommentRequestDto("오 저기는 꼭 가봐야겠어."));
-    });
-    setSecutiryContextDoSomethingAndClear(5L, () -> {
-      postController.addComment(1L, new AddCommentRequestDto("와 이건 뭐임."));
-    });
-    setSecutiryContextDoSomethingAndClear(4L, () -> {
-      postController.addComment(1L, new AddCommentRequestDto("오 ㅋㅋㅋ"));
-    });
-    setSecutiryContextDoSomethingAndClear(2L, () -> {
-      postController.addComment(2L, new AddCommentRequestDto("ㅋㅋㅋ ㄹㅇ 강추해요."));
-    });
-
-    setSecutiryContextDoSomethingAndClear(2L, () -> {
-      postController.addComment(2L, new AddCommentRequestDto("ㅋㅋㅋ ㄹㅇ 강추해요."));
-    });
-
-    // 인용하기.
-    // 2번 게시글이 1번 게시글을 인용.
-    // 3번 게시글이 1번 게시글을 인용.
-    // 5번 게시글이 3번 게시글을 인용.
-    setSecutiryContextDoSomethingAndClear(2L, () -> {
-      postController.addQuote(2L, 1L);
-    });
-    setSecutiryContextDoSomethingAndClear(3L, () -> {
-      postController.addQuote(3L, 1L);
-    });
-    setSecutiryContextDoSomethingAndClear(5L, () -> {
-      postController.addQuote(5L, 3L);
-    });
-
-
-    // 1번부터 5번까지 게시글 첨부파일 등록
-    // 1번부터 5번까지 내 프로필 등록.
-//    attachPhoto();
-
+  private void initAlcoholType() {
+    alcoholTypeRepository.save(
+        AlcoholType.builder().name("포도주").description("포도주다.").displayOrder(1L).build());
+    alcoholTypeRepository.save(
+        AlcoholType.builder().name("브랜디").description("브랜디다.").displayOrder(2L).build());
+    alcoholTypeRepository.save(
+        AlcoholType.builder().name("위스키").description("위스키다.").displayOrder(3L).build());
+    alcoholTypeRepository.save(
+        AlcoholType.builder().name("리큐르").description("리큐르다.").displayOrder(4L).build());
+    alcoholTypeRepository.save(
+        AlcoholType.builder().name("맥주").description("맥주다.").displayOrder(5L).build());
+    alcoholTypeRepository.save(
+        AlcoholType.builder().name("우리술").description("우리술이다.").displayOrder(6L).build());
+    alcoholTypeRepository.save(
+        AlcoholType.builder().name("사케").description("사케다.").displayOrder(7L).build());
+    alcoholTypeRepository.save(
+        AlcoholType.builder().name("럼").description("럼이다.").displayOrder(8L).build());
+    alcoholTypeRepository.save(
+        AlcoholType.builder().name("미분류").description("미분류다.").displayOrder(9L).build());
   }
 
   private void attachPhoto() {

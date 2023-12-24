@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 public class UserUpdateRequestDto {
+  @Schema(example = "닉네임.", description = "닉네임.")
+  String nickname;
+
   @Schema(example = "안녕하세요.", description = "자기소개.")
   String introduction;
 }

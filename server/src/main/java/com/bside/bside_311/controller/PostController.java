@@ -13,7 +13,6 @@ import com.bside.bside_311.dto.GetPostResponseDto;
 import com.bside.bside_311.dto.GetQuotesByPostResponseDto;
 import com.bside.bside_311.dto.PostResponseDto;
 import com.bside.bside_311.entity.Post;
-import com.bside.bside_311.service.AttachService;
 import com.bside.bside_311.service.PostService;
 import com.bside.bside_311.util.AuthUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -50,11 +49,11 @@ import java.util.List;
 @Tag(name = "게시글", description = "게시글 API")
 public class PostController {
   private final PostService postService;
-  private final AttachService attachService;
 
   @Operation(summary = "[o]게시글 등록 ", description = "게시글 등록 API")
   @UserRequired
   @PostMapping
+  @ResponseStatus(HttpStatus.CREATED)
   public AddPostResponseDto addPost(@RequestBody @Valid AddPostRequestDto addPostRequestDto) {
     log.info(">>> PostController.addPost");
     return postService.addPost(Post.of(addPostRequestDto), addPostRequestDto.getAlcoholNo(),
@@ -69,7 +68,6 @@ public class PostController {
     log.info(">>> PostController.editPost");
 
     postService.editPost(postNo, editPostRequestDto);
-    return;
   }
 
   @Operation(summary = "[o]게시글 삭제", description = "게시글 삭제 API")
@@ -132,7 +130,10 @@ public class PostController {
       Boolean isLikedByMe,
       @RequestParam(required = false, name = "isCommentedByMe")
       @Schema(description = "내가 댓글을 단 게시글 필터 여부.(true or false)", example = "false")
-      Boolean isCommentedByMe
+      Boolean isCommentedByMe,
+      @RequestParam(required = false, name = "searchAlcoholNos")
+      @Schema(description = "검색 술 번호들.", example = "1,2,4")
+      String searchAlcoholNos
 
   ) {
     log.info(">>> PostController.getPost");
@@ -150,8 +151,22 @@ public class PostController {
       }
     }
 
+    List<Long> searchAlcoholNoList = new ArrayList<>();
+    if (StringUtils.hasText(searchAlcoholNos)) {
+      try {
+        searchAlcoholNoList =
+            Arrays.stream(searchAlcoholNos.split(",")).map(Long::parseLong).toList();
+      } catch (NumberFormatException e) {
+        log.error(">>> PostController.getPost searchAlcoholNos 파싱 에러 NumberFormatException", e);
+        throw new IllegalArgumentException("searchAlcoholNos 파싱 에러 NumberFormatException", e);
+      } catch (Exception e) {
+        log.error(">>> PostController.getPost searchAlcoholNos 파싱 에러 Exception", e);
+        throw new IllegalArgumentException("searchAlcoholNos 파싱 에러 Exception", e);
+      }
+    }
+
     return postService.getPostsV2(pageable, searchKeyword, searchUserNoList, isLikedByMe,
-        isCommentedByMe);
+        isCommentedByMe, searchAlcoholNoList);
   }
 
   @Operation(summary = "[o]게시글 상세 조회", description = "게시글 상세 조회 API")

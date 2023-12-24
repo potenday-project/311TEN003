@@ -1,5 +1,6 @@
 package com.bside.bside_311.service;
 
+import com.bside.bside_311.component.AttachManager;
 import com.bside.bside_311.dto.ImageRequestDto;
 import com.bside.bside_311.dto.UploadImageResultDto;
 import com.bside.bside_311.entity.Attach;
@@ -17,13 +18,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
-import static com.bside.bside_311.util.ValidateUtil.resourceChangeableCheckByThisRequestToken;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
 public class AttachService {
+  private final AttachManager attachManager;
   private final UserRepository userRepository;
   private final PostRepository postRepository;
   private final AlcoholRepository alcoholRepository;
@@ -70,20 +70,9 @@ public class AttachService {
   }
 
   public void deleteAttach(Long attachNo, Long myUserNo) {
-    // search attach
-    Attach attach = attachRepository.findByIdAndDelYnIs(attachNo, YesOrNo.N)
-                                    .orElseThrow(
-                                        () -> new IllegalArgumentException("존재하지 않는 첨부파일입니다."));
-    resourceChangeableCheckByThisRequestToken(attach);
-    // delete attach
-    attach.setDelYn(YesOrNo.Y);
-
-    // delte image
-    imageStorage.delete(attach.getPublicId());
-
-    //return
-    return;
+    attachManager.deleteAttachByAttachNo(attachNo);
   }
+
 
   //TODO attach 형태 변경. attachNo도 같이 전달.
 }

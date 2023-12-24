@@ -179,7 +179,7 @@ class UserControllerTest extends ControllerTest {
   @Test
   @DisplayName("유저 정보 수정 성공.")
   void userEditSuccess() throws Exception {
-    UserUpdateRequestDto userUpdateRequestDto = new UserUpdateRequestDto("안녕하세요~~~");
+    UserUpdateRequestDto userUpdateRequestDto = new UserUpdateRequestDto("test", "안녕하세요~~~");
 
     mockMvc.perform(patch("/user")
                         .header(HttpHeaders.AUTHORIZATION, JwtUtil.BEARER_PREFIX + userAccessToken)
@@ -192,7 +192,7 @@ class UserControllerTest extends ControllerTest {
   @Test
   @DisplayName("유저 비밀번호 변경 성공.")
   void userChangePassword() throws Exception {
-    UserUpdateRequestDto userUpdateRequestDto = new UserUpdateRequestDto("안녕하세요~~~");
+    UserUpdateRequestDto userUpdateRequestDto = new UserUpdateRequestDto("test", "안녕하세요~~~");
 
     mockMvc.perform(patch("/user/pwd/change")
                         .header(HttpHeaders.AUTHORIZATION, JwtUtil.BEARER_PREFIX + userAccessToken)
@@ -240,7 +240,7 @@ class UserControllerTest extends ControllerTest {
   @Test
   @DisplayName("유저 언팔로우. 성공.")
   void user_unfollow_success() throws Exception {
-    mockMvc.perform(post(String.format("/user/follow/%d", 2))
+    mockMvc.perform(post(String.format("/user/unfollow/%d", 2))
                         .header("Authorization", "Bearer " + userAccessToken))
            .andExpect(status().isOk());
   }
@@ -249,7 +249,8 @@ class UserControllerTest extends ControllerTest {
   @DisplayName("내가 팔로잉하는 유저 조회. 성공.")
   void getMyFollowingUsers_success() throws Exception {
     //given
-    Page<UserResponseDto> pagedResponse = new PageImpl<>(List.of(UserResponseDto.of(normalUser)));
+    Page<UserResponseDto> pagedResponse =
+        new PageImpl<>(List.of(UserResponseDto.of(normalUser, null)));
     given(userService.getMyFollowingUsers(eq(normalUser.getId()),
         ArgumentMatchers.any(Pageable.class)))
         .willReturn(pagedResponse);
@@ -263,7 +264,8 @@ class UserControllerTest extends ControllerTest {
   @DisplayName("나를 팔로잉하는 유저 조회. 성공.")
   void getUsersOfFollowingMePage_success() throws Exception {
     //given
-    Page<UserResponseDto> pagedResponse = new PageImpl<>(List.of(UserResponseDto.of(normalUser)));
+    Page<UserResponseDto> pagedResponse =
+        new PageImpl<>(List.of(UserResponseDto.of(normalUser, null)));
     given(userService.getUsersOfFollowingMe(eq(normalUser.getId()),
         ArgumentMatchers.any(Pageable.class)))
         .willReturn(pagedResponse);

@@ -25,6 +25,7 @@ import com.bside.bside_311.repository.AlcoholTagRepository;
 import com.bside.bside_311.repository.AlcoholTypeRepository;
 import com.bside.bside_311.repository.AttachRepository;
 import com.bside.bside_311.repository.TagRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -38,8 +39,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static com.bside.bside_311.util.ValidateUtil.resourceChangeableCheckByThisRequestToken;
 
 @Service
 @Slf4j
@@ -55,7 +54,8 @@ public class AlcoholService {
   private final AttachRepository attachRepository;
   private final AlcoholTagRepository alcoholTagRepository;
 
-  public AddAlcoholResponseDto addAlcohol(AddAlcoholRequestDto addAlcoholRequestDto) {
+  public AddAlcoholResponseDto addAlcohol(AddAlcoholRequestDto addAlcoholRequestDto)
+      throws JsonProcessingException {
     Long alcoholTypeNo = addAlcoholRequestDto.getAlcoholTypeNo();
     AlcoholType alcoholType = alcoholTypeRepository.findByIdAndDelYnIs(alcoholTypeNo, YesOrNo.N)
                                                    .orElseThrow(
@@ -84,7 +84,6 @@ public class AlcoholService {
   public void editAlcohol(Long alcoholNo, EditAlcoholRequestDto editAlcoholRequestDto) {
     Alcohol alcohol = alcoholRepository.findByIdAndDelYnIs(alcoholNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException("술이 존재하지 않습니다."));
-    resourceChangeableCheckByThisRequestToken(alcohol);
     if (editAlcoholRequestDto != null) {
       if (editAlcoholRequestDto.getAlcoholName() != null) {
         alcohol.setName(editAlcoholRequestDto.getAlcoholName());
@@ -132,7 +131,6 @@ public class AlcoholService {
   public void deleteAlcohol(Long alcoholNo) {
     Alcohol alcohol = alcoholRepository.findByIdAndDelYnIs(alcoholNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException("술이 존재하지 않습니다."));
-    resourceChangeableCheckByThisRequestToken(alcohol);
     alcohol.setDelYn(YesOrNo.Y);
     alcoholRepository.save(alcohol);
   }
@@ -191,13 +189,13 @@ public class AlcoholService {
     return GetAlcoholResponseDto.of(alcoholResponseDtos, alcoholsCount);
   }
 
-  public  Page<AlcoholResponseDto> getAlcoholV2(Pageable pageable, String searchKeyword) {
+  public Page<AlcoholResponseDto> getAlcoholV2(Pageable pageable, String searchKeyword) {
     // 술 종류 fetch join
     Page<Alcohol> alcohols = alcoholRepository.searchAlcoholPage(AlcoholSearchCondition.builder()
                                                                                        .searchKeyword(
-                                                                                          searchKeyword)
+                                                                                           searchKeyword)
                                                                                        .build(),
-                                                                 pageable);
+        pageable);
     List<Long> alcoholNos = alcohols.stream().map(Alcohol::getId).toList();
     List<Attach> alcoholAttachList =
         attachRepository.findByRefNoInAndAttachTypeIsAndDelYnIs(alcoholNos, AttachType.ALCOHOL,
@@ -217,7 +215,18 @@ public class AlcoholService {
   }
 
   public GetAlcoholTypesResponseDto getAlcoholTypes() {
-    List<AlcoholType> alcoholTypes = alcoholTypeRepository.findAll();
+    List<AlcoholType> alcoholTypes =
+        alcoholTypeRepository.findByDelYnIsOrderByDisplayOrderAsc(YesOrNo.N);
     return GetAlcoholTypesResponseDto.of(alcoholTypes);
+  }
+
+  public Map<String, Long> getAlcoholTypeMap() {
+    List<AlcoholType> alcoholTypes = alcoholTypeRepository.findAll().stream().filter(
+        alcoholType -> alcoholType.getDelYn() == YesOrNo.N).collect(Collectors.toList());
+    Map<String, Long> alcoholTypeMap = new HashMap<>();
+    for (AlcoholType alcoholType : alcoholTypes) {
+      alcoholTypeMap.put(alcoholType.getName(), alcoholType.getId());
+    }
+    return alcoholTypeMap;
   }
 }

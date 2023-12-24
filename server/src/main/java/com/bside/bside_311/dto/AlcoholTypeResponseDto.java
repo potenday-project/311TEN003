@@ -13,9 +13,10 @@ public class AlcoholTypeResponseDto {
   private Long alcoholTypeNo;
   private String name;
   private String description;
+  private Long displayOrder;
 
   public static AlcoholTypeResponseDto of(AlcoholType alcoholType) {
     return new AlcoholTypeResponseDto(alcoholType.getId(), alcoholType.getName(),
-        alcoholType.getDescription());
+        alcoholType.getDescription(), alcoholType.getDisplayOrder());
   }
 }

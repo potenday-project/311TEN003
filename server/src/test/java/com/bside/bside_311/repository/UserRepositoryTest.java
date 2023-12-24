@@ -8,6 +8,7 @@ import jakarta.persistence.PersistenceContext;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +27,8 @@ class UserRepositoryTest {
   UserRepository userRepository;
   @Autowired
   UserFollowRepository userFollowRepository;
+  @Value("${spring.profiles.active}")
+  private String activeProfile;
   @PersistenceContext
   private EntityManager em;
 
@@ -49,6 +52,7 @@ class UserRepositoryTest {
 
   @Test
   public void getMyFollowingUsersPage_success() {
+    System.out.println("activeProfile = " + activeProfile);
     // given
     int limit = 300;
 
@@ -62,8 +66,8 @@ class UserRepositoryTest {
                       .userId(String.format("test%d", i))
                       .nickname(String.format("test%d", i))
                       .password("test1!").build();
-      userList.add(test);
       userRepository.save(test);
+      userList.add(test);
     }
 
     em.flush();
@@ -81,10 +85,13 @@ class UserRepositoryTest {
     userFollowRepository.save(
         UserFollow.of(userList.get(2), userList.get(3))
     );
+    em.flush();
+    em.clear();
 
 
     // when
-    Page<User> myFollowingUsersPage = userRepository.getMyFollowingUsersPage(1L, pageRequest);
+    Page<User> myFollowingUsersPage =
+        userRepository.getMyFollowingUsersPage(userList.get(0).getId(), pageRequest);
     // then
     Assertions.assertThat(myFollowingUsersPage.getContent().size()).isEqualTo(2);
   }
@@ -100,7 +107,7 @@ class UserRepositoryTest {
     //
     List<User> userList = new ArrayList<>();
     for (int i = 0; i < 5; i++) {
-      User test = User.builder().id(i + 1L)
+      User test = User.builder()
                       .userId(String.format("test%d", i))
                       .nickname(String.format("test%d", i))
                       .password("test1!").build();
@@ -131,7 +138,8 @@ class UserRepositoryTest {
 
 
     // when
-    Page<User> myFollowingUsersPage = userRepository.getUsersOfFollowingMePage(4L, pageRequest);
+    Page<User> myFollowingUsersPage =
+        userRepository.getUsersOfFollowingMePage(userList.get(3).getId(), pageRequest);
     // then
     Assertions.assertThat(myFollowingUsersPage.getContent().size()).isEqualTo(2);
   }
