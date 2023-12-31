@@ -19,9 +19,8 @@ import com.bside.bside_311.dto.GetPostsMvo;
 import com.bside.bside_311.dto.GetPostsToOneMvo;
 import com.bside.bside_311.dto.GetQuotesByPostResponseDto;
 import com.bside.bside_311.dto.PostResponseDto;
-import com.bside.bside_311.dto.PostSearchCondition;
+import com.bside.bside_311.dto.common.ResultDto;
 import com.bside.bside_311.entity.Alcohol;
-import com.bside.bside_311.entity.Attach;
 import com.bside.bside_311.entity.AttachType;
 import com.bside.bside_311.entity.Comment;
 import com.bside.bside_311.entity.Post;
@@ -45,6 +44,7 @@ import com.bside.bside_311.repository.UserFollowRepository;
 import com.bside.bside_311.repository.UserRepository;
 import com.bside.bside_311.util.AuthUtil;
 import com.bside.bside_311.util.MessageUtil;
+import com.bside.bside_311.util.ResultCode;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -221,47 +221,20 @@ public class PostService {
                                           Boolean isLikedByMe, Boolean isCommentedByMe,
                                           List<Long> searchAlcoholNoList) {
     Page<Post> posts =
-        postRepository.searchPageSimple(PostSearchCondition.builder().searchKeyword(searchKeyword)
-                                                           .searchUserNoList(searchUserNoList)
-                                                           .isLikedByMe(isLikedByMe)
-                                                           .isCommentedByMe(isCommentedByMe)
-                                                           .myUserNo(
-                                                               AuthUtil.getUserNoFromAuthentication())
-                                                           .searchAlcoholNoList(searchAlcoholNoList)
-                                                           .build(), pageable);
-    List<Long> postNos = posts.stream().map(Post::getId).toList();
-    List<GetPostsToOneMvo> postsToOneList =
-        CollectionUtils.isNotEmpty(postNos) ? postMybatisRepository.getPostsToOne(postNos) :
-            List.of();
-    Map<Long, GetPostsToOneMvo> postsToOneMap = new HashMap<>();
-    for (GetPostsToOneMvo getPostsToOneMvo : postsToOneList) {
-      postsToOneMap.put(getPostsToOneMvo.getPostNo(), getPostsToOneMvo);
-    }
+        postManager.getPostListCommon(pageable, searchKeyword, searchUserNoList, isLikedByMe,
+            isCommentedByMe,
+            searchAlcoholNoList);
 
-    List<Attach> postAttachList =
-        attachRepository.findByRefNoInAndAttachTypeIsAndDelYnIs(postNos, AttachType.POST,
-            YesOrNo.N);
-    Map<Long, List<AttachDto>> pToAMap = new HashMap<>();
-    for (Attach attach : postAttachList) {
-      if (!pToAMap.containsKey(attach.getRefNo())) {
-        pToAMap.put(attach.getRefNo(), new ArrayList<>());
-      }
-      List<AttachDto> attachDtos = pToAMap.get(attach.getRefNo());
-      attachDtos.add(AttachDto.of(attach));
-    }
+    List<Long> postNos = posts.stream().map(Post::getId).toList();
+    Map<Long, GetPostsToOneMvo> postsToOneMap =
+        postManager.getGetPostsToOneMvoMap(postNos);
+
+    Map<Long, List<AttachDto>> pToAMap =
+        attachManager.getAttachListBykeysAndType(postNos, AttachType.POST);
 
     List<Long> postCreatedBys = posts.stream().map(Post::getCreatedBy).toList();
-    List<Attach> userAttachList =
-        attachRepository.findByRefNoInAndAttachTypeIsAndDelYnIs(postCreatedBys, AttachType.PROFILE,
-            YesOrNo.N);
-    Map<Long, List<AttachDto>> uToAMap = new HashMap<>();
-    for (Attach attach : userAttachList) {
-      if (!uToAMap.containsKey(attach.getRefNo())) {
-        uToAMap.put(attach.getRefNo(), new ArrayList<>());
-      }
-      List<AttachDto> attachDtos = uToAMap.get(attach.getRefNo());
-      attachDtos.add(AttachDto.of(attach));
-    }
+    Map<Long, List<AttachDto>> uToAMap =
+        attachManager.getAttachListBykeysAndType(postCreatedBys, AttachType.PROFILE);
 
     return posts.map(post -> {
       GetPostsToOneMvo getPostsToOneMvo = postsToOneMap.get(post.getId());
@@ -269,6 +242,29 @@ public class PostService {
       List<AttachDto> userAttachDtos = uToAMap.getOrDefault(post.getCreatedBy(), new ArrayList<>());
       return PostResponseDto.of(post, getPostsToOneMvo, postAttachDtos, userAttachDtos);
     });
+  }
+
+  public ResultDto<Page<PostResponseDto>> getPostsPopular(Long page, Long size) {
+    Page<Post> posts =
+        postManager.getPostListPopular(page, size);
+
+    List<Long> postNos = posts.stream().map(Post::getId).toList();
+    Map<Long, GetPostsToOneMvo> postsToOneMap =
+        postManager.getGetPostsToOneMvoMap(postNos);
+
+    Map<Long, List<AttachDto>> pToAMap =
+        attachManager.getAttachListBykeysAndType(postNos, AttachType.POST);
+
+    List<Long> postCreatedBys = posts.stream().map(Post::getCreatedBy).toList();
+    Map<Long, List<AttachDto>> uToAMap =
+        attachManager.getAttachListBykeysAndType(postCreatedBys, AttachType.PROFILE);
+
+    return ResultDto.of(ResultCode.SUCCESS, posts.map(post -> {
+      GetPostsToOneMvo getPostsToOneMvo = postsToOneMap.get(post.getId());
+      List<AttachDto> postAttachDtos = pToAMap.getOrDefault(post.getId(), new ArrayList<>());
+      List<AttachDto> userAttachDtos = uToAMap.getOrDefault(post.getCreatedBy(), new ArrayList<>());
+      return PostResponseDto.of(post, getPostsToOneMvo, postAttachDtos, userAttachDtos);
+    }));
   }
 
   public AddCommentResponseDto addComment(Long postNo, AddCommentRequestDto addCommentRequestDto) {
@@ -293,18 +289,8 @@ public class PostService {
       createdByToUser.put(user.getId(), user);
     }
 
-    List<Attach> attachList =
-        attachRepository.findByRefNoInAndAttachTypeIsAndDelYnIs(commentCreatedList,
-            AttachType.PROFILE,
-            YesOrNo.N);
-    Map<Long, List<AttachDto>> uToAMap = new HashMap<>();
-    for (Attach attach : attachList) {
-      if (!uToAMap.containsKey(attach.getRefNo())) {
-        uToAMap.put(attach.getRefNo(), new ArrayList<>());
-      }
-      List<AttachDto> attachDtos = uToAMap.get(attach.getRefNo());
-      attachDtos.add(AttachDto.of(attach));
-    }
+    Map<Long, List<AttachDto>> uToAMap =
+        attachManager.getAttachListBykeysAndType(commentCreatedList, AttachType.PROFILE);
 
     return GetPostCommentsResponseDto.of(comments, createdByToUser, uToAMap);
   }

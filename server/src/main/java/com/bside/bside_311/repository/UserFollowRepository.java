@@ -16,6 +16,10 @@ public interface UserFollowRepository extends JpaRepository<UserFollow, Long> {
                                                               List<User> followedUserNos,
                                                               YesOrNo delYn);
 
+  List<UserFollow> findByFollowingIsAndFollowed_IdIsInAndDelYnIs(User followingUser,
+                                                                 List<Long> followedUserNos,
+                                                                 YesOrNo delYn);
+
   Long countByFollowedAndDelYnIs(User followed, YesOrNo delYn);
 
   Long countByFollowingAndDelYnIs(User following, YesOrNo delYn);

@@ -116,6 +116,28 @@ class PostControllerTest extends ControllerTest {
   }
 
   @Test
+  void getPostsPopular_success() throws Exception {
+    //given
+    //when
+    //then
+    String queryParameter = "?page=1&size=10";
+    mockMvc.perform(
+               get(String.format("/posts/popular%s", queryParameter)))
+           .andExpect(status().isOk());
+  }
+
+  @Test
+  void getPostsPopular_fail() throws Exception {
+    //given
+    //when
+    //then
+    String queryParameter = "?page=asdf&size=10";
+    mockMvc.perform(
+               get(String.format("/posts/popular%s", queryParameter)))
+           .andExpect(status().is4xxClientError());
+  }
+
+  @Test
   void getPostDetail_success() {
   }
 
