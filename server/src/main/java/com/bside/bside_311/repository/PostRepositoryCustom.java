@@ -7,4 +7,6 @@ import org.springframework.data.domain.Pageable;
 
 public interface PostRepositoryCustom {
   Page<Post> searchPageSimple(PostSearchCondition condition, Pageable pageable);
+
+  Page<Post> searchPagePopular(Long page, Long size);
 }

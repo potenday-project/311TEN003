@@ -1,6 +1,9 @@
 package com.bside.bside_311.exercise;
 
 import com.bside.bside_311.config.security.AdminRequired;
+import com.bside.bside_311.dto.UserResponseDto;
+import com.bside.bside_311.dto.common.ResultDto;
+import com.bside.bside_311.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -42,5 +45,10 @@ public class TestController {
     }
     return ResponseEntity.notFound()
                          .build();
+  }
+
+  @GetMapping("/common-result-dto")
+  public ResultDto<UserResponseDto> testCommonResultDto() {
+    return ResultDto.of("200", "success", UserResponseDto.of(User.of(1L)));
   }
 }

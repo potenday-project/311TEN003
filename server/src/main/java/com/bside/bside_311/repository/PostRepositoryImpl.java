@@ -12,7 +12,9 @@ import jakarta.persistence.EntityManager;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -58,6 +60,31 @@ public class PostRepositoryImpl extends Querydsl4RepositorySupport
         };
     return applyPagination(pageable, jpaQueryFactoryJPAQueryFunction
     );
+  }
+
+  @Override
+  public Page<Post> searchPagePopular(Long page, Long size) {
+    List<Post> postQueryResults = queryFactory.select(post)
+                                              .from(post)
+                                              .leftJoin(postLike)
+                                              .on(postLike.post.eq(post).and(
+                                                  postLike.delYn.eq(YesOrNo.N)))
+                                              .where(notDeleted())
+                                              .groupBy(post.id)
+                                              .orderBy(postLike.count().desc())
+                                              .offset(page * size)
+                                              .limit(size)
+                                              .fetch();
+    // groupBy 행 결과를 query로 받음.
+    JPAQuery<Integer> prepareCountQuery = queryFactory.selectOne()
+                                                      .from(post)
+                                                      .leftJoin(postLike)
+                                                      .on(postLike.post.eq(post).and(
+                                                          postLike.delYn.eq(YesOrNo.N)))
+                                                      .where(notDeleted())
+                                                      .groupBy(post.id);
+    return PageableExecutionUtils.getPage(postQueryResults, PageRequest.of(page.intValue(),
+        size.intValue()), () -> prepareCountQuery.fetch().size());
   }
 
   private BooleanExpression contentLike(String searchKeyword) {

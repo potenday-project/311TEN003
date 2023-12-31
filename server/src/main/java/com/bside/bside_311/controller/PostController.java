@@ -12,6 +12,7 @@ import com.bside.bside_311.dto.GetPostCommentsResponseDto;
 import com.bside.bside_311.dto.GetPostResponseDto;
 import com.bside.bside_311.dto.GetQuotesByPostResponseDto;
 import com.bside.bside_311.dto.PostResponseDto;
+import com.bside.bside_311.dto.common.ResultDto;
 import com.bside.bside_311.entity.Post;
 import com.bside.bside_311.service.PostService;
 import com.bside.bside_311.util.AuthUtil;
@@ -167,6 +168,20 @@ public class PostController {
 
     return postService.getPostsV2(pageable, searchKeyword, searchUserNoList, isLikedByMe,
         isCommentedByMe, searchAlcoholNoList);
+  }
+
+  // TODO 추후 캐싱 처리 예정.(레디스)
+  @Operation(summary = "[o] 인기 게시글 목록 조회", description = "인기 게시글 조회 API Page, size 사용법. <br> ex1) /posts/popular?page=0&size=10 <br> ex2) /posts/popular?page=1&size=10")
+  @GetMapping("/popular")
+  public ResultDto<Page<PostResponseDto>> getPostsPopular(
+      @RequestParam(required = true, name = "page")
+      @Schema(description = "페이지", example = "0")
+      Long page,
+      @RequestParam(required = true, name = "size")
+      @Schema(description = "사이즈", example = "10")
+      Long size
+  ) {
+    return postService.getPostsPopular(page, size);
   }
 
   @Operation(summary = "[o]게시글 상세 조회", description = "게시글 상세 조회 API")

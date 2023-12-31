@@ -5,10 +5,12 @@ import com.bside.bside_311.dto.ChangePasswordRequestDto;
 import com.bside.bside_311.dto.GetUserInfoResponseDto;
 import com.bside.bside_311.dto.LoginResponseDto;
 import com.bside.bside_311.dto.MyInfoResponseDto;
+import com.bside.bside_311.dto.UserIncludeFollowCountDto;
 import com.bside.bside_311.dto.UserLoginRequestDto;
 import com.bside.bside_311.dto.UserResponseDto;
 import com.bside.bside_311.dto.UserSignupResponseDto;
 import com.bside.bside_311.dto.UserUpdateRequestDto;
+import com.bside.bside_311.dto.common.ResultDto;
 import com.bside.bside_311.entity.Attach;
 import com.bside.bside_311.entity.AttachType;
 import com.bside.bside_311.entity.User;
@@ -230,6 +232,24 @@ public class UserService {
     return uToFMap;
   }
 
+  public Map<Long, List<UserFollow>> getUserFollowInfoFollowingIsAndFollowed_IdIsIn(Long myUserNo,
+                                                                                    List<Long> followedUserNoList) {
+    List<UserFollow> userFollowList =
+        userFollowRepository.findByFollowingIsAndFollowed_IdIsInAndDelYnIs(User.of(myUserNo),
+            followedUserNoList,
+            YesOrNo.N);
+    Map<Long, List<UserFollow>> uToFMap = new HashMap<>();
+    for (UserFollow userFollow : userFollowList) {
+      Long targetUserNo = userFollow.getFollowed().getId();
+      if (!uToFMap.containsKey(targetUserNo)) {
+        uToFMap.put(targetUserNo, new ArrayList<>());
+      }
+      List<UserFollow> userFollows = uToFMap.get(targetUserNo);
+      userFollows.add(userFollow);
+    }
+    return uToFMap;
+  }
+
   public Map<Long, List<AttachDto>> getUserAttachInfos(List<Long> userNos) {
 
     List<Attach> userAttachList =
@@ -244,5 +264,18 @@ public class UserService {
       attachDtos.add(AttachDto.of(attach));
     }
     return uToAMap;
+  }
+
+  public ResultDto<Page<UserResponseDto>> getUsersPopular(Long page, Long size, Long myUserNo) {
+    Page<UserIncludeFollowCountDto> users = userRepository.getUsersPopular(page, size);
+    List<Long> userNos = users.stream().map(UserIncludeFollowCountDto::getUserNo).toList();
+    Map<Long, List<UserFollow>> uToUFMap =
+        getUserFollowInfoFollowingIsAndFollowed_IdIsIn(myUserNo, userNos);
+    Map<Long, List<AttachDto>> uToAMap = getUserAttachInfos(userNos);
+    return ResultDto.successOf(users.map(user -> {
+      List<AttachDto> attachDtos = uToAMap.getOrDefault(user.getId(), List.of());
+      Boolean isFollowedByMe = uToUFMap.containsKey(user.getId());
+      return UserResponseDto.of(user, attachDtos, isFollowedByMe);
+    }));
   }
 }

@@ -274,4 +274,26 @@ class UserControllerTest extends ControllerTest {
            .andExpect(status().isOk())
            .andExpect(content().string(containsString("userNo")));
   }
+
+  @Test
+  void getUsersPopular_success() throws Exception {
+    //given
+    //when
+    //then
+    String queryParameter = "?page=1&size=10";
+    mockMvc.perform(get(String.format("/user/popular%s", queryParameter)).header("Authorization",
+               "Bearer " + userAccessToken))
+           .andExpect(status().isOk());
+  }
+
+  @Test
+  void getUsersPopular_fail() throws Exception {
+    //given
+    //when
+    //then
+    String queryParameter = "?page=asdf&size=10";
+    mockMvc.perform(get(String.format("/user/popular%s", queryParameter)).header("Authorization",
+               "Bearer " + userAccessToken))
+           .andExpect(status().is4xxClientError());
+  }
 }
