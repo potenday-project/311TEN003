@@ -25,12 +25,13 @@ import "../newpost/quill.mention.css";
 import { sanitize } from "isomorphic-dompurify";
 import UserAvatar from "../user/info/UserAvatar";
 import Link from "next/link";
-import { USER_PAGE } from "@/const/clientPath";
+import { POST_DETAIL, USER_PAGE } from "@/const/clientPath";
 import { useMyInfoQuery } from "@/queries/auth/useMyInfoQuery";
 import PostCardOptionDropdown from "./PostCardOptionDropdown";
 import { postcardContext } from "@/store/post/PostCardContext";
-import { useRouter } from "next/navigation";
 import formatTime from "@/utils/formatTime";
+import copyToClipboard from "@/utils/copyToClipboard";
+import { useGlobalSnackbarStore } from "@/store/useGlobalSnackbarStore";
 
 const PostCard = ({
   postAttachUrls,
@@ -65,8 +66,24 @@ const PostCard = ({
     [currentUser]
   );
 
+  const CLIENT_BASE_URL = process.env.NEXT_PUBLIC_CLIENT_BASE_URL;
+  const fireToast = useGlobalSnackbarStore(({ fireToast }) => fireToast);
+  const copyToClipboardHander = async () => {
+    await copyToClipboard(
+      `${CLIENT_BASE_URL}${POST_DETAIL(id, String(postNo))}`,
+      {
+        onSuccess: () => {
+          fireToast("게시물 주소가 복사되었습니다");
+        },
+        onError: () => {
+          fireToast("게시물 주소 복사에 실패했습니다");
+        },
+      }
+    );
+  };
+
   return (
-    <Card sx={{ display: "flex", gap: 2, py:2 }} elevation={0}>
+    <Card sx={{ display: "flex", gap: 2, py: 2 }} elevation={0}>
       <Link href={USER_PAGE(createdBy)}>
         <UserAvatar
           src={profileImgUrls[0]?.attachUrl}
@@ -169,7 +186,11 @@ const PostCard = ({
             </Box>
             <Typography variant="label">{likeCount ?? 0}</Typography>
           </ButtonBase>
-          <ButtonBase data-testid="shareBtn" aria-label="share">
+          <ButtonBase
+            data-testid="shareBtn"
+            aria-label="share"
+            onClick={copyToClipboardHander}
+          >
             <ShareIcon />
             <Typography variant="label">공유</Typography>
           </ButtonBase>
