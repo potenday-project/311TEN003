@@ -11,18 +11,26 @@ import CustomAppbar from "@/components/layout/CustomAppbar";
 import CustomContainer from "@/components/layout/CustomContainer";
 import useSubmitEditPostMutation from "@/queries/newPost/useSubmitEditPostMutation";
 import PostEditor from "@/components/newpost/PostEditor";
-import useGetPostDetailQuery, { useInvalidatePostDetail } from "@/queries/post/useGetPostDetailQuery";
+import useGetPostDetailQuery, {
+  useInvalidatePostDetail,
+} from "@/queries/post/useGetPostDetailQuery";
 
 export default function EditPostPage({ params }: { params: { pid: string } }) {
   const { setLoading } = useGlobalLoadingStore();
 
   const router = useRouter();
   const invalidatePreviousPost = useInvalidatePostList();
-  const invalidatePostDetail = useInvalidatePostDetail()
+  const invalidatePostDetail = useInvalidatePostDetail();
 
   const { data: initialData } = useGetPostDetailQuery(params.pid);
-  const { alcoholName, alcoholNo, alcoholType, postContent, postAttachUrls,postNo } =
-    initialData;
+  const {
+    alcoholName,
+    alcoholNo,
+    alcoholType,
+    postContent,
+    postAttachUrls,
+    postNo,
+  } = initialData;
 
   const [formData, setFormData] = useState<NewPostRequestInterface>();
   const [file, setFile] = useState<File>();
@@ -31,7 +39,7 @@ export default function EditPostPage({ params }: { params: { pid: string } }) {
     onMutate: () => setLoading(true),
     onSuccess: () => {
       invalidatePreviousPost();
-      invalidatePostDetail(String(postNo))
+      invalidatePostDetail(String(postNo));
       router.push(HOME);
     },
     onSettled: () => setLoading(false),

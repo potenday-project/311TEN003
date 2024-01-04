@@ -32,7 +32,7 @@ const CustomToggleButtonGroup = ({
           onChange(val);
         }
       }}
-      sx={{ backgroundColor: "background.paper",px:2, ...sx }}
+      sx={{ backgroundColor: "background.paper",px:2, borderRadius:0,...sx }}
       {...toggleBtnGroupProps}
     >
       {value.map((val, i) => {
