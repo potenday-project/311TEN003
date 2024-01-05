@@ -14,7 +14,13 @@ import getTokenFromLocalStorage from "@/utils/getTokenFromLocalStorage";
 import { postcardContext } from "@/store/post/PostCardContext";
 import PostCardSkeleton from "./PostCardSkeleton";
 
-function PostCardList(props: UseGetPostListQueryInterface) {
+function PostCardList({
+  searchAlcoholNos,
+  searchKeyword,
+  searchUserNos,
+  sort,
+  ...props
+}: UseGetPostListQueryInterface) {
   const {
     data,
     fetchNextPage,
@@ -23,11 +29,15 @@ function PostCardList(props: UseGetPostListQueryInterface) {
     isSuccess,
     isLoading,
   } = useGetPostListInfiniteQuery({
+    // 검색중이 아니면서 AlcoholNos 가 있는 경우에만 AlcoholNo로 검색
+    searchAlcoholNos:
+      searchKeyword === "" && searchAlcoholNos ? searchAlcoholNos : undefined,
+    sort,
+    searchUserNos,
+    searchKeyword: searchKeyword !== "" ? searchKeyword : undefined,
     ...props,
     headers: { Authorization: getTokenFromLocalStorage() },
   });
-
-  const { searchKeyword, searchUserNos, sort } = props;
 
   const { ref, inView } = useInView();
   useEffect(() => {
@@ -59,7 +69,7 @@ function PostCardList(props: UseGetPostListQueryInterface) {
           <PostCardSkeleton />
         ) : (
           // 인터섹션옵저버
-          hasNextPage&&<div style={{ height: 60 }} ref={ref}></div>
+          hasNextPage && <div style={{ height: 60 }} ref={ref}></div>
         )}
       </div>
     </postcardContext.Provider>

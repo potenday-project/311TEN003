@@ -8,9 +8,12 @@ const SearchPage = async ({
 }: {
   searchParams?: { [key: string]: string | undefined };
 }) => {
-  const accessToken = await getTokenFromCookies()
+  const accessToken = await getTokenFromCookies();
   const initialData = await getPostListQueryFn({
     searchKeyword: searchParams?.keyword,
+    searchAlcoholNos: searchParams?.searchAlcoholNos
+      ? Number(searchParams?.searchAlcoholNos)
+      : undefined,
     headers: { Authorization: accessToken },
   });
 
@@ -19,6 +22,7 @@ const SearchPage = async ({
       <SearchArea
         initialData={initialData}
         searchKeyword={searchParams?.keyword}
+        searchAlcoholNos={Number(searchParams?.searchAlcoholNos)}
       />
     </>
   );
