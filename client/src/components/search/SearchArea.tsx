@@ -7,12 +7,17 @@ import useDebounce from "@/hooks/useDebounce";
 import InputSearchIcon from "~/assets/icons/InputSearchIcon.svg";
 import { motion } from "framer-motion";
 
-type Props = {
+type SearchAreaProps = {
   initialData: AugmentedGetPostListResponse;
   searchKeyword?: string;
+  searchAlcoholNos?: number;
 };
 
-const SearchArea = ({ initialData, searchKeyword }: Props) => {
+const SearchArea = ({
+  initialData,
+  searchKeyword,
+  searchAlcoholNos,
+}: SearchAreaProps) => {
   const [keyword, setKeyword] = useState(searchKeyword ?? "");
   const debouncedValue = useDebounce(keyword, 300);
   const MemoidInitailData = useMemo(() => initialData, []);
@@ -20,7 +25,7 @@ const SearchArea = ({ initialData, searchKeyword }: Props) => {
   return (
     <>
       <Box
-        height= {72}
+        height={72}
         sx={{
           position: "fixed",
           top: 0,
@@ -55,6 +60,7 @@ const SearchArea = ({ initialData, searchKeyword }: Props) => {
       <PostCardList
         initialData={!keyword ? MemoidInitailData : undefined}
         searchKeyword={debouncedValue}
+        searchAlcoholNos={searchAlcoholNos}
       />
     </>
   );

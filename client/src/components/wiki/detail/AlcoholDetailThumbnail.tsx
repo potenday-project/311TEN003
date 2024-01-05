@@ -1,5 +1,4 @@
-//@ts-ignore
-import LogoLarge from "@/assets/icons/LogoLarge.svg?url";
+import hasNoAlcoholImage from "@/assets/images/hasNoAlcoholImage.png";
 import { Box } from "@mui/material";
 import AlcoholDetailLabel from "./AlcoholDetailLabel";
 
@@ -17,10 +16,10 @@ const AlcoholDetailThumbnail = ({
   return (
     <Box
       height={410}
-      bgcolor={src ? "background.paper" : "gray.primary"}
+      bgcolor={"background.paper"}
       p={2}
       sx={{
-        backgroundImage: `url(${src ?? LogoLarge.src})`,
+        backgroundImage: `url(${src ?? hasNoAlcoholImage.src})`,
         backgroundRepeat: "no-repeat",
         backgroundSize: "contain",
         backgroundPosition: "center",

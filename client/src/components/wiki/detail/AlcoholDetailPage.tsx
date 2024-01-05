@@ -26,7 +26,7 @@ const AlcoholDetailPage = ({ alcoholNo, initialData, children }: Props) => {
       />
       {children}
 
-      <Stack gap={2}>
+      <Stack gap={2} pt={2}>
         <Typography
           variant={"subtitle1"}
           color="primary.main"
