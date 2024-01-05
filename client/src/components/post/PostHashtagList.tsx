@@ -1,12 +1,17 @@
 import { SEARCH_BY_KEYWORD } from "@/const/clientPath";
 import { PostInterface } from "@/types/post/PostInterface";
-import { Stack, StackProps, Typography } from "@mui/material";
+import { Stack, StackProps, TypographyProps, Typography } from "@mui/material";
 import Link from "next/link";
 
 interface TagListInterface extends StackProps {
   tags: PostInterface["tagList"];
+  color?: TypographyProps["color"];
 }
-const PostHashTagList = ({ tags, ...others }: TagListInterface) => {
+const PostHashTagList = ({
+  tags,
+  color = "text.secondary",
+  ...others
+}: TagListInterface) => {
   const uniqueSet = Array.from(new Set(tags));
   return (
     <>
@@ -21,11 +26,7 @@ const PostHashTagList = ({ tags, ...others }: TagListInterface) => {
         >
           {uniqueSet.map((tag, i) => (
             <Link href={SEARCH_BY_KEYWORD(tag)} key={i}>
-              <Typography
-                component={"span"}
-                variant={"label"}
-                color="text.secondary"
-              >
+              <Typography component={"span"} variant={"label"} color={color}>
                 {`#${tag}`}
               </Typography>
             </Link>

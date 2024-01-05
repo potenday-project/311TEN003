@@ -87,7 +87,7 @@ const PostCard = ({
       <Link href={USER_PAGE(createdBy)}>
         <UserAvatar
           src={profileImgUrls[0]?.attachUrl}
-          fallback={String(id)[0].toUpperCase()}
+          fallback={id?.[0]?.toUpperCase()}
         />
       </Link>
       <Box sx={{ width: "100%" }}>
@@ -143,6 +143,7 @@ const PostCard = ({
             dangerouslySetInnerHTML={{
               __html: sanitize(postContent),
             }}
+          onClick={() => openPostDetailPage(id, String(postNo))}
           ></div>
           {/* Hash tags */}
           <PostHashTagList tags={tagList} />
