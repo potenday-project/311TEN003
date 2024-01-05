@@ -8,7 +8,7 @@ import Pagenated from "@/types/Pagenated";
 
 export interface UseGetPopularPostListQueryInterface
   extends GetPostListOptions {
-  initialData?: AugmentedGetPostListResponse;
+  initialData?: AugmentedGetPopularPostListResponse;
   headers?: AxiosRequestConfig["headers"];
 }
 
@@ -36,10 +36,10 @@ export const useGetPopularPostListInfiniteQuery = ({
     getNextPageParam: ({
       currentPage,
       hasNextPage,
-    }: AugmentedGetPostListResponse) =>
+    }: AugmentedGetPopularPostListResponse) =>
       hasNextPage ? currentPage + 1 : undefined,
 
-    getPreviousPageParam: ({ currentPage }: AugmentedGetPostListResponse) =>
+    getPreviousPageParam: ({ currentPage }: AugmentedGetPopularPostListResponse) =>
       currentPage > 0 ? currentPage - 1 : undefined,
     initialPageParam: 0,
     initialData: initialData
@@ -58,7 +58,7 @@ export interface GetPostListOptions {
 /**
  * 서버응답값 + 무한스크롤을 위해 증강된 값
  */
-export interface AugmentedGetPostListResponse extends Pagenated<PostInterface> {
+export interface AugmentedGetPopularPostListResponse extends Pagenated<PostInterface> {
   currentPage: number;
   hasNextPage: boolean;
 }
@@ -70,7 +70,7 @@ export const getPopularPostListQueryFn = async ({
   headers,
 }: GetPostListOptions & {
   headers?: AxiosRequestConfig<any>["headers"];
-}): Promise<AugmentedGetPostListResponse> => {
+}): Promise<AugmentedGetPopularPostListResponse> => {
   const axiosPrivate = useAxiosPrivate();
   const { data } = await axiosPrivate.get<{ data: Pagenated<PostInterface> }>(
     POPULAR_POST_LIST,
