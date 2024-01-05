@@ -1,9 +1,11 @@
 import { HTML_TITLE, nameOfApp } from "@/const/brand";
 import { getAlcoholDetailById } from "@/queries/alcohol/useGetAlcoholDetailQuery";
 import { Metadata } from "next";
-import AlcoholDetailPage from "./(components)/AlcoholDetailPage";
+import AlcoholDetailPage from "../../../components/wiki/detail/AlcoholDetailPage";
 import CustomAppbar from "@/components/layout/CustomAppbar";
 import CustomContainer from "@/components/layout/CustomContainer";
+import AlcoholDetailPostCardList from "@/components/wiki/detail/AlcoholDetailPostCardList";
+import { getPostListQueryFn } from "@/queries/post/useGetPostListInfiniteQuery";
 
 type Props = {
   params: { alcoholNo: string };
@@ -41,18 +43,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 const page = async ({ params }: Props) => {
   const initialData = await getAlcoholDetailById(params.alcoholNo);
+  const initialPostData = await getPostListQueryFn({
+    searchAlcoholNos: Number(params?.alcoholNo),
+    size: 3,
+  });
   const searchKeyword = initialData.alcoholName;
 
   return (
     <>
-      <CustomAppbar title={initialData.alcoholName} />
+      <CustomAppbar title={searchKeyword} />
       <CustomContainer>
         <AlcoholDetailPage
           alcoholNo={params.alcoholNo}
           initialData={initialData}
         >
-          {/* 포스트리스트자리 */}
-          {/* FIXME */}
+          <AlcoholDetailPostCardList
+            initialData={initialPostData}
+            alcoholNo={Number(params.alcoholNo)}
+          />
         </AlcoholDetailPage>
       </CustomContainer>
     </>

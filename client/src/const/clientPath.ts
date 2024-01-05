@@ -51,6 +51,13 @@ export const SEARCH = "/search" as const;
  */
 export const SEARCH_BY_KEYWORD = (keyword: string) =>
   `${SEARCH}?keyword=${keyword}`;
+/**
+ * 알코올넘버를 인자로 받아 쿼리스트링이 추가된 검색페이지 라우트
+ * @param alcoholNo
+ * @returns
+ */
+export const SEARCH_BY_ALCOHOLNO = (alcoholNo: number) =>
+  `${SEARCH}?searchAlcoholNos=${alcoholNo}`;
 
 /**
  * 유저아이디와 게시글 아이디를 입력받아 /post/@userId/postId 형태의 path를 리턴
