@@ -47,7 +47,13 @@ export const DELETE_COMMENT = (postPk: string, commentPk: string) =>
 /**
  * 게시물리스트를 받아오거나, 작성하는 Path 버전2 (Breaking Change)
  */
-export const POST_LIST_V2 = "/posts/v2" as const;
+export const POST_LIST_V2 = "/posts/v2";
+
+/**
+ * 게시물리스트를 받아오거나, 작성하는 Path 버전2 (Breaking Change)
+ */
+export const POPULAR_POST_LIST = "/posts/popular";
+
 /**
  * ID(pk) 를 입력받아 해당 포스트를 지우는 URL
  */
