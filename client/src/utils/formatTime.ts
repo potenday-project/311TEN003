@@ -25,16 +25,17 @@ const formatTime = (timestamp: string, now?: string) => {
     currentTime.diff(postTime, "day") >= 7 &&
     currentTime.diff(postTime, "month") < 1
   ) {
-    return `${currentTime.diff(postTime, "week")}주 전`;
+    return `${Math.floor(currentTime.diff(postTime, "week"))}주 전`;
   }
-
+  
+  // 1달 전을 한 달 전 이 아닌 1달 전 으로 표기
+  if (currentTime.diff(postTime, "month") === 1) {
+    return "1달 전";
+  }
+  
   // 1년전을 일 년 전 이 아닌 1년 전 으로 표기
   if (currentTime.diff(postTime, "year") === 1) {
-    return `${currentTime.diff(postTime, "year")}년 전`;
-  }
-  // 1년 전을 일 년 전 이 아닌 1년 전 으로 표기
-  if (currentTime.diff(postTime, "month") === 1) {
-    return `${currentTime.diff(postTime, "month")}달 전`;
+    return "1년 전";
   }
 
   // 그 외의 경우에는 상대적인 시간 표시
