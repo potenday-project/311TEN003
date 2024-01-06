@@ -3,31 +3,47 @@ import axios from "@/libs/axios";
 import { AlcoholDetailInterface } from "@/types/alcohol/AlcoholInterface";
 import { useQuery } from "@tanstack/react-query";
 
-const useGetAlcoholListQuery = (keyword?: string) => {
+export interface useGetAlcoholListQueryInterface {
+  page?: number;
+  size?: number;
+  searchKeyword?: string;
+}
+
+const useGetAlcoholListQuery = ({
+  searchKeyword = "",
+  size = 5,
+  page = 0,
+}: useGetAlcoholListQueryInterface) => {
   return useQuery({
-    queryKey: AlcohilListQueryKey.byKeyword(keyword),
-    queryFn: async () => await getAlcoholListByKeyword(keyword),
-    enabled: keyword!=undefined,
+    queryKey: AlcohilListQueryKey.byKeyword({ page, size, searchKeyword }),
+    queryFn: async () =>
+      await getAlcoholListByKeyword({ searchKeyword, size, page }),
+    enabled: searchKeyword != undefined,
   });
 };
 
-export const getAlcoholListByKeyword = async (keyword?: string) => {
+export const getAlcoholListByKeyword = async ({
+  searchKeyword,
+  size,
+  page,
+}: useGetAlcoholListQueryInterface) => {
   const { data } = await axios.get<{
     list: AlcoholDetailInterface[];
     totalCount: number;
   }>(GET_ALCOHOL_LIST, {
     params: {
-      page: 0,
-      size: 5,
-      searchKeyword: keyword,
+      page,
+      size,
+      searchKeyword,
     },
-  }); 
+  });
   return data;
 };
 
 export const AlcohilListQueryKey = {
   all: ["alcohol"] as const,
-  byKeyword: (keyword?: string) => ["alcohol", { keyword }] as const,
+  byKeyword: ({ searchKeyword, size, page }: useGetAlcoholListQueryInterface) =>
+    ["alcohol", { searchKeyword, size, page }] as const,
 };
 
 export default useGetAlcoholListQuery;

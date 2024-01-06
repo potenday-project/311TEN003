@@ -5,16 +5,17 @@ import { Typography } from "@mui/material";
 import { memo } from "react";
 import AlcoholListSkeleton from "./AlcoholListSkeleton";
 
-interface AlcoholList {
+interface AlcoholListInterface {
   data?: AlcoholDetailInterface[];
   onClickElement?: (data: AlcoholDetailInterface) => void;
+  size?:number
 }
 /**
  * 술 정보 Array 를 입력받아 List로 맵핑해주는 컴포넌트
  * onClickElement 속성으로 각 엘리먼트 클릭 시 속성을 지정가능
  * @returns
  */
-const AlcoholList = ({ data: alcohols, onClickElement }: AlcoholList) => {
+const AlcoholList = ({ data: alcohols, onClickElement,size=5 }: AlcoholListInterface) => {
   return alcohols ? (
     <>
       {alcohols.length > 0 ? (
@@ -37,7 +38,7 @@ const AlcoholList = ({ data: alcohols, onClickElement }: AlcoholList) => {
       )}
     </>
   ) : (
-    <AlcoholListSkeleton disableTimer />
+    <AlcoholListSkeleton size={size} disableTimer/>
   );
 };
 export default memo(AlcoholList);
