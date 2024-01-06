@@ -61,6 +61,7 @@ const WrapperStyle = {
   border: "1px solid",
   borderColor: "gray.secondary",
   backgroundColor: "gray.primary",
+  cursor: "pointer",
   display: "flex",
   flexDirection: "row",
   alignItems: "center",

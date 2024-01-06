@@ -14,7 +14,9 @@ const WikiSerachArea = () => {
 
   const [searchKeyword, setSearchKeyword] = useState("");
   const debouncedValue = useDebounce(searchKeyword, 300);
-  const { data: alcohols } = useGetAlcoholListQuery(debouncedValue);
+  const { data: alcohols } = useGetAlcoholListQuery({
+    searchKeyword: debouncedValue,
+  });
 
   const onClickElementHandler = usePushToWikiDetail();
 

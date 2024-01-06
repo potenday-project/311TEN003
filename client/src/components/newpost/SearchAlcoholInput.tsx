@@ -37,7 +37,9 @@ const SearchAlcoholInput = ({
   const [isSearchingAlcohol, setIsSearchingAlCohol] = useState(false);
 
   // 검색결과
-  const { data, isLoading, isSuccess } = useGetAlcoholListQuery(debouncedValue);
+  const { data, isLoading, isSuccess } = useGetAlcoholListQuery({
+    searchKeyword: debouncedValue,
+  });
   // 유저가 검색후 최종적으로 선택한 값
   const [selectedAlcohol, setSelectedAlcohol] = useState<
     | Pick<AlcoholDetailInterface, "alcoholName" | "alcoholNo" | "alcoholType">
