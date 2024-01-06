@@ -16,24 +16,27 @@ const WikiAlcoholSelectorBtn = ({
   ...buttonBaseProps
 }: WiciAlcoholSelectorBtnProps) => {
   return (
-    <ButtonBase onClick={onClick} {...buttonBaseProps}>
-      <Stack alignItems="center">
-        <Stack
-          justifyContent="center"
-          alignItems="center"
-          sx={{
-            borderRadius: "50%",
-            width: 56,
-            height: 56,
-            backgroundColor: isSelected ? "primary.main" : "#F6EAFB",
-            transitionDuration: 200,
-          }}
-        >
-          {iconComponent}
-        </Stack>
-        <Typography sx={{ py: 1 }}>{title}</Typography>
+    <Stack
+      component={ButtonBase}
+      alignItems="center"
+      onClick={onClick}
+      {...buttonBaseProps}
+    >
+      <Stack
+        justifyContent="center"
+        alignItems="center"
+        sx={{
+          borderRadius: "50%",
+          width: 56,
+          height: 56,
+          backgroundColor: isSelected ? "primary.main" : "#F6EAFB",
+          transitionDuration: 200,
+        }}
+      >
+        {iconComponent}
       </Stack>
-    </ButtonBase>
+      <Typography sx={{ py: 1 }}>{title}</Typography>
+    </Stack>
   );
 };
 

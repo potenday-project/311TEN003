@@ -4,6 +4,12 @@ import { useCallback } from "react";
 import useSearchHistory from "../searchHistory/useSearchHistory";
 import { ALCOHOL_SEARCH_HISTORY } from "@/const/localstorageKey";
 import { WIKI_DETAIL } from "@/const/clientPath";
+
+interface OnclickElementHandlerInterface {
+  alcoholName: AlcoholDetailInterface["alcoholName"];
+  alcoholNo: AlcoholDetailInterface["alcoholNo"];
+}
+
 /**
  * 검색히스토리에 해당 술을 남기고, 디테일페이지로 이동시키는 함수를 리턴하는 훅
  * @returns 해당 callback함수
@@ -15,7 +21,7 @@ const usePushToWikiDetail = () => {
    * 검색히스토리에 해당 술을 남기고, 디테일페이지로 이동시키는 함수를 리턴하는 함수
    */
   const onClickElementHandler = useCallback(
-    ({ alcoholName, alcoholNo }: AlcoholDetailInterface) => {
+    ({ alcoholName, alcoholNo }: OnclickElementHandlerInterface) => {
       addToSearchHistory(alcoholName);
       router.push(WIKI_DETAIL(String(alcoholNo)));
     },

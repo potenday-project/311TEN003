@@ -3,6 +3,7 @@ import { useState, useCallback, useMemo } from "react";
 import { Stack } from "@mui/material";
 import WikiAlcoholSelectorBtn from "./WikiAlcoholSelectorBtn";
 import WineIcon from "@/assets/icons/Alcohol/WineIcon.svg";
+import AllAlcoholIcon from "@/assets/icons/Alcohol/AllAlcoholIcon.svg";
 import WiskyIcon from "@/assets/icons/Alcohol/WiskyIcon.svg";
 import SpiritsIcon from "@/assets/icons/Alcohol/SpiritsIcon.svg";
 import TraditionalAlcoholIcon from "@/assets/icons/Alcohol/TraditionalAlcoholIcon.svg";
@@ -11,6 +12,7 @@ import SakeIcon from "@/assets/icons/Alcohol/SakeIcon.svg";
 const WikiAlcoholSelector = () => {
   const btnList = useMemo(
     () => [
+      { title: "전체", iconComponent: <AllAlcoholIcon /> },
       { title: "포도주", iconComponent: <WineIcon /> },
       { title: "위스키", iconComponent: <WiskyIcon /> },
       { title: "증류주", iconComponent: <SpiritsIcon /> },

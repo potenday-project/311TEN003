@@ -32,6 +32,7 @@ import { postcardContext } from "@/store/post/PostCardContext";
 import formatTime from "@/utils/formatTime";
 import copyToClipboard from "@/utils/copyToClipboard";
 import { useGlobalSnackbarStore } from "@/store/useGlobalSnackbarStore";
+import usePushToWikiDetail from "@/hooks/wiki/usePushToWikiDetail";
 
 const PostCard = ({
   postAttachUrls,
@@ -65,6 +66,8 @@ const PostCard = ({
     () => currentUser?.userNo === createdBy,
     [currentUser]
   );
+
+  const onClickElementHandler = usePushToWikiDetail();
 
   const CLIENT_BASE_URL = process.env.NEXT_PUBLIC_CLIENT_BASE_URL;
   const fireToast = useGlobalSnackbarStore(({ fireToast }) => fireToast);
@@ -134,6 +137,9 @@ const PostCard = ({
             alcoholNo={alcoholNo}
             alcoholName={alcoholName}
             alcoholType={alcoholType}
+            onClick={() => {
+              onClickElementHandler({ alcoholName, alcoholNo });
+            }}
           />
         )}
 
@@ -143,7 +149,7 @@ const PostCard = ({
             dangerouslySetInnerHTML={{
               __html: sanitize(postContent),
             }}
-          onClick={() => openPostDetailPage(id, String(postNo))}
+            onClick={() => openPostDetailPage(id, String(postNo))}
           ></div>
           {/* Hash tags */}
           <PostHashTagList tags={tagList} />
