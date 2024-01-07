@@ -27,4 +27,24 @@ class AlcoholControllerTest extends ControllerTest {
 
     //then
   }
+
+  @Test
+  void getAlcoholV2_success() throws Exception {
+    // given
+    // when
+    // then
+    String queryParameter = "?alcoholType=1&searchKeyword=소주";
+    mockMvc.perform(get(String.format("/alcohols/v2%s", queryParameter)))
+           .andExpect(status().isOk());
+  }
+
+  @Test
+  void getAlcoholV2_fail() throws Exception {
+    // given
+    // when
+    // then
+    String queryParameter = "?alcoholType=asdf&searchKeyword=소주";
+    mockMvc.perform(get(String.format("/alcohols/v2%s", queryParameter)))
+           .andExpect(status().is4xxClientError());
+  }
 }

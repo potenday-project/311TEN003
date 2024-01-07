@@ -2,27 +2,21 @@ package com.bside.bside_311.repository;
 
 import com.bside.bside_311.dto.AlcoholSearchCondition;
 import com.bside.bside_311.entity.Alcohol;
-import com.bside.bside_311.entity.Post;
-import com.bside.bside_311.entity.QAlcohol;
-import com.bside.bside_311.entity.QAlcoholType;
-import com.bside.bside_311.entity.QUser;
 import com.bside.bside_311.entity.YesOrNo;
 import com.bside.bside_311.repository.support.Querydsl4RepositorySupport;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.util.StringUtils;
 
-import java.util.Optional;
 import java.util.function.Function;
 
 import static com.bside.bside_311.entity.QAlcohol.alcohol;
 import static com.bside.bside_311.entity.QAlcoholType.alcoholType;
-import static com.bside.bside_311.entity.QPost.post;
 
 public class AlcoholRepositoryImpl extends Querydsl4RepositorySupport
     implements AlcoholRepositoryCustom {
@@ -39,12 +33,18 @@ public class AlcoholRepositoryImpl extends Querydsl4RepositorySupport
         query -> query.select(alcohol)
                       .from(alcohol)
                       .leftJoin(alcoholType).on((alcohol.alcoholType.eq(alcoholType))
-                .and(alcohol.delYn.eq(YesOrNo.N))
-                .and(alcoholType.delYn.eq(YesOrNo.N)))
+                                                    .and(alcohol.delYn.eq(YesOrNo.N))
+                                                    .and(alcoholType.delYn.eq(YesOrNo.N)))
                       .where(contentLike(condition.getSearchKeyword()),
+                          alcoholTypeIs(condition.getAlcoholType()),
                           notDeleted());
     return applyPagination(pageable, jpaQueryFactoryJPAQueryFunction
     );
+  }
+
+  private BooleanExpression alcoholTypeIs(Long alcoholType) {
+    return ObjectUtils.isNotEmpty(alcoholType) ? alcohol.alcoholType.id.eq(alcoholType) :
+               null;
   }
 
   private BooleanExpression contentLike(String searchKeyword) {
