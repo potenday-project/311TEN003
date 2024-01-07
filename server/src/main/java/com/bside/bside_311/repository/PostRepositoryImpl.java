@@ -78,9 +78,6 @@ public class PostRepositoryImpl extends Querydsl4RepositorySupport
     // groupBy 행 결과를 query로 받음.
     JPAQuery<Integer> prepareCountQuery = queryFactory.selectOne()
                                                       .from(post)
-                                                      .leftJoin(postLike)
-                                                      .on(postLike.post.eq(post).and(
-                                                          postLike.delYn.eq(YesOrNo.N)))
                                                       .where(notDeleted())
                                                       .groupBy(post.id);
     return PageableExecutionUtils.getPage(postQueryResults, PageRequest.of(page.intValue(),

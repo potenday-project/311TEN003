@@ -3,7 +3,7 @@ package com.bside.bside_311.controller;
 import com.bside.bside_311.dto.AddPostRequestDto;
 import com.bside.bside_311.dto.AddPostResponseDto;
 import com.bside.bside_311.entity.Post;
-import com.bside.bside_311.service.PostService;
+import com.bside.bside_311.service.PostFacade;
 import com.bside.bside_311.util.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ class PostControllerTest extends ControllerTest {
   private MockMvc mockMvc;
 
   @MockBean
-  private PostService postService;
+  private PostFacade postFacade;
 
   @Autowired
   private ObjectMapper objectMapper;
@@ -40,7 +40,7 @@ class PostControllerTest extends ControllerTest {
     AddPostRequestDto addPostRequestDto =
         AddPostRequestDto.builder().alcoholNo(1L).alcoholFeature("산뜻함. 달콤함.").postContent("게시글 내용")
                          .postType("BASIC").positionInfo("위치 정보").build();
-    given(postService.addPost(any(), any(), any(), any())).willReturn(
+    given(postFacade.addPost(any(), any(), any(), any())).willReturn(
         AddPostResponseDto.of(Post.builder().id(1L).build()));
     //when
     //then

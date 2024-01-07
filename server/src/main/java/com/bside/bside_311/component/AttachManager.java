@@ -55,8 +55,8 @@ public class AttachManager {
     }
   }
 
-  public Map<Long, List<AttachDto>> getAttachListBykeysAndType(List<Long> keys,
-                                                               AttachType attachType) {
+  public Map<Long, List<AttachDto>> getAttachInfoMapBykeysAndType(List<Long> keys,
+                                                                  AttachType attachType) {
     List<Attach> attachList =
         attachRepository.findByRefNoInAndAttachTypeIsAndDelYnIs(keys, attachType,
             YesOrNo.N);
@@ -69,5 +69,17 @@ public class AttachManager {
       attachDtos.add(AttachDto.of(attach));
     }
     return kToAMap;
+  }
+
+  public List<AttachDto> getAttachListBykeyAndType(Long key,
+                                                   AttachType attachType) {
+    List<Attach> attachList =
+        attachRepository.findByRefNoInAndAttachTypeIsAndDelYnIs(List.of(key), attachType,
+            YesOrNo.N);
+    List<AttachDto> attachDtos = new ArrayList<>();
+    for (Attach attach : attachList) {
+      attachDtos.add(AttachDto.of(attach));
+    }
+    return attachDtos;
   }
 }

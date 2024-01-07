@@ -20,7 +20,7 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-public class PostManager {
+public class PostService {
   private final PostRepository postRepository;
   private final PostMybatisRepository postMybatisRepository;
 

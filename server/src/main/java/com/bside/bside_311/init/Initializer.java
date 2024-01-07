@@ -71,11 +71,6 @@ public class Initializer {
     FileUtils.copyInputStreamToFile(inputStream, file);
   }
 
-  private void setSecurityContextUserNo(Long userNo) {
-    SecurityContextHolder.getContext()
-                         .setAuthentication(easyUserRoleAuthenticationFactory(userNo));
-  }
-
   @PostConstruct
   public void init() throws JsonProcessingException {
     initAlcoholType();
@@ -89,6 +84,11 @@ public class Initializer {
 //     1번부터 5번까지 내 프로필 등록.
 //    attachPhoto();
 
+  }
+
+  private void setSecurityContextUserNo(Long userNo) {
+    SecurityContextHolder.getContext()
+                         .setAuthentication(easyUserRoleAuthenticationFactory(userNo));
   }
 
   private void initPostQuotes() {

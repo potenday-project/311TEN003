@@ -58,7 +58,8 @@ public class PostResponseDto {
   private Long quoteCount;
 
   public static PostResponseDto of(Post post, User user, Alcohol alcohol, List<Tag> tags,
-                                   List<Comment> comments, List<AttachDto> attachDtos
+                                   List<Comment> comments, List<AttachDto> postAttachDtos,
+                                   List<AttachDto> profileAttachDtos
       , Boolean isLikedByMe, Boolean isFollowedByMe, Long likeCount, Long quoteCount) {
     PostResponseDtoBuilder postResponseDtoBuilder = PostResponseDto.builder();
     if (user != null) {
@@ -74,10 +75,12 @@ public class PostResponseDto {
       postResponseDtoBuilder.tagList(tagList);
     }
     // TODO quoteInfo는 나중에.
-    if (ObjectUtils.isNotEmpty(attachDtos)) {
-      postResponseDtoBuilder.postAttachUrls(attachDtos);
+    if (ObjectUtils.isNotEmpty(postAttachDtos)) {
+      postResponseDtoBuilder.postAttachUrls(postAttachDtos);
     }
-
+    if (ObjectUtils.isNotEmpty(profileAttachDtos)) {
+      postResponseDtoBuilder.profileImgUrls(profileAttachDtos);
+    }
     if (ObjectUtils.isNotEmpty(isFollowedByMe)) {
       postResponseDtoBuilder.isFollowedByMe(isFollowedByMe);
     }

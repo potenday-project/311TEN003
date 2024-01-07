@@ -52,7 +52,31 @@ class PostRepositoryTest {
     //then
     List<Post> content = posts.getContent();
     content.forEach(System.out::println);
+    Assertions.assertThat(posts.getTotalElements()).isEqualTo(3);
     Assertions.assertThat(content.get(0).getId()).isEqualTo(inputPosts.get(1).getId());
+  }
+
+  @Test
+  void searchPagePopularPageTest() {
+    //given
+    // 게시글이 3개 정도 있다.
+    // 그런데 그 게시글들은 좋아요 수가 아래와 같음.
+    // 1st idx 게시글 : 좋아요 1개.
+    // 2st idx 게시글 : 좋아요 3개.
+    // 3st idx 게시글 : 좋아요 2개.
+    List<Post> inputPosts = dataInitSearchPagePostPopular();
+
+    //when
+    Page<Post> posts = postRepository.searchPagePopular(1L, 2L);
+
+
+    //then
+    List<Post> content = posts.getContent();
+    content.forEach(System.out::println);
+    Assertions.assertThat(posts.getTotalElements()).isEqualTo(3);
+    Assertions.assertThat(content.get(0).getId()).isEqualTo(inputPosts.get(0).getId());
+    // 이 뜻은 사이즈 크기가 2인데, 1번째 페이지를 보여달라는 뜻.(0부터 시작.)
+    // 그러니까 지금 데이터 순서가 (idx 기준) 2, 1, 0 이니까, 0번째 인덱스의 데이터를 가리키는 것이 맞음.
   }
 
   private List<Post> dataInitSearchPagePostPopular() {
@@ -84,28 +108,6 @@ class PostRepositoryTest {
     postLikeList.add(PostLike.of(userList.get(4), p3));
     postLikeRepository.saveAllAndFlush(postLikeList);
     return inputPosts;
-  }
-
-  @Test
-  void searchPagePopularPageTest() {
-    //given
-    // 게시글이 3개 정도 있다.
-    // 그런데 그 게시글들은 좋아요 수가 아래와 같음.
-    // 1st idx 게시글 : 좋아요 1개.
-    // 2st idx 게시글 : 좋아요 3개.
-    // 3st idx 게시글 : 좋아요 2개.
-    List<Post> inputPosts = dataInitSearchPagePostPopular();
-
-    //when
-    Page<Post> posts = postRepository.searchPagePopular(1L, 2L);
-
-
-    //then
-    List<Post> content = posts.getContent();
-    content.forEach(System.out::println);
-    Assertions.assertThat(content.get(0).getId()).isEqualTo(inputPosts.get(0).getId());
-    // 이 뜻은 사이즈 크기가 2인데, 1번째 페이지를 보여달라는 뜻.(0부터 시작.)
-    // 그러니까 지금 데이터 순서가 (idx 기준) 2, 1, 0 이니까, 0번째 인덱스의 데이터를 가리키는 것이 맞음.
   }
 
 }
