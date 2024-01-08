@@ -13,4 +13,6 @@ import lombok.NoArgsConstructor;
 public class AlcoholSearchCondition {
   @Schema(description = "키워드", example = "키워드")
   String searchKeyword;
+  @Schema(description = "술 종류 PK", example = "1")
+  Long alcoholType;
 }

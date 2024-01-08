@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -102,9 +103,13 @@ public class AlcoholController {
       Pageable pageable,
       @RequestParam(required = false, name = "searchKeyword")
       @Schema(description = "키워드", example = "키워드")
-      String searchKeyword) {
+      String searchKeyword,
+      @RequestParam(required = false, name = "alcoholType")
+      @Schema(description = "술 타입(선택)", example = "1")
+      @Positive(message = "술 타입은 1이상의 숫자만 가능합니다.")
+      Long alcoholType) {
     log.info(">>> AlcoholController.getAlcohol");
-    return alcoholService.getAlcoholV2(pageable, searchKeyword);
+    return alcoholService.getAlcoholV2(pageable, searchKeyword, alcoholType);
   }
 
   @Operation(summary = "[o]술 상세 조회", description = "술 상세 조회 API")

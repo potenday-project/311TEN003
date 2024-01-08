@@ -1,2 +1,2 @@
 ALTER TABLE alcohol_type
-    ADD `display_order` bigint DEFAULT NULL
+    ADD `display_order` int DEFAULT NULL

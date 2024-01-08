@@ -21,6 +21,7 @@ public class UserResponseDto {
   private String introduction;
   private Long createdBy;
   private Boolean isFollowedByMe;
+  private Long followedCount;
   @Builder.Default
   private List<AttachDto> profileImgUrls = new ArrayList<>();
 
@@ -42,6 +43,21 @@ public class UserResponseDto {
                           .createdBy(user.getCreatedBy())
                           .isFollowedByMe(isFollowedByMe)
                           .profileImgUrls(userAttachDtos)
+                          .build();
+  }
+
+  public static UserResponseDto of(UserIncludeFollowCountDto user, List<AttachDto> attachDtos,
+                                   Boolean isFollowedByMe) {
+    return UserResponseDto.builder()
+                          .nickname(user.getNickname())
+                          .id(user.getId())
+                          .userNo(user.getUserNo())
+                          .introduction(user.getIntroduction())
+                          .createdBy(user.getCreatedBy())
+                          .isFollowedByMe(isFollowedByMe)
+                          .profileImgUrls(attachDtos)
+                          // followedCount
+                          .followedCount(user.getFollowedCount())
                           .build();
   }
 }

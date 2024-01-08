@@ -1,5 +1,6 @@
 package com.bside.bside_311.repository;
 
+import com.bside.bside_311.dto.UserIncludeFollowCountDto;
 import com.bside.bside_311.entity.User;
 import com.bside.bside_311.entity.UserFollow;
 import com.bside.bside_311.entity.YesOrNo;
@@ -9,18 +10,18 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@SpringBootTest
-@Transactional
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 //@Rollback(false)
 class UserRepositoryTest {
   @Autowired
@@ -142,6 +143,65 @@ class UserRepositoryTest {
         userRepository.getUsersOfFollowingMePage(userList.get(3).getId(), pageRequest);
     // then
     Assertions.assertThat(myFollowingUsersPage.getContent().size()).isEqualTo(2);
+  }
+
+  @Test
+  void searchUserPopularTest() {
+    //given
+    // 유저가 3명 정도 있다.
+    // 그런데 그 유저들은 팔로워 수가 아래와 같음.
+    // 1st idx 유저 : 팔로워 1개.
+    // 2st idx 유저 : 팔로워 3개.
+    // 3st idx 유저 : 팔로워 2개.
+    List<User> inputUsers = dataInitSearchUserPopular();
+
+    //when
+    Page<UserIncludeFollowCountDto> users = userRepository.getUsersPopular(0L, 10L);
+
+    //then
+    List<UserIncludeFollowCountDto> content = users.getContent();
+    content.forEach(System.out::println);
+    Assertions.assertThat(content.get(0).getUserNo()).isEqualTo(inputUsers.get(1).getId());
+  }
+
+  @Test
+  void searchUserPopularPageTest() {
+    //given
+    // 유저가 3명 정도 있다.
+    // 그런데 그 유저들은 팔로워 수가 아래와 같음.
+    // 0st idx 유저 : 팔로워 1개.
+    // 1st idx 유저 : 팔로워 3개.
+    // 2st idx 유저 : 팔로워 2개.
+    List<User> inputUsers = dataInitSearchUserPopular();
+
+    //when
+    Page<UserIncludeFollowCountDto> users = userRepository.getUsersPopular(1L, 2L);
+
+    //then
+    List<UserIncludeFollowCountDto> content = users.getContent();
+    content.forEach(System.out::println);
+    Assertions.assertThat(content.get(0).getUserNo()).isEqualTo(inputUsers.get(0).getId());
+  }
+
+  private List<User> dataInitSearchUserPopular() {
+    List<User> userList = new ArrayList<>();
+    for (int i = 0; i < 10; i++) {
+      User test = User.builder().id(i + 1L)
+                      .userId(String.format("test%d", i))
+                      .nickname(String.format("test%d", i))
+                      .password("test1!").build();
+      userList.add(test);
+    }
+    userRepository.saveAllAndFlush(userList);
+    List<UserFollow> userFollowList = new ArrayList<>();
+    userFollowList.add(UserFollow.of(userList.get(1), userList.get(0)));
+    userFollowList.add(UserFollow.of(userList.get(2), userList.get(1)));
+    userFollowList.add(UserFollow.of(userList.get(3), userList.get(1)));
+    userFollowList.add(UserFollow.of(userList.get(4), userList.get(1)));
+    userFollowList.add(UserFollow.of(userList.get(5), userList.get(2)));
+    userFollowList.add(UserFollow.of(userList.get(6), userList.get(2)));
+    userFollowRepository.saveAllAndFlush(userFollowList);
+    return userList;
   }
 
 }

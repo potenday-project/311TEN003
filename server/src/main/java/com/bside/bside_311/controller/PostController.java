@@ -12,8 +12,9 @@ import com.bside.bside_311.dto.GetPostCommentsResponseDto;
 import com.bside.bside_311.dto.GetPostResponseDto;
 import com.bside.bside_311.dto.GetQuotesByPostResponseDto;
 import com.bside.bside_311.dto.PostResponseDto;
+import com.bside.bside_311.dto.common.ResultDto;
 import com.bside.bside_311.entity.Post;
-import com.bside.bside_311.service.PostService;
+import com.bside.bside_311.service.PostFacade;
 import com.bside.bside_311.util.AuthUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -48,7 +49,7 @@ import java.util.List;
 @RequestMapping("/posts")
 @Tag(name = "게시글", description = "게시글 API")
 public class PostController {
-  private final PostService postService;
+  private final PostFacade postFacade;
 
   @Operation(summary = "[o]게시글 등록 ", description = "게시글 등록 API")
   @UserRequired
@@ -56,7 +57,7 @@ public class PostController {
   @ResponseStatus(HttpStatus.CREATED)
   public AddPostResponseDto addPost(@RequestBody @Valid AddPostRequestDto addPostRequestDto) {
     log.info(">>> PostController.addPost");
-    return postService.addPost(Post.of(addPostRequestDto), addPostRequestDto.getAlcoholNo(),
+    return postFacade.addPost(Post.of(addPostRequestDto), addPostRequestDto.getAlcoholNo(),
         addPostRequestDto.getAlcoholFeature(), addPostRequestDto.getTagList());
   }
 
@@ -67,7 +68,7 @@ public class PostController {
                        @RequestBody @Valid EditPostRequestDto editPostRequestDto) {
     log.info(">>> PostController.editPost");
 
-    postService.editPost(postNo, editPostRequestDto);
+    postFacade.editPost(postNo, editPostRequestDto);
   }
 
   @Operation(summary = "[o]게시글 삭제", description = "게시글 삭제 API")
@@ -75,7 +76,7 @@ public class PostController {
   @DeleteMapping("/{postNo}")
   public void deletePost(@PathVariable("postNo") Long postNo) {
     log.info(">>> PostController.deletePost");
-    postService.deletePost(postNo);
+    postFacade.deletePost(postNo);
   }
 
   @Operation(summary = "[o]게시글 목록 조회(v1)", description = "게시글 조회 API")
@@ -110,7 +111,7 @@ public class PostController {
     } catch (Exception e) {
       log.error(">>> PostController.getPost searchUserNos 파싱 에러 Exception", e);
     }
-    return postService.getPosts(page, size, orderColumn, orderType, searchKeyword,
+    return postFacade.getPosts(page, size, orderColumn, orderType, searchKeyword,
         searchUserNoList);
   }
 
@@ -165,15 +166,29 @@ public class PostController {
       }
     }
 
-    return postService.getPostsV2(pageable, searchKeyword, searchUserNoList, isLikedByMe,
+    return postFacade.getPostsV2(pageable, searchKeyword, searchUserNoList, isLikedByMe,
         isCommentedByMe, searchAlcoholNoList);
+  }
+
+  // TODO 추후 캐싱 처리 예정.(레디스)
+  @Operation(summary = "[o] 인기 게시글 목록 조회", description = "인기 게시글 조회 API Page, size 사용법. <br> ex1) /posts/popular?page=0&size=10 <br> ex2) /posts/popular?page=1&size=10")
+  @GetMapping("/popular")
+  public ResultDto<Page<PostResponseDto>> getPostsPopular(
+      @RequestParam(required = true, name = "page")
+      @Schema(description = "페이지", example = "0")
+      Long page,
+      @RequestParam(required = true, name = "size")
+      @Schema(description = "사이즈", example = "10")
+      Long size
+  ) {
+    return postFacade.getPostsPopular(page, size);
   }
 
   @Operation(summary = "[o]게시글 상세 조회", description = "게시글 상세 조회 API")
   @GetMapping("/{postNo}")
   public PostResponseDto getPostDetail(@PathVariable("postNo") Long postNo) {
     log.info(">>> PostController.getPostDetail");
-    return postService.getPostDetail(postNo);
+    return postFacade.getPostDetail(postNo);
   }
 
   @Operation(summary = "[o]게시글 댓글 등록", description = "게시글 댓글 등록 API")
@@ -183,7 +198,7 @@ public class PostController {
   public AddCommentResponseDto addComment(@PathVariable("postNo") Long postNo, @Valid @RequestBody
   AddCommentRequestDto addCommentRequestDto) {
     log.info(">>> PostController.addComment");
-    return postService.addComment(postNo, addCommentRequestDto);
+    return postFacade.addComment(postNo, addCommentRequestDto);
   }
 
   @Operation(summary = "[o]게시글 댓글 조회", description = "게시글 댓글 조회 API")
@@ -191,7 +206,7 @@ public class PostController {
   @ResponseStatus(HttpStatus.CREATED)
   public GetPostCommentsResponseDto getPostComments(@PathVariable("postNo") Long postNo) {
     log.info(">>> PostController.getPostComments");
-    return postService.getPostComments(postNo);
+    return postFacade.getPostComments(postNo);
   }
 
   @Operation(summary = "[o]게시글 댓글 수정", description = "게시글 댓글 수정 API")
@@ -202,7 +217,7 @@ public class PostController {
                           @Valid @RequestBody
                           EditCommentRequestDto editCommentRequestDto) {
     log.info(">>> PostController.editComment");
-    postService.editComment(postNo, commentNo, editCommentRequestDto);
+    postFacade.editComment(postNo, commentNo, editCommentRequestDto);
   }
 
   @Operation(summary = "[o]게시글 댓글 삭제", description = "게시글 댓글 삭제 API")
@@ -211,7 +226,7 @@ public class PostController {
   public void deleteComment(@PathVariable("postNo") Long postNo,
                             @PathVariable("commentNo") Long commentNo) {
     log.info(">>> PostController.deleteComment");
-    postService.deleteComment(postNo, commentNo);
+    postFacade.deleteComment(postNo, commentNo);
   }
 
   @Operation(summary = "[o]인용 등록 ", description = "인용 등록 API")
@@ -224,7 +239,7 @@ public class PostController {
       , @PathVariable("quotedPostNo") @Schema(example = "2", description = "인용하는 포스트 번호")
                                       Long quotedPostNo) {
     log.info(">>> PostController.addQuote");
-    return AddQuoteResponseDto.of(postService.addQuote(postNo, quotedPostNo));
+    return AddQuoteResponseDto.of(postFacade.addQuote(postNo, quotedPostNo));
   }
 
   @Operation(summary = "[o]인용 삭제", description = "인용 삭제 API")
@@ -232,14 +247,14 @@ public class PostController {
   @UserRequired
   public void deleteQuote(@PathVariable("quoteNo") Long quoteNo) {
     log.info(">>> PostController.deleteQuote");
-    postService.deleteQuote(quoteNo);
+    postFacade.deleteQuote(quoteNo);
   }
 
   @Operation(summary = "[o]인용 복수 조회", description = "인용 복수 조회 API")
   @GetMapping("/post-quotes/{postNo}")
   public GetQuotesByPostResponseDto getQuotesByPost(@PathVariable("postNo") Long postNo) {
     log.info(">>> PostController.getQuoteDetail");
-    return postService.getQuotesByPost(postNo);
+    return postFacade.getQuotesByPost(postNo);
   }
 
   @Operation(summary = "[o]게시글 좋아요", description = "게시글 좋아요 API")
@@ -248,7 +263,7 @@ public class PostController {
   public void likePost(@PathVariable("postNo") Long postNo) {
     log.info(">>> PostController.likePost");
     Long userNo = AuthUtil.getUserNoFromAuthentication();
-    postService.likePost(userNo, postNo);
+    postFacade.likePost(userNo, postNo);
   }
 
   @Operation(summary = "[o]게시글 좋아요 취소", description = "게시글 좋아요 취소 API")
@@ -257,7 +272,7 @@ public class PostController {
   public void likeCancelPost(@PathVariable("postNo") Long postNo) {
     log.info(">>> PostController.likeCancelPost");
     Long userNo = AuthUtil.getUserNoFromAuthentication();
-    postService.likeCancelPost(userNo, postNo);
+    postFacade.likeCancelPost(userNo, postNo);
   }
 
 }

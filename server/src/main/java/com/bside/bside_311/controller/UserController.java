@@ -11,11 +11,13 @@ import com.bside.bside_311.dto.UserResponseDto;
 import com.bside.bside_311.dto.UserSignupRequestDto;
 import com.bside.bside_311.dto.UserSignupResponseDto;
 import com.bside.bside_311.dto.UserUpdateRequestDto;
+import com.bside.bside_311.dto.common.ResultDto;
 import com.bside.bside_311.entity.Role;
 import com.bside.bside_311.entity.User;
 import com.bside.bside_311.service.UserService;
 import com.bside.bside_311.util.AuthUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -131,10 +134,27 @@ public class UserController {
   @Operation(summary = "[o]나를 팔로잉하는 유저 조회", description = "나를 팔로잉하는 유저 조회")
   @UserRequired
   @GetMapping("/users-of-following-me")
-  public Page<UserResponseDto> getUsersOfFollowingMe(Pageable pageable) {
+  public Page<UserResponseDto> getUsersPopular(Pageable pageable) {
     Long myUserNo = AuthUtil.getUserNoFromAuthentication();
     log.info(">>> UserController.getMyFollowingUsers");
     return userService.getUsersOfFollowingMe(myUserNo, pageable);
+  }
+
+
+  // TODO 추후 캐싱 처리 예정.(레디스)
+  @Operation(summary = "[o]인기순 유저 조회", description = "인기순 유저 조회")
+  @UserRequired
+  @GetMapping("/popular")
+  public ResultDto<Page<UserResponseDto>> getUsersOfFollowingMe(
+      @RequestParam(required = true, name = "page")
+      @Schema(description = "페이지", example = "0")
+      Long page,
+      @RequestParam(required = true, name = "size")
+      @Schema(description = "사이즈", example = "10")
+      Long size) {
+    log.info(">>> UserController.getMyFollowingUsers");
+    Long myUserNo = AuthUtil.getUserNoFromAuthentication();
+    return userService.getUsersPopular(page, size, myUserNo);
   }
 
   @Operation(summary = "[o]유저 정보 조회", description = "유저 정보 조회 API")
