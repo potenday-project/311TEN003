@@ -83,7 +83,7 @@ const SearchAlcoholInput = ({
         <Box sx={WrapperStyle}>
           <List sx={ListStyle}>
             {isSuccess &&
-              data?.list.map((alcoholData) => (
+              data?.content.map((alcoholData) => (
                 <ListItemButton
                   key={alcoholData.alcoholNo}
                   disableRipple
@@ -104,7 +104,7 @@ const SearchAlcoholInput = ({
                 </ListItemButton>
               ))}
             {isLoading && <CircularProgress sx={{ margin: "0 auto" }} />}
-            {data?.list.length === 0 && <>검색결과가 없어요</>}
+            {data?.content.length === 0 && <>검색결과가 없어요</>}
           </List>
         </Box>
       )}
