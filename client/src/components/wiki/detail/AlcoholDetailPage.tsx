@@ -38,19 +38,19 @@ const AlcoholDetailPage = ({ alcoholNo, initialData, children }: Props) => {
           <Stack direction="row">
             <Typography width="78px">Aroma</Typography>
             <Typography fontWeight="bold">
-              {alcoholInfo.taste.Aroma?.join(", ")}
+              {alcoholInfo.taste.Aroma.join(", ")}
             </Typography>
           </Stack>
           <Stack direction="row">
             <Typography width="78px">Taste</Typography>
             <Typography fontWeight="bold">
-              {alcoholInfo.taste.Taste?.join(", ")}
+              {alcoholInfo.taste.Taste.join(", ")}
             </Typography>
           </Stack>
           <Stack direction="row">
             <Typography width="78px">Finish</Typography>
             <Typography fontWeight="bold">
-              {alcoholInfo.taste.Finish?.join(", ")}
+              {alcoholInfo.taste.Finish.join(", ")}
             </Typography>
           </Stack>
         </Stack>

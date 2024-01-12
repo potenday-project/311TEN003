@@ -30,9 +30,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       nameOfApp,
       alcoholType,
       `${alcoholType}추천`,
-      taste.Aroma?.map((aroma) => `${aroma}향 ${alcoholType}`).join(", "),
-      taste.Finish?.map((finish) => `${finish}피니시 ${alcoholType}`).join(", "),
-      taste.Taste?.map((taste) => `${taste}맛 ${alcoholType}`).join(", "),
+      taste.Aroma.map((aroma) => `${aroma}향 ${alcoholType}`).join(", "),
+      taste.Finish.map((finish) => `${finish}피니시 ${alcoholType}`).join(", "),
+      taste.Taste.map((taste) => `${taste}맛 ${alcoholType}`).join(", "),
     ],
     openGraph: {
       title: `${nameOfApp} | ${alcoholType} ${alcoholName}`,
