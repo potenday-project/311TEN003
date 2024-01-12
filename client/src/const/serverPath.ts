@@ -91,13 +91,13 @@ export const REMOVE_FILE = (attachNo: string) => `/attach/${attachNo}` as const;
 /**
  * 알콜리스트를 받아오는 URL
  */
-export const GET_ALCOHOL_LIST = "/alcohols" as const;
+export const GET_ALCOHOL_LIST = "/alcohols/v2" as const;
 
 /**
  * 알콜 디테일을 받아오는 URL
  */
 export const GET_ALCOHOL_DETAIL = (id: string) =>
-  `${GET_ALCOHOL_LIST}/${id}` as const;
+  `/alcohols/${id}` as const;
 
 /**
  * 포스트의 PK를 입력받아 해당 PK의 게시글의 좋아요 취소를 요청
