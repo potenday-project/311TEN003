@@ -45,7 +45,7 @@ const WikiSerachArea = () => {
         {searchKeyword ? (
           // 입력중인 경우
           <AlcoholList
-            data={alcohols?.list}
+            data={alcohols?.content}
             onClickElement={(alcoholData) => {
               onClickElementHandler(alcoholData);
               setIsSearching(false);
