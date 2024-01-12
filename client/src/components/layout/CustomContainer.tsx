@@ -19,7 +19,6 @@ const CustomContainer = ({ sx, mt, children }: CustomContainerInterface) => {
           gap: 2,
           p: 2,
           minHeight: `calc(100vh - ${appbarHeight} - ${navbarHeight})`,
-          height:'100%'
         }}
       >
         {children}
