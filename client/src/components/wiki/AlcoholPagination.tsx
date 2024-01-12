@@ -9,25 +9,26 @@ import usePushToWikiDetail from "@/hooks/wiki/usePushToWikiDetail";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
-const AlcoholPagenation = () => {
+const AlcoholPagenation = ({ alcoholTypeNo }: { alcoholTypeNo?: number }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const size = 10;
 
   const { data: alcohols } = useGetAlcoholListQuery({
     searchKeyword: "",
     page: currentPage - 1,
+    alcoholType: alcoholTypeNo,
     size,
   });
 
-  const [totalCount, setTotalCount] = useState(alcohols?.totalCount);
+  // const [totalCount, setTotalCount] = useState(alcohols?.totalPages);
 
-  useEffect(() => {
-    const isSameWithPreviousValue =
-      totalCount === alcohols?.totalCount || alcohols?.totalCount === undefined;
+  // useEffect(() => {
+  //   const isSameWithPreviousValue =
+  //     totalCount === alcohols?.totalPages || alcohols?.totalPages === undefined;
 
-    if (isSameWithPreviousValue) return;
-    setTotalCount(alcohols?.totalCount);
-  }, [alcohols]);
+  //   if (isSameWithPreviousValue) return;
+  //   setTotalCount(alcohols?.totalPages);
+  // }, [alcohols]);
 
   const queryClient = useQueryClient();
 
@@ -35,6 +36,7 @@ const AlcoholPagenation = () => {
     const handler = async () => {
       const nextPageParams = {
         searchKeyword: "",
+        alcoholType: alcoholTypeNo,
         size,
         page: currentPage + 1,
       };
@@ -61,7 +63,7 @@ const AlcoholPagenation = () => {
     <Stack alignItems="center" gap={2}>
       <Stack gap={1} alignItems="center" width={"100%"}>
         <AlcoholList
-          data={alcohols?.list}
+          data={alcohols?.content}
           size={size}
           onClickElement={({ alcoholName, alcoholNo }) =>
             onClickElementHandler({ alcoholName, alcoholNo })
@@ -69,7 +71,7 @@ const AlcoholPagenation = () => {
         />
       </Stack>
       <Pagination
-        count={(totalCount ?? 0) / size - 1}
+        count={alcohols?.totalPages}
         page={currentPage}
         siblingCount={2}
         onChange={(_e, page) => setCurrentPage(page)}
