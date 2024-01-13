@@ -45,7 +45,9 @@ import com.bside.bside_311.repository.UserFollowRepository;
 import com.bside.bside_311.repository.UserRepository;
 import com.bside.bside_311.util.AuthUtil;
 import com.bside.bside_311.util.ResultCode;
+import com.bside.bside_311.util.ValidateUtil;
 import io.micrometer.common.util.StringUtils;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -59,8 +61,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.bside.bside_311.util.ValidateUtil.resourceChangeableCheckByThisRequestToken;
 
 @Service
 @Slf4j
@@ -116,7 +116,7 @@ public class PostFacade {
 
   public void editPost(Long postNo, EditPostRequestDto editPostRequestDto) {
     Post post = postService.findPost(postNo);
-    resourceChangeableCheckByThisRequestToken(post);
+    ValidateUtil.resourceChangeableCheckByThisRequestToken(post);
     if (StringUtils.isNotEmpty(editPostRequestDto.getPostContent())) {
       post.setContent(editPostRequestDto.getPostContent());
     }
@@ -148,7 +148,7 @@ public class PostFacade {
 
   public void deletePost(Long postNo) {
     Post post = postService.findPost(postNo);
-    resourceChangeableCheckByThisRequestToken(post);
+    ValidateUtil.resourceChangeableCheckByThisRequestToken(post);
     postService.deletePost(post);
     postTagManager.deletePostTagByPost(post);
     postAlcoholManager.deletePostAlcoholByPost(post);
@@ -166,11 +166,12 @@ public class PostFacade {
     List<AttachDto> postAttachDtos =
         attachManager.getAttachListBykeyAndType(post.getId(), AttachType.POST);
     List<AttachDto> profileAttachDtos =
-        attachManager.getAttachListBykeyAndType(post.getId(), AttachType.PROFILE);
+        // FIXME 이부분 그 전에 post.getId()여서 프로필 이미지를 불러오지 못했었음. 관련하여 테스트 코드 작성할것.
+        attachManager.getAttachListBykeyAndType(post.getCreatedBy(), AttachType.PROFILE);
     // isFollowedByMe, isLikedByMe, quoteInfo, likeCount, quoteCount
     Long myUserNo = AuthUtil.getUserNoFromAuthentication();
-    Boolean isLikedByMe = getLikedByMe(post, myUserNo);
-    Boolean isFollowdByMe = getFollowedByMe(post, myUserNo);
+    boolean isLikedByMe = getLikedByMe(post, myUserNo);
+    boolean isFollowdByMe = getFollowedByMe(post, myUserNo);
     Long likeCount = getLikeCount(post);
     Long quoteCount = getQuoteCount(post);
 
@@ -284,7 +285,7 @@ public class PostFacade {
     postService.findPost(postNo);
     Comment comment = commentRepository.findByIdAndDelYnIs(commentNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
-    resourceChangeableCheckByThisRequestToken(comment);
+    ValidateUtil.resourceChangeableCheckByThisRequestToken(comment);
     if (!ObjectUtils.isEmpty(editCommentRequestDto) &&
             StringUtils.isNotBlank(editCommentRequestDto.getCommentContent())) {
       comment.setContent(editCommentRequestDto.getCommentContent());
@@ -295,7 +296,7 @@ public class PostFacade {
     postService.findPost(postNo);
     Comment comment = commentRepository.findByIdAndDelYnIs(commentNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
-    resourceChangeableCheckByThisRequestToken(comment);
+    ValidateUtil.resourceChangeableCheckByThisRequestToken(comment);
     comment.setDelYn(YesOrNo.Y);
   }
 
@@ -314,7 +315,7 @@ public class PostFacade {
   public void deleteQuote(Long quoteNo) {
     PostQuote postQuote = postQuoteRepository.findByIdAndDelYnIs(quoteNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException("인용이 존재하지 않습니다."));
-    resourceChangeableCheckByThisRequestToken(postQuote);
+    ValidateUtil.resourceChangeableCheckByThisRequestToken(postQuote);
     postQuote.setDelYn(YesOrNo.Y);
   }
 
@@ -341,7 +342,7 @@ public class PostFacade {
     PostLike postLike =
         postLikeRepository.findByUserAndPostAndDelYnIs(user, post, YesOrNo.N).orElseThrow(
             () -> new IllegalArgumentException("좋아요가 존재하지 않습니다."));
-    resourceChangeableCheckByThisRequestToken(postLike);
+    ValidateUtil.resourceChangeableCheckByThisRequestToken(postLike);
     postLike.setDelYn(YesOrNo.Y);
   }
 
@@ -353,29 +354,25 @@ public class PostFacade {
     return postLikeRepository.countByPostAndDelYnIs(post, YesOrNo.N);
   }
 
-  private Boolean getFollowedByMe(Post post, Long myUserNo) {
+  @Nullable
+  private boolean getFollowedByMe(Post post, Long myUserNo) {
     if (ObjectUtils.isEmpty(post) || ObjectUtils.isEmpty(post.getCreatedBy()) || ObjectUtils
                                                                                      .isEmpty(
                                                                                          myUserNo)) {
-      return null;
+      return false;
     }
     return userFollowRepository.findByFollowingAndFollowedAndDelYnIs(
         User.of(myUserNo), User.of(post.getCreatedBy()), YesOrNo.N).isPresent();
   }
 
-  private Boolean getLikedByMe(Post post, Long myUserNo) {
+  @Nullable
+  private boolean getLikedByMe(Post post, Long myUserNo) {
     if (ObjectUtils.isEmpty(post) || ObjectUtils.isEmpty(post.getId()) ||
             ObjectUtils.isEmpty(myUserNo)) {
-      return null;
+      return false;
     }
     return postLikeRepository.findByUserAndPostAndDelYnIs(User.of(myUserNo), post, YesOrNo.N)
                              .isPresent();
-  }
-
-  private List<AttachDto> getPostAttachDto(Post post) {
-    return AttachDto.of(
-        attachRepository.findByRefNoAndAttachTypeIsAndDelYnIs(post.getId(), AttachType.POST,
-            YesOrNo.N));
   }
 
   private List<Comment> getComments(Post post) {
