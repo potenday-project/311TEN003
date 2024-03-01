@@ -321,6 +321,13 @@ public class Initializer {
     return multipartFile;
   }
 
+  /**
+   * @param userNo   사용자 번호
+   * @param runnable 사용자 번호를 설정하고 runnable을 실행한 후에 SecurityContextHolder를 clear한다.
+   * @return void
+   * @since 1.0.0
+   * @deprecated 1.0.0
+   */
   public void setSecutiryContextDoSomethingAndClear(Long userNo, Runnable runnable) {
     setSecurityContextUserNo(userNo);
     runnable.run();
