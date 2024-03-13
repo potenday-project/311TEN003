@@ -14,6 +14,7 @@ import com.bside.bside_311.dto.GetQuotesByPostResponseDto;
 import com.bside.bside_311.dto.PostResponseDto;
 import com.bside.bside_311.dto.common.ResultDto;
 import com.bside.bside_311.entity.Post;
+import com.bside.bside_311.model.UserAuthInfo;
 import com.bside.bside_311.service.PostFacade;
 import com.bside.bside_311.util.AuthUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -65,18 +67,18 @@ public class PostController {
   @UserRequired
   @PatchMapping("/{postNo}")
   public void editPost(@PathVariable("postNo") Long postNo,
-                       @RequestBody @Valid EditPostRequestDto editPostRequestDto) {
+                       @RequestBody @Valid EditPostRequestDto editPostRequestDto,
+                       Authentication authentication) {
     log.info(">>> PostController.editPost");
-
-    postFacade.editPost(postNo, editPostRequestDto);
+    postFacade.editPost(postNo, editPostRequestDto, UserAuthInfo.of(authentication));
   }
 
   @Operation(summary = "[o]게시글 삭제", description = "게시글 삭제 API")
   @UserRequired
   @DeleteMapping("/{postNo}")
-  public void deletePost(@PathVariable("postNo") Long postNo) {
+  public void deletePost(@PathVariable("postNo") Long postNo, Authentication accessAuthentication) {
     log.info(">>> PostController.deletePost");
-    postFacade.deletePost(postNo);
+    postFacade.deletePost(postNo, UserAuthInfo.of(accessAuthentication));
   }
 
   @Operation(summary = "[o]게시글 목록 조회(v1)", description = "게시글 조회 API")
@@ -215,18 +217,21 @@ public class PostController {
   public void editComment(@PathVariable("postNo") Long postNo,
                           @PathVariable("commentNo") Long commentNo,
                           @Valid @RequestBody
-                          EditCommentRequestDto editCommentRequestDto) {
+                          EditCommentRequestDto editCommentRequestDto,
+                          Authentication authentication) {
     log.info(">>> PostController.editComment");
-    postFacade.editComment(postNo, commentNo, editCommentRequestDto);
+    postFacade.editComment(postNo, commentNo, editCommentRequestDto,
+        UserAuthInfo.of(authentication));
   }
 
   @Operation(summary = "[o]게시글 댓글 삭제", description = "게시글 댓글 삭제 API")
   @DeleteMapping("/{postNo}/comments/{commentNo}")
   @UserRequired
   public void deleteComment(@PathVariable("postNo") Long postNo,
-                            @PathVariable("commentNo") Long commentNo) {
+                            @PathVariable("commentNo") Long commentNo,
+                            Authentication authentication) {
     log.info(">>> PostController.deleteComment");
-    postFacade.deleteComment(postNo, commentNo);
+    postFacade.deleteComment(postNo, commentNo, UserAuthInfo.of(authentication));
   }
 
   @Operation(summary = "[o]인용 등록 ", description = "인용 등록 API")
@@ -245,9 +250,9 @@ public class PostController {
   @Operation(summary = "[o]인용 삭제", description = "인용 삭제 API")
   @DeleteMapping("/quotes/{quoteNo}")
   @UserRequired
-  public void deleteQuote(@PathVariable("quoteNo") Long quoteNo) {
+  public void deleteQuote(@PathVariable("quoteNo") Long quoteNo, Authentication authentication) {
     log.info(">>> PostController.deleteQuote");
-    postFacade.deleteQuote(quoteNo);
+    postFacade.deleteQuote(quoteNo, UserAuthInfo.of(authentication));
   }
 
   @Operation(summary = "[o]인용 복수 조회", description = "인용 복수 조회 API")
@@ -269,10 +274,10 @@ public class PostController {
   @Operation(summary = "[o]게시글 좋아요 취소", description = "게시글 좋아요 취소 API")
   @PostMapping("/like-cancel/{postNo}")
   @UserRequired
-  public void likeCancelPost(@PathVariable("postNo") Long postNo) {
+  public void likeCancelPost(@PathVariable("postNo") Long postNo, Authentication authentication) {
     log.info(">>> PostController.likeCancelPost");
     Long userNo = AuthUtil.getUserNoFromAuthentication();
-    postFacade.likeCancelPost(userNo, postNo);
+    postFacade.likeCancelPost(userNo, postNo, UserAuthInfo.of(authentication));
   }
 
 }

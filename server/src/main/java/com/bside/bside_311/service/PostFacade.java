@@ -33,6 +33,8 @@ import com.bside.bside_311.entity.PostType;
 import com.bside.bside_311.entity.Tag;
 import com.bside.bside_311.entity.User;
 import com.bside.bside_311.entity.YesOrNo;
+import com.bside.bside_311.model.AbstractUserAuthInfo;
+import com.bside.bside_311.model.UserAuthInfo;
 import com.bside.bside_311.repository.AlcoholRepository;
 import com.bside.bside_311.repository.AttachRepository;
 import com.bside.bside_311.repository.CommentRepository;
@@ -114,9 +116,10 @@ public class PostFacade {
     return AddPostResponseDto.of(post);
   }
 
-  public void editPost(Long postNo, EditPostRequestDto editPostRequestDto) {
+  public void editPost(Long postNo, EditPostRequestDto editPostRequestDto,
+                       UserAuthInfo accessUser) {
     Post post = postService.findPost(postNo);
-    ValidateUtil.resourceChangeableCheckByThisRequestToken(post);
+    ValidateUtil.resourceChangeableCheckByThisUserAuthInfo(post, accessUser);
     if (StringUtils.isNotEmpty(editPostRequestDto.getPostContent())) {
       post.setContent(editPostRequestDto.getPostContent());
     }
@@ -146,13 +149,13 @@ public class PostFacade {
     }
   }
 
-  public void deletePost(Long postNo) {
+  public void deletePost(Long postNo, AbstractUserAuthInfo accessUserAuthInfo) {
     Post post = postService.findPost(postNo);
-    ValidateUtil.resourceChangeableCheckByThisRequestToken(post);
+    ValidateUtil.resourceChangeableCheckByThisUserAuthInfo(post, accessUserAuthInfo);
     postService.deletePost(post);
     postTagManager.deletePostTagByPost(post);
     postAlcoholManager.deletePostAlcoholByPost(post);
-    attachManager.deleteAttachesByRefNoAndAttachType(postNo, AttachType.POST);
+    attachManager.deleteAttachesByRefNoAndAttachType(postNo, AttachType.POST, accessUserAuthInfo);
   }
 
   public PostResponseDto getPostDetail(Long postNo) {
@@ -281,22 +284,23 @@ public class PostFacade {
   }
 
   public void editComment(Long postNo, Long commentNo,
-                          EditCommentRequestDto editCommentRequestDto) {
+                          EditCommentRequestDto editCommentRequestDto,
+                          AbstractUserAuthInfo accessUserAuthInfo) {
     postService.findPost(postNo);
     Comment comment = commentRepository.findByIdAndDelYnIs(commentNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
-    ValidateUtil.resourceChangeableCheckByThisRequestToken(comment);
+    ValidateUtil.resourceChangeableCheckByThisUserAuthInfo(comment, accessUserAuthInfo);
     if (!ObjectUtils.isEmpty(editCommentRequestDto) &&
             StringUtils.isNotBlank(editCommentRequestDto.getCommentContent())) {
       comment.setContent(editCommentRequestDto.getCommentContent());
     }
   }
 
-  public void deleteComment(Long postNo, Long commentNo) {
+  public void deleteComment(Long postNo, Long commentNo, AbstractUserAuthInfo accessUserAuthInfo) {
     postService.findPost(postNo);
     Comment comment = commentRepository.findByIdAndDelYnIs(commentNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
-    ValidateUtil.resourceChangeableCheckByThisRequestToken(comment);
+    ValidateUtil.resourceChangeableCheckByThisUserAuthInfo(comment, accessUserAuthInfo);
     comment.setDelYn(YesOrNo.Y);
   }
 
@@ -312,10 +316,10 @@ public class PostFacade {
     return postQuote;
   }
 
-  public void deleteQuote(Long quoteNo) {
+  public void deleteQuote(Long quoteNo, AbstractUserAuthInfo accessUserAuthInfo) {
     PostQuote postQuote = postQuoteRepository.findByIdAndDelYnIs(quoteNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException("인용이 존재하지 않습니다."));
-    ValidateUtil.resourceChangeableCheckByThisRequestToken(postQuote);
+    ValidateUtil.resourceChangeableCheckByThisUserAuthInfo(postQuote, accessUserAuthInfo);
     postQuote.setDelYn(YesOrNo.Y);
   }
 
@@ -335,14 +339,14 @@ public class PostFacade {
     postLikeRepository.save(postLike);
   }
 
-  public void likeCancelPost(Long userNo, Long postNo) {
+  public void likeCancelPost(Long userNo, Long postNo, AbstractUserAuthInfo accessUserAuthInfo) {
     User user = userManager.getUser(userNo);
     Post post = postService.findPost(postNo);
 
     PostLike postLike =
         postLikeRepository.findByUserAndPostAndDelYnIs(user, post, YesOrNo.N).orElseThrow(
             () -> new IllegalArgumentException("좋아요가 존재하지 않습니다."));
-    ValidateUtil.resourceChangeableCheckByThisRequestToken(postLike);
+    ValidateUtil.resourceChangeableCheckByThisUserAuthInfo(postLike, accessUserAuthInfo);
     postLike.setDelYn(YesOrNo.Y);
   }
 

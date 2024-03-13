@@ -4,6 +4,7 @@ import com.bside.bside_311.dto.AttachDto;
 import com.bside.bside_311.entity.Attach;
 import com.bside.bside_311.entity.AttachType;
 import com.bside.bside_311.entity.YesOrNo;
+import com.bside.bside_311.model.AbstractUserAuthInfo;
 import com.bside.bside_311.repository.AttachRepository;
 import com.bside.bside_311.service.ImageStorage;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.bside.bside_311.util.ValidateUtil.resourceChangeableCheckByThisRequestToken;
+import static com.bside.bside_311.util.ValidateUtil.resourceChangeableCheckByThisUserAuthInfo;
 
 @Component
 @RequiredArgsConstructor
@@ -22,12 +23,12 @@ public class AttachManager {
   private final AttachRepository attachRepository;
   private final ImageStorage imageStorage;
 
-  public void deleteAttachByAttachNo(Long attachNo) {
+  public void deleteAttachByAttachNo(Long attachNo, AbstractUserAuthInfo userAuthInfo) {
     // search attach
     Attach attach = attachRepository.findByIdAndDelYnIs(attachNo, YesOrNo.N)
                                     .orElseThrow(
                                         () -> new IllegalArgumentException("존재하지 않는 첨부파일입니다."));
-    resourceChangeableCheckByThisRequestToken(attach);
+    resourceChangeableCheckByThisUserAuthInfo(attach, userAuthInfo);
     // delete attach
     attach.setDelYn(YesOrNo.Y);
 
@@ -35,13 +36,14 @@ public class AttachManager {
     imageStorage.delete(attach.getPublicId());
   }
 
-  public void deleteAttachesByRefNoAndAttachType(Long refNo, AttachType attachType) {
+  public void deleteAttachesByRefNoAndAttachType(Long refNo, AttachType attachType,
+                                                 AbstractUserAuthInfo accessUserAuth) {
     // search attach
     List<Attach> attaches =
         attachRepository.findByRefNoAndAttachTypeIsAndDelYnIs(refNo, attachType, YesOrNo.N);
     for (Attach attach : attaches
     ) {
-      resourceChangeableCheckByThisRequestToken(attach);
+      resourceChangeableCheckByThisUserAuthInfo(attach, accessUserAuth);
       // delete attach
       attach.setDelYn(YesOrNo.Y);
     }

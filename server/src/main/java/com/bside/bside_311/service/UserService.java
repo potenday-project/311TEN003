@@ -16,6 +16,7 @@ import com.bside.bside_311.entity.AttachType;
 import com.bside.bside_311.entity.User;
 import com.bside.bside_311.entity.UserFollow;
 import com.bside.bside_311.entity.YesOrNo;
+import com.bside.bside_311.model.AbstractUserAuthInfo;
 import com.bside.bside_311.repository.AttachRepository;
 import com.bside.bside_311.repository.UserFollowRepository;
 import com.bside.bside_311.repository.UserRepository;
@@ -41,7 +42,7 @@ import java.util.Map;
 
 import static com.bside.bside_311.util.JwtUtil.NORMAL_TOKEN;
 import static com.bside.bside_311.util.JwtUtil.normalValidity;
-import static com.bside.bside_311.util.ValidateUtil.resourceChangeableCheckByThisRequestToken;
+import static com.bside.bside_311.util.ValidateUtil.resourceChangeableCheckByThisUserAuthInfo;
 
 @Service
 @Slf4j
@@ -174,7 +175,7 @@ public class UserService {
     return userFollow;
   }
 
-  public void unfollowUser(Long myUserNo, Long followingUserNo) {
+  public void unfollowUser(Long myUserNo, Long followingUserNo, AbstractUserAuthInfo userAuthInfo) {
     User me = userRepository.findByIdAndDelYnIs(myUserNo, YesOrNo.N)
                             .orElseThrow(() -> new IllegalArgumentException("로그인 유저가 존재하지 않습니다."));
 
@@ -184,7 +185,7 @@ public class UserService {
     UserFollow userFollow =
         userFollowRepository.findByFollowingAndFollowedAndDelYnIs(me, followingUser, YesOrNo.N)
                             .orElseThrow(() -> new IllegalArgumentException("팔로우하지 않은 유저입니다."));
-    resourceChangeableCheckByThisRequestToken(userFollow);
+    resourceChangeableCheckByThisUserAuthInfo(userFollow, userAuthInfo);
     userFollow.setDelYn(YesOrNo.Y);
   }
 

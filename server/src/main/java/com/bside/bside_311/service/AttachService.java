@@ -6,6 +6,7 @@ import com.bside.bside_311.dto.UploadImageResultDto;
 import com.bside.bside_311.entity.Attach;
 import com.bside.bside_311.entity.AttachType;
 import com.bside.bside_311.entity.YesOrNo;
+import com.bside.bside_311.model.AbstractUserAuthInfo;
 import com.bside.bside_311.repository.AlcoholRepository;
 import com.bside.bside_311.repository.AttachRepository;
 import com.bside.bside_311.repository.PostRepository;
@@ -69,10 +70,8 @@ public class AttachService {
     return attach;
   }
 
-  public void deleteAttach(Long attachNo, Long myUserNo) {
-    attachManager.deleteAttachByAttachNo(attachNo);
+  public void deleteAttach(Long attachNo, AbstractUserAuthInfo accessUserAuth) {
+    attachManager.deleteAttachByAttachNo(attachNo, accessUserAuth);
   }
 
-
-  //TODO attach 형태 변경. attachNo도 같이 전달.
 }

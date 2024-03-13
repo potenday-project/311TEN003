@@ -3,6 +3,7 @@ package com.bside.bside_311.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Map;
 
 class JsonParseUtilTest {
@@ -35,6 +36,18 @@ class JsonParseUtilTest {
       System.out.println(stringObjectMap);
     } catch (Exception e) {
       e.printStackTrace();
+    }
+  }
+
+  @Test
+  public void indexOutOfBoundsException() {
+//    String[] arr = new String[] {"a", "b", "c"};
+//    for (int i = 0; i < 5; i++) {
+//      System.out.println(arr[i]);
+//    }
+    List<String> list = List.of("a", "b", "c");
+    for (int i = 0; i < 5; i++) {
+      System.out.println(list.get(i));
     }
   }
 }

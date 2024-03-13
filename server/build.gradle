@@ -4,6 +4,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.3'
 //	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
     id 'jacoco'
+    id 'org.jetbrains.kotlin.jvm' version '1.7.10'
 }
 
 group = 'com.bside'
@@ -86,6 +87,7 @@ dependencies {
 //    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.2'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
 tasks.named('test') {
@@ -151,4 +153,14 @@ jacocoTestCoverageVerification {
 jar {
     enabled = false
 //    archiveClassifier = '' // Classifier 제거
+}
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }

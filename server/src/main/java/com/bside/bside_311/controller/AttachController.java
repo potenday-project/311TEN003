@@ -4,6 +4,7 @@ import com.bside.bside_311.config.security.UserRequired;
 import com.bside.bside_311.dto.ImageRequestDto;
 import com.bside.bside_311.dto.UploadAttachResponseDto;
 import com.bside.bside_311.entity.AttachType;
+import com.bside.bside_311.model.UserAuthInfo;
 import com.bside.bside_311.service.AttachService;
 import com.bside.bside_311.util.AuthUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -54,10 +56,10 @@ public class AttachController {
   @Operation(summary = "[o]사진 삭제", description = "사진 삭제 API")
   @UserRequired
   @DeleteMapping("/{attachNo}")
-  public void userDeletePicture(@PathVariable("attachNo") Long attachNo) {
-    // FIXME 자신이 소유하고 있는 자원만 접근이 가능하도록 조치.
+  public void userDeletePicture(@PathVariable("attachNo") Long attachNo,
+                                Authentication authentication) {
     log.info(">>> PostController.userDeletePicture");
     Long myUserNo = AuthUtil.getUserNoFromAuthentication();
-    attachService.deleteAttach(attachNo, myUserNo);
+    attachService.deleteAttach(attachNo, UserAuthInfo.of(authentication));
   }
 }

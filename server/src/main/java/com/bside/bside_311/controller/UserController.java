@@ -14,6 +14,7 @@ import com.bside.bside_311.dto.UserUpdateRequestDto;
 import com.bside.bside_311.dto.common.ResultDto;
 import com.bside.bside_311.entity.Role;
 import com.bside.bside_311.entity.User;
+import com.bside.bside_311.model.UserAuthInfo;
 import com.bside.bside_311.service.UserService;
 import com.bside.bside_311.util.AuthUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -185,10 +187,10 @@ public class UserController {
   @Operation(summary = "[o]유저 언팔로우하기", description = "유저 언팔로우하기 API")
   @PostMapping("/unfollow/{userNo}")
   @UserRequired
-  public void unfollowUser(@PathVariable("userNo") Long userNo) {
+  public void unfollowUser(@PathVariable("userNo") Long userNo, Authentication authentication) {
     log.info(">>> UserController.unfollowUser");
     Long myUserNo = AuthUtil.getUserNoFromAuthentication();
-    userService.unfollowUser(myUserNo, userNo);
+    userService.unfollowUser(myUserNo, userNo, UserAuthInfo.of(authentication));
   }
 
 }

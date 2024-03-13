@@ -6,7 +6,6 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.MappedSuperclass;
-import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedBy;
@@ -14,10 +13,9 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 
-@Getter
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
-public class BaseEntity extends BaseTimeEntity {
+public class BaseEntity extends BaseTimeEntity implements BaseCreatedByGetter {
 
   @CreatedBy
   @Column(updatable = false)
@@ -32,5 +30,17 @@ public class BaseEntity extends BaseTimeEntity {
   @Setter
   private YesOrNo delYn;
 
+  @Override
+  public Long getCreatedBy() {
+    return createdBy;
+  }
+
+  public Long getLastModifiedBy() {
+    return lastModifiedBy;
+  }
+
+  public YesOrNo getDelYn() {
+    return delYn;
+  }
 }
 
