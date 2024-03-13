@@ -1,5 +1,7 @@
 package com.bside.bside_311.service;
 
+import com.bside.bside_311.entity.Post;
+import com.bside.bside_311.entity.PostTag;
 import com.bside.bside_311.entity.Tag;
 import com.bside.bside_311.entity.YesOrNo;
 import com.bside.bside_311.repository.TagRepository;
@@ -33,6 +35,12 @@ public class TagService {
 
   public List<Tag> searchTag(String searchKeyword) {
     return tagRepository.findByNameContainingAndDelYnIs(searchKeyword, YesOrNo.N);
+  }
+
+  public List<Tag> getTags(Post post) {
+    List<PostTag> nonDeletedPostTags =
+        post.getPostTags().stream().filter(postTag -> postTag.getDelYn() == YesOrNo.N).toList();
+    return tagRepository.findByPostTagsInAndDelYnIs(nonDeletedPostTags, YesOrNo.N);
   }
 }
 

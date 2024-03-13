@@ -218,4 +218,9 @@ public class AlcoholService {
     }
     return alcoholTypeMap;
   }
+
+  public Alcohol findAlcoholById(Long alcoholId) {
+    return alcoholRepository.findByIdAndDelYnIs(alcoholId, YesOrNo.N).orElseThrow(
+        () -> new IllegalArgumentException("술이 존재하지 않습니다."));
+  }
 }

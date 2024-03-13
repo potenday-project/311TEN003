@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
+import java.util.List;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -22,4 +24,9 @@ public class UserManager {
     return userRepository.findByIdAndDelYnIs(userNo, YesOrNo.N).orElseThrow(
         () -> new IllegalArgumentException(MessageUtil.USER_NOT_FOUND_MSG));
   }
+
+  public List<User> findUsers(List<Long> commentCreatedList) {
+    return userRepository.findAllByIdInAndDelYnIs(commentCreatedList, YesOrNo.N);
+  }
+
 }

@@ -114,7 +114,7 @@ public class PostController {
       log.error(">>> PostController.getPost searchUserNos 파싱 에러 Exception", e);
     }
     return postFacade.getPosts(page, size, orderColumn, orderType, searchKeyword,
-        searchUserNoList);
+        searchUserNoList, AuthUtil.getUserNoFromAuthentication());
   }
 
   @Operation(summary = "[o]게시글 목록 조회(v2)", description = "게시글 조회 API Page, size 사용법. <br> ex1) /posts/v2?page=0&size=10&sort=id,desc <br> ex2) /posts/v2?page=0&size=10&sort=id,desc&sort=content,asc&searchKeyword=키워드&searchUserNos=1,2,4")
@@ -190,7 +190,7 @@ public class PostController {
   @GetMapping("/{postNo}")
   public PostResponseDto getPostDetail(@PathVariable("postNo") Long postNo) {
     log.info(">>> PostController.getPostDetail");
-    return postFacade.getPostDetail(postNo);
+    return postFacade.getPostDetail(postNo, AuthUtil.getUserNoFromAuthentication());
   }
 
   @Operation(summary = "[o]게시글 댓글 등록", description = "게시글 댓글 등록 API")

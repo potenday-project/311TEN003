@@ -76,18 +76,9 @@ public class PostFacade {
   private final PostAlcoholManager postAlcoholManager;
   private final TagService tagService;
   private final AlcoholManager alcoholManager;
-  private final UserRepository userRepository;
-  private final PostLikeRepository postLikeRepository;
   private final PostService postService;
-  private final PostRepository postRepository;
   private final PostMybatisRepository postMybatisRepository;
-  private final TagRepository tagRepository;
-  private final AttachRepository attachRepository;
-  private final AlcoholRepository alcoholRepository;
-
-  private final CommentRepository commentRepository;
-  private final PostQuoteRepository postQuoteRepository;
-  private final UserFollowRepository userFollowRepository;
+  private final AlcoholService alcoholService;
 
   private Alcohol getAlcohol(Post post) {
     if (ObjectUtils.isEmpty(post) || CollectionUtils.isEmpty(post.getPostAlcohols())) {
@@ -129,7 +120,7 @@ public class PostFacade {
     if (StringUtils.isNotEmpty(editPostRequestDto.getPositionInfo())) {
       post.setPosition(editPostRequestDto.getPositionInfo());
     }
-    postRepository.save(post);
+    postService.savePost(post);
 
     List<String> tagStrList = editPostRequestDto.getTagList();
     Long alcoholNo = editPostRequestDto.getAlcoholNo();
@@ -137,15 +128,13 @@ public class PostFacade {
 
     if (CollectionUtils.isNotEmpty(tagStrList)) {
       //FIXME 추후 최적화.
-      List<Tag> tags = tagService.addOrSetTags(tagStrList);
-      post.removeAllPostTagsAndAddNewPostTags(tags);
+      postService.putTagsToPost(post, tagStrList);
     }
-    postRepository.save(post);
+    postService.savePost(post);
 
     if (alcoholNo != null) {
-      Alcohol alcohol = alcoholRepository.findByIdAndDelYnIs(alcoholNo, YesOrNo.N).orElseThrow(
-          () -> new IllegalArgumentException("술이 존재하지 않습니다."));
-      post.removeAllPostAlcoholsAndAddNewPostAlcohols(List.of(alcohol), alcoholFeature);
+      Alcohol alcohol = alcoholService.findAlcoholById(alcoholNo);
+      postService.linkAlcoholToPost(post, alcohol, alcoholFeature);
     }
   }
 
@@ -158,7 +147,7 @@ public class PostFacade {
     attachManager.deleteAttachesByRefNoAndAttachType(postNo, AttachType.POST, accessUserAuthInfo);
   }
 
-  public PostResponseDto getPostDetail(Long postNo) {
+  public PostResponseDto getPostDetail(Long postNo, Long myUserNo) {
     Post post = postService.findPost(postNo);
     Long userNo = post.getCreatedBy();
     User user = userManager.getUser(userNo);
@@ -169,22 +158,24 @@ public class PostFacade {
     List<AttachDto> postAttachDtos =
         attachManager.getAttachListBykeyAndType(post.getId(), AttachType.POST);
     List<AttachDto> profileAttachDtos =
-        // FIXME 이부분 그 전에 post.getId()여서 프로필 이미지를 불러오지 못했었음. 관련하여 테스트 코드 작성할것.
         attachManager.getAttachListBykeyAndType(post.getCreatedBy(), AttachType.PROFILE);
     // isFollowedByMe, isLikedByMe, quoteInfo, likeCount, quoteCount
-    Long myUserNo = AuthUtil.getUserNoFromAuthentication();
-    boolean isLikedByMe = getLikedByMe(post, myUserNo);
-    boolean isFollowdByMe = getFollowedByMe(post, myUserNo);
-    Long likeCount = getLikeCount(post);
-    Long quoteCount = getQuoteCount(post);
+    boolean isLikedByMe = postService.isThisPostLikedByMe(post, myUserNo);
+    boolean isFollowdByMe = postService.getFollowedByMe(post, myUserNo);
+    Long likeCount = postService.getLikeCount(post);
+    Long quoteCount = postService.getQuoteCount(post);
 
     return PostResponseDto.of(post, user, alcohol, tags, comments, postAttachDtos,
         profileAttachDtos, isLikedByMe,
         isFollowdByMe, likeCount, quoteCount);
   }
 
+  /**
+   * 게시글 조회.
+   * @deprecated 이 메소드는 사용되지 않습니다. {@link PostFacade#getPostsV2(Pageable, String, List, Boolean, Boolean, List)}를 사용하세요.
+   */
   public GetPostResponseDto getPosts(Long page, Long size, String orderColumn, String orderType,
-                                     String searchKeyword, List<Long> searchUserNoList) {
+                                     String searchKeyword, List<Long> searchUserNoList, Long myUserNo) {
     GetPostVo getPostVo = GetPostVo.builder()
                                    .page(page)
                                    .offset(page * size)
@@ -198,7 +189,7 @@ public class PostFacade {
     Long totalCount = postMybatisRepository.getPostsCount(getPostVo);
     List<Post> posts = getPostsMvos.stream().map(Post::of).toList();
     List<PostResponseDto> list =
-        posts.stream().map(post -> getPostDetail(post.getId())).toList();
+        posts.stream().map(post -> getPostDetail(post.getId(), myUserNo)).toList();
     // FIXME
     // 추구 여기서 첨부파일 개수 쿼리 최적화.
     return GetPostResponseDto.of(list, totalCount);
@@ -258,20 +249,18 @@ public class PostFacade {
   public AddCommentResponseDto addComment(Long postNo, AddCommentRequestDto addCommentRequestDto) {
     Post post = postService.findPost(postNo);
     Comment comment = Comment.of(post, addCommentRequestDto.getCommentContent());
-    post.addComment(comment);
-    commentRepository.save(comment);
-
+    postService.addCommentToPost(post, comment);
     return AddCommentResponseDto.of(comment);
   }
 
   public GetPostCommentsResponseDto getPostComments(Long postNo) {
     Post post = postService.findPost(postNo);
+
     List<Comment> comments =
         post.getComments().stream().filter(comment -> comment.getDelYn() == YesOrNo.N).toList();
     // FIXME 최적화. 추후 페이징 처리할것.
     List<Long> commentCreatedList = comments.stream().map(Comment::getCreatedBy).toList();
-    List<User> userList =
-        userRepository.findAllByIdInAndDelYnIs(commentCreatedList, YesOrNo.N);
+    List<User> userList = userManager.findUsers(commentCreatedList);
     Map<Long, User> createdByToUser = new HashMap<>();
     for (User user : userList) {
       createdByToUser.put(user.getId(), user);
@@ -287,8 +276,7 @@ public class PostFacade {
                           EditCommentRequestDto editCommentRequestDto,
                           AbstractUserAuthInfo accessUserAuthInfo) {
     postService.findPost(postNo);
-    Comment comment = commentRepository.findByIdAndDelYnIs(commentNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
+    Comment comment = postService.getCommentById(commentNo);
     ValidateUtil.resourceChangeableCheckByThisUserAuthInfo(comment, accessUserAuthInfo);
     if (!ObjectUtils.isEmpty(editCommentRequestDto) &&
             StringUtils.isNotBlank(editCommentRequestDto.getCommentContent())) {
@@ -298,97 +286,49 @@ public class PostFacade {
 
   public void deleteComment(Long postNo, Long commentNo, AbstractUserAuthInfo accessUserAuthInfo) {
     postService.findPost(postNo);
-    Comment comment = commentRepository.findByIdAndDelYnIs(commentNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
+    Comment comment = postService.getCommentById(commentNo);
     ValidateUtil.resourceChangeableCheckByThisUserAuthInfo(comment, accessUserAuthInfo);
     comment.setDelYn(YesOrNo.Y);
   }
 
   public PostQuote addQuote(Long postNo, Long quotedPostNo) {
     Post post = postService.findPost(postNo);
-
-    Post quotedPost = postRepository.findByIdAndDelYnIs(quotedPostNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException("인용할 게시글이 존재하지 않습니다."));
-    PostQuote postQuote =
-        postQuoteRepository.findByPostAndQuoteAndDelYnIs(post, quotedPost, YesOrNo.N)
-                           .orElse(PostQuote.of(post, quotedPost));
-    postQuoteRepository.save(postQuote);
-    return postQuote;
+    Post quotedPost = postService.findPost(quotedPostNo, "인용할 게시글이 존재하지 않습니다.");
+    return postService.addQuoteToPost(post, quotedPost);
   }
 
   public void deleteQuote(Long quoteNo, AbstractUserAuthInfo accessUserAuthInfo) {
-    PostQuote postQuote = postQuoteRepository.findByIdAndDelYnIs(quoteNo, YesOrNo.N).orElseThrow(
-        () -> new IllegalArgumentException("인용이 존재하지 않습니다."));
-    ValidateUtil.resourceChangeableCheckByThisUserAuthInfo(postQuote, accessUserAuthInfo);
-    postQuote.setDelYn(YesOrNo.Y);
+    postService.deleteQuote(quoteNo, accessUserAuthInfo);
   }
 
   public GetQuotesByPostResponseDto getQuotesByPost(Long postNo) {
     Post post = postService.findPost(postNo);
-    List<PostQuote> postQuotes = postQuoteRepository.findByPostAndDelYnIs(post, YesOrNo.N);
-    return GetQuotesByPostResponseDto.of(postQuotes);
+    return postService.getQuoteByPost(post);
   }
 
   public void likePost(Long userNo, Long postNo) {
     User user = userManager.getUser(userNo);
     Post post = postService.findPost(postNo);
-
-    PostLike postLike =
-        postLikeRepository.findByUserAndPostAndDelYnIs(user, post, YesOrNo.N).orElse(
-            PostLike.of(user, post));
-    postLikeRepository.save(postLike);
+    postService.userLikePost(post, user);
   }
 
   public void likeCancelPost(Long userNo, Long postNo, AbstractUserAuthInfo accessUserAuthInfo) {
     User user = userManager.getUser(userNo);
     Post post = postService.findPost(postNo);
-
-    PostLike postLike =
-        postLikeRepository.findByUserAndPostAndDelYnIs(user, post, YesOrNo.N).orElseThrow(
-            () -> new IllegalArgumentException("좋아요가 존재하지 않습니다."));
-    ValidateUtil.resourceChangeableCheckByThisUserAuthInfo(postLike, accessUserAuthInfo);
-    postLike.setDelYn(YesOrNo.Y);
+    postService.userCancelLikePost(post, user, accessUserAuthInfo);
   }
 
-  private Long getQuoteCount(Post post) {
-    return postQuoteRepository.countByPostAndDelYnIs(post, YesOrNo.N);
-  }
 
-  private Long getLikeCount(Post post) {
-    return postLikeRepository.countByPostAndDelYnIs(post, YesOrNo.N);
-  }
-
-  @Nullable
-  private boolean getFollowedByMe(Post post, Long myUserNo) {
-    if (ObjectUtils.isEmpty(post) || ObjectUtils.isEmpty(post.getCreatedBy()) || ObjectUtils
-                                                                                     .isEmpty(
-                                                                                         myUserNo)) {
-      return false;
-    }
-    return userFollowRepository.findByFollowingAndFollowedAndDelYnIs(
-        User.of(myUserNo), User.of(post.getCreatedBy()), YesOrNo.N).isPresent();
-  }
-
-  @Nullable
-  private boolean getLikedByMe(Post post, Long myUserNo) {
-    if (ObjectUtils.isEmpty(post) || ObjectUtils.isEmpty(post.getId()) ||
-            ObjectUtils.isEmpty(myUserNo)) {
-      return false;
-    }
-    return postLikeRepository.findByUserAndPostAndDelYnIs(User.of(myUserNo), post, YesOrNo.N)
-                             .isPresent();
-  }
 
   private List<Comment> getComments(Post post) {
-    return commentRepository.findByPostAndDelYnIs(post, YesOrNo.N);
+    return postService.getComments(post);
+
   }
 
   private List<Tag> getTags(Post post) {
     if (ObjectUtils.isEmpty(post) || CollectionUtils.isEmpty(post.getPostTags())) {
       return List.of();
     }
-    List<PostTag> nonDeletedPostTags =
-        post.getPostTags().stream().filter(postTag -> postTag.getDelYn() == YesOrNo.N).toList();
-    return tagRepository.findByPostTagsInAndDelYnIs(nonDeletedPostTags, YesOrNo.N);
+    return tagService.getTags(post);
   }
 }
