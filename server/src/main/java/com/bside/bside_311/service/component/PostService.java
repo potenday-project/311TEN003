@@ -1,18 +1,13 @@
-package com.bside.bside_311.component;
+package com.bside.bside_311.service.component;
 
-import com.bside.bside_311.dto.GetPostResponseDto;
-import com.bside.bside_311.dto.GetPostVo;
-import com.bside.bside_311.dto.GetPostsMvo;
 import com.bside.bside_311.dto.GetPostsToOneMvo;
 import com.bside.bside_311.dto.GetQuotesByPostResponseDto;
-import com.bside.bside_311.dto.PostResponseDto;
 import com.bside.bside_311.dto.PostSearchCondition;
 import com.bside.bside_311.entity.Alcohol;
 import com.bside.bside_311.entity.Comment;
 import com.bside.bside_311.entity.Post;
 import com.bside.bside_311.entity.PostLike;
 import com.bside.bside_311.entity.PostQuote;
-import com.bside.bside_311.entity.PostTag;
 import com.bside.bside_311.entity.Tag;
 import com.bside.bside_311.entity.User;
 import com.bside.bside_311.entity.YesOrNo;
@@ -54,6 +49,7 @@ public class PostService {
   public void savePost(Post post) {
     postRepository.save(post);
   }
+
   public Post findPost(Long postNo) {
     return findPost(postNo, MessageUtil.POST_NOT_FOUND_MSG);
   }
@@ -119,8 +115,8 @@ public class PostService {
 
   public boolean getFollowedByMe(Post post, Long myUserNo) {
     if (ObjectUtils.isEmpty(post) || ObjectUtils.isEmpty(post.getCreatedBy()) || ObjectUtils
-        .isEmpty(
-            myUserNo)) {
+                                                                                     .isEmpty(
+                                                                                         myUserNo)) {
       return false;
     }
     return userFollowRepository.findByFollowingAndFollowedAndDelYnIs(

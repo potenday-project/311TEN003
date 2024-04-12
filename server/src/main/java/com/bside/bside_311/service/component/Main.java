@@ -1,4 +1,4 @@
-package com.bside.bside_311.component;
+package com.bside.bside_311.service.component;
 
 
 interface SomethingWithCallback {

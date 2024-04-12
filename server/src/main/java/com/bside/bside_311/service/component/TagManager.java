@@ -1,4 +1,4 @@
-package com.bside.bside_311.component;
+package com.bside.bside_311.service.component;
 
 import com.bside.bside_311.entity.Post;
 import com.bside.bside_311.entity.Tag;

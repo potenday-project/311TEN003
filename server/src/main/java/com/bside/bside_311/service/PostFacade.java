@@ -1,12 +1,5 @@
 package com.bside.bside_311.service;
 
-import com.bside.bside_311.component.AlcoholManager;
-import com.bside.bside_311.component.AttachManager;
-import com.bside.bside_311.component.PostAlcoholManager;
-import com.bside.bside_311.component.PostService;
-import com.bside.bside_311.component.PostTagManager;
-import com.bside.bside_311.component.TagManager;
-import com.bside.bside_311.component.UserManager;
 import com.bside.bside_311.dto.AddCommentRequestDto;
 import com.bside.bside_311.dto.AddCommentResponseDto;
 import com.bside.bside_311.dto.AddPostResponseDto;
@@ -26,30 +19,24 @@ import com.bside.bside_311.entity.AttachType;
 import com.bside.bside_311.entity.Comment;
 import com.bside.bside_311.entity.Post;
 import com.bside.bside_311.entity.PostAlcohol;
-import com.bside.bside_311.entity.PostLike;
 import com.bside.bside_311.entity.PostQuote;
-import com.bside.bside_311.entity.PostTag;
 import com.bside.bside_311.entity.PostType;
 import com.bside.bside_311.entity.Tag;
 import com.bside.bside_311.entity.User;
 import com.bside.bside_311.entity.YesOrNo;
 import com.bside.bside_311.model.AbstractUserAuthInfo;
 import com.bside.bside_311.model.UserAuthInfo;
-import com.bside.bside_311.repository.AlcoholRepository;
-import com.bside.bside_311.repository.AttachRepository;
-import com.bside.bside_311.repository.CommentRepository;
-import com.bside.bside_311.repository.PostLikeRepository;
 import com.bside.bside_311.repository.PostMybatisRepository;
-import com.bside.bside_311.repository.PostQuoteRepository;
-import com.bside.bside_311.repository.PostRepository;
-import com.bside.bside_311.repository.TagRepository;
-import com.bside.bside_311.repository.UserFollowRepository;
-import com.bside.bside_311.repository.UserRepository;
-import com.bside.bside_311.util.AuthUtil;
+import com.bside.bside_311.service.component.AlcoholManager;
+import com.bside.bside_311.service.component.AttachManager;
+import com.bside.bside_311.service.component.PostAlcoholManager;
+import com.bside.bside_311.service.component.PostService;
+import com.bside.bside_311.service.component.PostTagManager;
+import com.bside.bside_311.service.component.TagManager;
+import com.bside.bside_311.service.component.UserService;
 import com.bside.bside_311.util.ResultCode;
 import com.bside.bside_311.util.ValidateUtil;
 import io.micrometer.common.util.StringUtils;
-import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -69,7 +56,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Transactional
 public class PostFacade {
-  private final UserManager userManager;
+  private final UserService userService;
   private final TagManager tagManager;
   private final AttachManager attachManager;
   private final PostTagManager postTagManager;
@@ -150,7 +137,7 @@ public class PostFacade {
   public PostResponseDto getPostDetail(Long postNo, Long myUserNo) {
     Post post = postService.findPost(postNo);
     Long userNo = post.getCreatedBy();
-    User user = userManager.getUser(userNo);
+    User user = userService.getUser(userNo);
     Alcohol alcohol = getAlcohol(post);
     List<Tag> tags = getTags(post);
     List<Comment> comments = getComments(post);
@@ -172,10 +159,12 @@ public class PostFacade {
 
   /**
    * 게시글 조회.
+   *
    * @deprecated 이 메소드는 사용되지 않습니다. {@link PostFacade#getPostsV2(Pageable, String, List, Boolean, Boolean, List)}를 사용하세요.
    */
   public GetPostResponseDto getPosts(Long page, Long size, String orderColumn, String orderType,
-                                     String searchKeyword, List<Long> searchUserNoList, Long myUserNo) {
+                                     String searchKeyword, List<Long> searchUserNoList,
+                                     Long myUserNo) {
     GetPostVo getPostVo = GetPostVo.builder()
                                    .page(page)
                                    .offset(page * size)
@@ -260,7 +249,7 @@ public class PostFacade {
         post.getComments().stream().filter(comment -> comment.getDelYn() == YesOrNo.N).toList();
     // FIXME 최적화. 추후 페이징 처리할것.
     List<Long> commentCreatedList = comments.stream().map(Comment::getCreatedBy).toList();
-    List<User> userList = userManager.findUsers(commentCreatedList);
+    List<User> userList = userService.findUsers(commentCreatedList);
     Map<Long, User> createdByToUser = new HashMap<>();
     for (User user : userList) {
       createdByToUser.put(user.getId(), user);
@@ -307,17 +296,16 @@ public class PostFacade {
   }
 
   public void likePost(Long userNo, Long postNo) {
-    User user = userManager.getUser(userNo);
+    User user = userService.getUser(userNo);
     Post post = postService.findPost(postNo);
     postService.userLikePost(post, user);
   }
 
   public void likeCancelPost(Long userNo, Long postNo, AbstractUserAuthInfo accessUserAuthInfo) {
-    User user = userManager.getUser(userNo);
+    User user = userService.getUser(userNo);
     Post post = postService.findPost(postNo);
     postService.userCancelLikePost(post, user, accessUserAuthInfo);
   }
-
 
 
   private List<Comment> getComments(Post post) {

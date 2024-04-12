@@ -8,7 +8,7 @@ import com.bside.bside_311.dto.UserSignupRequestDto;
 import com.bside.bside_311.dto.UserUpdateRequestDto;
 import com.bside.bside_311.entity.User;
 import com.bside.bside_311.entity.UserFollow;
-import com.bside.bside_311.service.UserService;
+import com.bside.bside_311.service.UserFacade;
 import com.bside.bside_311.util.JwtUtil;
 import com.bside.bside_311.utils.UserUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,7 +45,7 @@ class UserControllerTest extends ControllerTest {
   private MockMvc mockMvc;
 
   @MockBean
-  private UserService userService;
+  private UserFacade userFacade;
 
   @Autowired
   private ObjectMapper objectMapper;
@@ -150,7 +150,7 @@ class UserControllerTest extends ControllerTest {
                                                                  .id(id)
                                                                  .password(password)
                                                                  .build();
-    given(userService.login(userLoginRequestDto))
+    given(userFacade.login(userLoginRequestDto))
         .willReturn(LoginResponseDto.of("testsuccess"));
     mockMvc.perform(post("/user/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -167,7 +167,7 @@ class UserControllerTest extends ControllerTest {
                                                                  .id(null)
                                                                  .password(password)
                                                                  .build();
-    given(userService.login(userLoginRequestDto))
+    given(userFacade.login(userLoginRequestDto))
         .willReturn(LoginResponseDto.of("testsuccess"));
     mockMvc.perform(post("/user/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -205,7 +205,7 @@ class UserControllerTest extends ControllerTest {
   @Test
   @DisplayName("GET /me success")
   void me() throws Exception {
-    given(userService.getMyInfo(normalUser.getId()))
+    given(userFacade.getMyInfo(normalUser.getId()))
         .willReturn(MyInfoResponseDto.of(normalUser, null, 0L,
             0L));
 
@@ -227,7 +227,7 @@ class UserControllerTest extends ControllerTest {
   @Test
   @DisplayName("유저 팔로우. 성공.")
   void user_follow_success() throws Exception {
-    given(userService.followUser(normalUser.getId(), 2L))
+    given(userFacade.followUser(normalUser.getId(), 2L))
         .willReturn(UserFollow.builder().following(normalUser).followed(User.of(2L))
                               .build());
 
@@ -251,7 +251,7 @@ class UserControllerTest extends ControllerTest {
     //given
     Page<UserResponseDto> pagedResponse =
         new PageImpl<>(List.of(UserResponseDto.of(normalUser, null)));
-    given(userService.getMyFollowingUsers(eq(normalUser.getId()),
+    given(userFacade.getMyFollowingUsers(eq(normalUser.getId()),
         ArgumentMatchers.any(Pageable.class)))
         .willReturn(pagedResponse);
     mockMvc.perform(get("/user//my-following-users")
@@ -266,7 +266,7 @@ class UserControllerTest extends ControllerTest {
     //given
     Page<UserResponseDto> pagedResponse =
         new PageImpl<>(List.of(UserResponseDto.of(normalUser, null)));
-    given(userService.getUsersOfFollowingMe(eq(normalUser.getId()),
+    given(userFacade.getUsersOfFollowingMe(eq(normalUser.getId()),
         ArgumentMatchers.any(Pageable.class)))
         .willReturn(pagedResponse);
     mockMvc.perform(get("/user/users-of-following-me")

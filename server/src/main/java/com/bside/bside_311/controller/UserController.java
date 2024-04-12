@@ -15,7 +15,7 @@ import com.bside.bside_311.dto.common.ResultDto;
 import com.bside.bside_311.entity.Role;
 import com.bside.bside_311.entity.User;
 import com.bside.bside_311.model.UserAuthInfo;
-import com.bside.bside_311.service.UserService;
+import com.bside.bside_311.service.UserFacade;
 import com.bside.bside_311.util.AuthUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -44,7 +44,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/user")
 @Tag(name = "유저", description = "유저 API")
 public class UserController {
-  private final UserService userService;
+  private final UserFacade userFacade;
 
   @Operation(summary = "[o]일반 유저 등록", description = "일반 유저 등록 API")
   @PostMapping("/signup")
@@ -52,7 +52,7 @@ public class UserController {
   public UserSignupResponseDto signup(
       @Valid @RequestBody UserSignupRequestDto userSignupRequestDto) {
     log.info(">>> UserController.signup");
-    return userService.signUp(User.of(userSignupRequestDto, Role.ROLE_USER));
+    return userFacade.signUp(User.of(userSignupRequestDto, Role.ROLE_USER));
   }
 
   @Operation(summary = "[o] 어드민 유저 등록", description = "어드민 유저 등록 API")
@@ -61,7 +61,7 @@ public class UserController {
   public UserSignupResponseDto signupAdmin(
       @Valid @RequestBody UserSignupRequestDto userSignupRequestDto) {
     log.info(">>> UserController.signupAdmin");
-    return userService.signUp(User.of(userSignupRequestDto, Role.ROLE_ADMIN));
+    return userFacade.signUp(User.of(userSignupRequestDto, Role.ROLE_ADMIN));
   }
 
   @Operation(summary = "[o]유저 로그인", description = "유저 로그인 API")
@@ -69,7 +69,7 @@ public class UserController {
   public LoginResponseDto login(@RequestBody @Valid UserLoginRequestDto userLoginRequestDto) {
     log.info(">>> UserController.login");
 
-    return userService.login(userLoginRequestDto);
+    return userFacade.login(userLoginRequestDto);
   }
 
   @Operation(summary = "성인 인증 API(추후)")
@@ -101,7 +101,7 @@ public class UserController {
   @UserRequired
   public void updateUser(@RequestBody @Valid UserUpdateRequestDto userUpdateRequestDto) {
     Long userNo = AuthUtil.getUserNoFromAuthentication();
-    userService.updateUser(userNo, userUpdateRequestDto);
+    userFacade.updateUser(userNo, userUpdateRequestDto);
     log.info(">>> UserController.updateUser");
   }
 
@@ -111,7 +111,7 @@ public class UserController {
   public void changePassword(
       @RequestBody @Valid ChangePasswordRequestDto changePasswordRequestDto) {
     log.info(">>> UserController.changePassword");
-    userService.chagePoassword(changePasswordRequestDto);
+    userFacade.chagePoassword(changePasswordRequestDto);
   }
 
   @Operation(summary = "[o]내 정보 조회", description = "내 정보 조회 API")
@@ -121,7 +121,7 @@ public class UserController {
     Long myUserNo = AuthUtil.getUserNoFromAuthentication();
 
     log.info(">>> UserController.getUserInfo");
-    return userService.getMyInfo(myUserNo);
+    return userFacade.getMyInfo(myUserNo);
   }
 
   @Operation(summary = "[o]내가 팔로잉하는 유저 조회", description = "내가 팔로잉하는 유저 정보 조회 API")
@@ -130,7 +130,7 @@ public class UserController {
   public Page<UserResponseDto> getMyFollowingUsers(Pageable pageable) {
     Long myUserNo = AuthUtil.getUserNoFromAuthentication();
     log.info(">>> UserController.getMyFollowingUsers");
-    return userService.getMyFollowingUsers(myUserNo, pageable);
+    return userFacade.getMyFollowingUsers(myUserNo, pageable);
   }
 
   @Operation(summary = "[o]나를 팔로잉하는 유저 조회", description = "나를 팔로잉하는 유저 조회")
@@ -139,7 +139,7 @@ public class UserController {
   public Page<UserResponseDto> getUsersPopular(Pageable pageable) {
     Long myUserNo = AuthUtil.getUserNoFromAuthentication();
     log.info(">>> UserController.getMyFollowingUsers");
-    return userService.getUsersOfFollowingMe(myUserNo, pageable);
+    return userFacade.getUsersOfFollowingMe(myUserNo, pageable);
   }
 
 
@@ -156,14 +156,14 @@ public class UserController {
       Long size) {
     log.info(">>> UserController.getMyFollowingUsers");
     Long myUserNo = AuthUtil.getUserNoFromAuthentication();
-    return userService.getUsersPopular(page, size, myUserNo);
+    return userFacade.getUsersPopular(page, size, myUserNo);
   }
 
   @Operation(summary = "[o]유저 정보 조회", description = "유저 정보 조회 API")
   @GetMapping("/{userNo}/summary")
   public GetUserInfoResponseDto getUserInfo(@PathVariable("userNo") Long userNo) {
     log.info(">>> UserController.getUserInfo");
-    return userService.getUserInfo(userNo);
+    return userFacade.getUserInfo(userNo);
   }
 
   @Operation(summary = "[o]회원 탈퇴", description = "회원 탈퇴 API")
@@ -171,7 +171,7 @@ public class UserController {
   @UserRequired
   public void withdraw() {
     Long myUserNo = AuthUtil.getUserNoFromAuthentication();
-    userService.withdraw(myUserNo);
+    userFacade.withdraw(myUserNo);
     log.info(">>> UserController.withdrawl");
   }
 
@@ -181,7 +181,7 @@ public class UserController {
   public UserFollowResponseDto followUser(@PathVariable("userNo") Long userNo) {
     log.info(">>> UserController.followUser");
     Long myUserNo = AuthUtil.getUserNoFromAuthentication();
-    return UserFollowResponseDto.of(userService.followUser(myUserNo, userNo));
+    return UserFollowResponseDto.of(userFacade.followUser(myUserNo, userNo));
   }
 
   @Operation(summary = "[o]유저 언팔로우하기", description = "유저 언팔로우하기 API")
@@ -190,7 +190,7 @@ public class UserController {
   public void unfollowUser(@PathVariable("userNo") Long userNo, Authentication authentication) {
     log.info(">>> UserController.unfollowUser");
     Long myUserNo = AuthUtil.getUserNoFromAuthentication();
-    userService.unfollowUser(myUserNo, userNo, UserAuthInfo.of(authentication));
+    userFacade.unfollowUser(myUserNo, userNo, UserAuthInfo.of(authentication));
   }
 
 }

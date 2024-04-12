@@ -1,6 +1,5 @@
 package com.bside.bside_311.service;
 
-import com.bside.bside_311.component.AttachManager;
 import com.bside.bside_311.dto.ImageRequestDto;
 import com.bside.bside_311.dto.UploadImageResultDto;
 import com.bside.bside_311.entity.Attach;
@@ -11,6 +10,7 @@ import com.bside.bside_311.repository.AlcoholRepository;
 import com.bside.bside_311.repository.AttachRepository;
 import com.bside.bside_311.repository.PostRepository;
 import com.bside.bside_311.repository.UserRepository;
+import com.bside.bside_311.service.component.AttachManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

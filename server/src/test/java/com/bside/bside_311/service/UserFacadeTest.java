@@ -22,9 +22,9 @@ import static org.mockito.BDDMockito.given;
 
 @SpringBootTest
 @Transactional
-class UserServiceTest {
+class UserFacadeTest {
   @Autowired
-  private UserService userService;
+  private UserFacade userFacade;
 
   @MockBean
   private UserRepository userRepository;
@@ -39,7 +39,7 @@ class UserServiceTest {
     Page<User> pagedResponse = new PageImpl<>(List.of(User.of(1L)));
     given(userRepository.getMyFollowingUsersPage(eq(1L), any())).willReturn(pagedResponse);
     // when
-    Page<UserResponseDto> myFollowingUsers = userService.getMyFollowingUsers(1L, pageRequest);
+    Page<UserResponseDto> myFollowingUsers = userFacade.getMyFollowingUsers(1L, pageRequest);
     // then
     Assertions.assertThat(myFollowingUsers.getContent().size()).isEqualTo(1);
   }
@@ -54,7 +54,7 @@ class UserServiceTest {
     Page<User> pagedResponse = new PageImpl<>(List.of(User.of(1L)));
     given(userRepository.getUsersOfFollowingMePage(eq(1L), any())).willReturn(pagedResponse);
     // when
-    Page<UserResponseDto> myFollowingUsers = userService.getUsersOfFollowingMe(1L, pageRequest);
+    Page<UserResponseDto> myFollowingUsers = userFacade.getUsersOfFollowingMe(1L, pageRequest);
     // then
     Assertions.assertThat(myFollowingUsers.getContent().size()).isEqualTo(1);
   }

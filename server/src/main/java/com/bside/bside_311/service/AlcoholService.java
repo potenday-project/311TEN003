@@ -1,7 +1,5 @@
 package com.bside.bside_311.service;
 
-import com.bside.bside_311.component.AlcoholManager;
-import com.bside.bside_311.component.AttachManager;
 import com.bside.bside_311.dto.AddAlcoholRequestDto;
 import com.bside.bside_311.dto.AddAlcoholResponseDto;
 import com.bside.bside_311.dto.AlcoholResponseDto;
@@ -25,6 +23,8 @@ import com.bside.bside_311.repository.AlcoholTagRepository;
 import com.bside.bside_311.repository.AlcoholTypeRepository;
 import com.bside.bside_311.repository.AttachRepository;
 import com.bside.bside_311.repository.TagRepository;
+import com.bside.bside_311.service.component.AlcoholManager;
+import com.bside.bside_311.service.component.AttachManager;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
