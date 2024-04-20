@@ -8,14 +8,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class AddAlcoholResponseDto {
-  @Schema(example = "1", description = "술 번호")
-  private Long alcoholNo;
+	@Schema(example = "1", description = "술 번호")
+	private Long alcoholNo;
 
-  private AddAlcoholResponseDto(Long alcoholNo) {
-    this.alcoholNo = alcoholNo;
-  }
+	private AddAlcoholResponseDto(Long alcoholNo) {
+		this.alcoholNo = alcoholNo;
+	}
 
-  public static AddAlcoholResponseDto of(Long alcoholNo) {
-    return new AddAlcoholResponseDto(alcoholNo);
-  }
+	public static AddAlcoholResponseDto of(Long alcoholNo) {
+		return new AddAlcoholResponseDto(alcoholNo);
+	}
 }

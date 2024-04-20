@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class UploadImageResultDto {
-  private String attachUrl;
-  private String publicId;
+	private String attachUrl;
+	private String publicId;
 
-  public static UploadImageResultDto of(String secureUrl, String publicId) {
-    return new UploadImageResultDto(secureUrl, publicId);
-  }
+	public static UploadImageResultDto of(String secureUrl, String publicId) {
+		return new UploadImageResultDto(secureUrl, publicId);
+	}
 }

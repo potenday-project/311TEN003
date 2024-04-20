@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class UserAttachPictureResponseDto {
-  @Schema(example = "1", description = "첨부 번호")
-  private Long attachNo;
+	@Schema(example = "1", description = "첨부 번호")
+	private Long attachNo;
 }

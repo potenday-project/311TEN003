@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 public class ChangePasswordRequestDto {
-  @Schema(example = "1a2s3d4f1!", description = "기존 비밀번호")
-  private String password;
-  @Schema(example = "1a2s3d4f2@", description = "신규 비밀번호")
-  private String newPassword;
+	@Schema(example = "1a2s3d4f1!", description = "기존 비밀번호")
+	private String password;
+	@Schema(example = "1a2s3d4f2@", description = "신규 비밀번호")
+	private String newPassword;
 }

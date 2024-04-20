@@ -13,12 +13,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 public class UserLoginRequestDto {
-  @Schema(example = "apple", description = "아이디")
-  @NotBlank
-  String id;
+	@Schema(example = "apple", description = "아이디")
+	@NotBlank
+	String id;
 
-  @Schema(example = "1a2s3d4f1!", description = "패스워드8~20자 대소문자, 숫자, 특수기호)")
-  @NotBlank
-  String password;
+	@Schema(example = "1a2s3d4f1!", description = "패스워드8~20자 대소문자, 숫자, 특수기호)")
+	@NotBlank
+	String password;
 
 }

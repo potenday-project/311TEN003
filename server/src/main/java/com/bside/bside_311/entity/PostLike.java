@@ -1,5 +1,8 @@
 package com.bside.bside_311.entity;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -13,8 +16,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Getter
@@ -25,23 +26,23 @@ import org.hibernate.annotations.DynamicUpdate;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostLike extends BaseEntity {
-  @Id
-  @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-  @Column(name = "post_like_no")
-  private Long id;
+	@Id
+	@GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
+	@Column(name = "post_like_no")
+	private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_no")
-  private User user;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_no")
+	private User user;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "post_no")
-  private Post post;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "post_no")
+	private Post post;
 
-  public static PostLike of(User user, Post post) {
-    return PostLike.builder()
-                   .user(user)
-                   .post(post)
-                   .build();
-  }
+	public static PostLike of(User user, Post post) {
+		return PostLike.builder()
+			.user(user)
+			.post(post)
+			.build();
+	}
 }

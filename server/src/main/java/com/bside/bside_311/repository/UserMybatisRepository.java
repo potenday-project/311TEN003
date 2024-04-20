@@ -1,13 +1,14 @@
 package com.bside.bside_311.repository;
 
-import com.bside.bside_311.dto.FindUserMvo;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import com.bside.bside_311.dto.FindUserMvo;
 
 @Mapper
 @Repository
 public interface UserMybatisRepository {
-  List<FindUserMvo> getUsers();
+	List<FindUserMvo> getUsers();
 }

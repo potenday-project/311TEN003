@@ -1,19 +1,19 @@
 package com.bside.bside_311.repository;
 
-
-import com.bside.bside_311.entity.User;
-import com.bside.bside_311.entity.YesOrNo;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.bside.bside_311.entity.User;
+import com.bside.bside_311.entity.YesOrNo;
+
 public interface UserRepository extends JpaRepository<User, Long>, UserRepositoryCustom {
-  List<User> findByEmailOrUserIdAndDelYnIs(String email, String userId, YesOrNo delYn);
+	List<User> findByEmailOrUserIdAndDelYnIs(String email, String userId, YesOrNo delYn);
 
-  Optional<User> findByUserIdAndDelYnIs(String id, YesOrNo delYn);
+	Optional<User> findByUserIdAndDelYnIs(String id, YesOrNo delYn);
 
-  Optional<User> findByIdAndDelYnIs(Long userNo, YesOrNo delYn);
+	Optional<User> findByIdAndDelYnIs(Long userNo, YesOrNo delYn);
 
-  List<User> findAllByIdInAndDelYnIs(List<Long> commentCreatedList, YesOrNo n);
+	List<User> findAllByIdInAndDelYnIs(List<Long> commentCreatedList, YesOrNo n);
 }

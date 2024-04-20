@@ -17,41 +17,41 @@ import lombok.ToString;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"id","username","age"})
+@ToString(of = {"id", "username", "age"})
 public class TestMember {
 
-  @Id
-  @GeneratedValue
-  @Column(name = "member_id")
-  private Long id;
+	@Id
+	@GeneratedValue
+	@Column(name = "member_id")
+	private Long id;
 
-  private String username;
+	private String username;
 
-  private int age;
+	private int age;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "team_id")
-  private TestTeam testTeam;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "team_id")
+	private TestTeam testTeam;
 
-  public TestMember(String username) {
-    this(username,0);
-  }
+	public TestMember(String username) {
+		this(username, 0);
+	}
 
-  public TestMember(String username, int age) {
-    this(username, age,null);
-  }
+	public TestMember(String username, int age) {
+		this(username, age, null);
+	}
 
-  public TestMember(String username, int age, TestTeam testTeam) {
-    this.username = username;
-    this.age = age;
+	public TestMember(String username, int age, TestTeam testTeam) {
+		this.username = username;
+		this.age = age;
 
-    if (testTeam != null) {
-      changeTeam(testTeam);
-    }
-  }
+		if (testTeam != null) {
+			changeTeam(testTeam);
+		}
+	}
 
-  public void changeTeam(TestTeam testTeam) {
-    this.testTeam = testTeam;
-    testTeam.getTestMembers().add(this);
-  }
+	public void changeTeam(TestTeam testTeam) {
+		this.testTeam = testTeam;
+		testTeam.getTestMembers().add(this);
+	}
 }

@@ -2,7 +2,8 @@
 
 # 개발 환경 설정.
 
-* naver intellij foramatter 설정.
+* naver intellij foramatter 설정. -> 코드 가독성 업.
+* naver checkstyle-rule 설정. -> 코드 품질 업.
 
 # 로컬 개발시 API 명세 링크.
 

@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 public class AddCommentRequestDto {
-  @Schema(example = "댓글 내용", description = "댓글 내용")
-  private String commentContent;
+	@Schema(example = "댓글 내용", description = "댓글 내용")
+	private String commentContent;
 }

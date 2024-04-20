@@ -6,5 +6,5 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class EditCommentRequestDto extends AddCommentRequestDto{
+public class EditCommentRequestDto extends AddCommentRequestDto {
 }

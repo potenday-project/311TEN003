@@ -1,6 +1,7 @@
 package com.bside.bside_311.dto;
 
 import com.bside.bside_311.entity.AlcoholType;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,13 +11,13 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 public class AlcoholTypeResponseDto {
-  private Long alcoholTypeNo;
-  private String name;
-  private String description;
-  private Long displayOrder;
+	private Long alcoholTypeNo;
+	private String name;
+	private String description;
+	private Long displayOrder;
 
-  public static AlcoholTypeResponseDto of(AlcoholType alcoholType) {
-    return new AlcoholTypeResponseDto(alcoholType.getId(), alcoholType.getName(),
-        alcoholType.getDescription(), alcoholType.getDisplayOrder());
-  }
+	public static AlcoholTypeResponseDto of(AlcoholType alcoholType) {
+		return new AlcoholTypeResponseDto(alcoholType.getId(), alcoholType.getName(),
+			alcoholType.getDescription(), alcoholType.getDisplayOrder());
+	}
 }

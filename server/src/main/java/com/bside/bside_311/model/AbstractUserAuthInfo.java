@@ -1,11 +1,11 @@
 package com.bside.bside_311.model;
 
-import com.bside.bside_311.entity.Role;
-
 import java.util.Collection;
 
-public interface AbstractUserAuthInfo {
-  long getId();
+import com.bside.bside_311.entity.Role;
 
-  Collection<Role> getAuthorities();
+public interface AbstractUserAuthInfo {
+	long getId();
+
+	Collection<Role> getAuthorities();
 }

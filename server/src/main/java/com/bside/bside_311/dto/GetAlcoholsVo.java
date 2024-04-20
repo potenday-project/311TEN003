@@ -7,22 +7,22 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GetAlcoholsVo {
-  Long page;
-  Long size;
-  Long offset;
+	Long page;
+	Long size;
+	Long offset;
 
-  String orderColumn;
-  String orderType;
-  String searchKeyword;
+	String orderColumn;
+	String orderType;
+	String searchKeyword;
 
-  @Builder
-  public GetAlcoholsVo(Long page, Long size, Long offset, String orderColumn,
-                       String orderType, String searchKeyword) {
-    this.page = page;
-    this.size = size;
-    this.offset = offset;
-    this.orderColumn = orderColumn;
-    this.orderType = orderType;
-    this.searchKeyword = searchKeyword;
-  }
+	@Builder
+	public GetAlcoholsVo(Long page, Long size, Long offset, String orderColumn,
+		String orderType, String searchKeyword) {
+		this.page = page;
+		this.size = size;
+		this.offset = offset;
+		this.orderColumn = orderColumn;
+		this.orderType = orderType;
+		this.searchKeyword = searchKeyword;
+	}
 }

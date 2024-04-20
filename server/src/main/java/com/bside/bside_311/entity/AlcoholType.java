@@ -1,5 +1,9 @@
 package com.bside.bside_311.entity;
 
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,9 +14,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Getter
@@ -23,15 +24,15 @@ import org.hibernate.annotations.DynamicUpdate;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AlcoholType extends BaseEntity {
-  @Id
-  @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-  @Column(name = "alcohol_type_no")
-  private Long id;
+	@Id
+	@GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
+	@Column(name = "alcohol_type_no")
+	private Long id;
 
-  private String description;
+	private String description;
 
-  @Column(unique = true)
-  private String name;
-  @ColumnDefault("1")
-  private Long displayOrder;
+	@Column(unique = true)
+	private String name;
+	@ColumnDefault("1")
+	private Long displayOrder;
 }

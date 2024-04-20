@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 @Mapper
 @Repository
 public interface TestRepository {
-//  void insertMember(TestMemberVo memberVo);
-    void insertTeam(TestTeamVo teamVo);
+	//  void insertMember(TestMemberVo memberVo);
+	void insertTeam(TestTeamVo teamVo);
 }

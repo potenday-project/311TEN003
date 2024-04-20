@@ -1,68 +1,65 @@
 package com.bside.bside_311.service.component;
 
-
 interface SomethingWithCallback {
 
-  void doSomething();
+	void doSomething();
 
-  void call();
+	void call();
 
 }
-
 
 class WrappedObject implements SomethingWithCallback {
 
-  private final SomeService service;
+	private final SomeService service;
 
-  WrappedObject(SomeService service) {
-    this.service = service;
-  }
+	WrappedObject(SomeService service) {
+		this.service = service;
+	}
 
-  @Override
-  public void doSomething() {
-    service.performAsync(this);
-  }
+	@Override
+	public void doSomething() {
+		service.performAsync(this);
+	}
 
-  @Override
-  public void call() {
-    System.out.println("WrappedObject callback!");
-  }
+	@Override
+	public void call() {
+		System.out.println("WrappedObject callback!");
+	}
 }
-
 
 class Wrapper implements SomethingWithCallback {
 
-  private final WrappedObject wrappedObject;
+	private final WrappedObject wrappedObject;
 
-  Wrapper(WrappedObject wrappedObject) {
-    this.wrappedObject = wrappedObject;
-  }
+	Wrapper(WrappedObject wrappedObject) {
+		this.wrappedObject = wrappedObject;
+	}
 
-  @Override
-  public void doSomething() {
-    wrappedObject.doSomething();
-  }
+	@Override
+	public void doSomething() {
+		wrappedObject.doSomething();
+	}
 
-  void doSomethingElse() {
-    System.out.println("We can do everything the wrapped object can, and more!");
-  }
+	void doSomethingElse() {
+		System.out.println("We can do everything the wrapped object can, and more!");
+	}
 
-  @Override
-  public void call() {
-    System.out.println("Wrapper callback!");
-  }
+	@Override
+	public void call() {
+		System.out.println("Wrapper callback!");
+	}
 }
 
 final class SomeService {
 
-  void performAsync(SomethingWithCallback callback) {
-    new Thread(() -> {
-      perform();
-      callback.call();
-    }).start();
-  }
+	void performAsync(SomethingWithCallback callback) {
+		new Thread(() -> {
+			perform();
+			callback.call();
+		}).start();
+	}
 
-  void perform() {
-    System.out.println("Service is being performed.");
-  }
+	void perform() {
+		System.out.println("Service is being performed.");
+	}
 }
