@@ -13,11 +13,10 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: test # 초기비밀번호
       TZ: Asia/Seoul
-#    volumes:
-#      - db-data:/var/lib/mysql # 디렉토리 마운트 설정
-#
-#volumes:
-#  db-data:
+    volumes:
+      - db-data:/var/lib/mysql # 디렉토리 마운트 설정
+volumes:
+  db-data:
 
 # 아래 설정 이용.
 #  docker run --platform linux/amd64 -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root --name mysql_container mysql

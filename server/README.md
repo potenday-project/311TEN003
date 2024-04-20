@@ -1,6 +1,14 @@
 # bside_311
 
+# 개발 환경 설정.
+
+* naver intellij foramatter 설정.
+
+# 로컬 개발시 API 명세 링크.
+
 * http://localhost:8080/swagger-ui/index.html
+
+# 테스트.
 
 * http://localhost:8080/test
 
