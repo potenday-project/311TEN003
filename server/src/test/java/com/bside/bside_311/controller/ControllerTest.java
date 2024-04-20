@@ -22,19 +22,12 @@ import com.bside.bside_311.util.JwtUtil;
 public abstract class ControllerTest {
 	protected static final String USER_ID = "UserId";
 	protected static final String ADMIN_ID = "AdminId";
-	//  @SpyBean
-	//  protected AccessTokenGenerator accessTokenGenerator;
-	//  @MockBean
-	//  protected AuthUserDao authUserDao;
 	public User normalUser;
 	@SpyBean
 	protected JwtUtil jwtUtil;
 	protected String userAccessToken;
 	protected String adminAccessToken;
 
-	//  @SpyBean
-	//  private AccessTokenService accessTokenService;
-	//
 	@BeforeEach
 	void setUpAccessTokenAndUserDetailsDaoForAuthentication() {
 		normalUser = User.builder()

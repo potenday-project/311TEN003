@@ -31,8 +31,6 @@ import lombok.extern.slf4j.Slf4j;
 public class JwtUtil {
 	public static final String AUTHORITIES_KEY = "authorities";
 	public static final String NORMAL_TOKEN = "NORMAL_TOKEN";
-	public static final String SOCIAL_TOKEN = "SOCIAL_TOKEN";
-	public static final String REMEMBER_TOKEN = "REMEMBER_TOKEN";
 	public static final String BEARER_PREFIX = "Bearer ";
 	public static final long normalValidity = 1000 * 36000; // 10시간
 	public final String secretKey = "bside311secret";

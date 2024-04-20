@@ -1,4 +1,4 @@
-package com.bside.bside_311.service.component;
+package com.bside.bside_311.exercise;
 
 public class Test {
 	public static void main(String[] args) {

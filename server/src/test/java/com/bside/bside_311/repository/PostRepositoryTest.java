@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 
+import com.bside.bside_311.custom.annotations.IntegrationTest;
 import com.bside.bside_311.entity.Post;
 import com.bside.bside_311.entity.PostLike;
 import com.bside.bside_311.entity.User;
@@ -19,7 +20,8 @@ import jakarta.persistence.PersistenceContext;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-	//@Rollback(false)
+//@Rollback(false)
+@IntegrationTest
 class PostRepositoryTest {
 	@Autowired
 	UserRepository userRepository;

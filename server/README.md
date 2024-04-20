@@ -12,6 +12,11 @@
 # 테스트.
 
 * http://localhost:8080/test
+* test 보고서 확인하기.
+    1. jacocoTestReport task 실행.
+    2. 모든 테스트 성공 확인.
+    3. server/build/jacocoHtml/index.html 이 경로에 있는 html 파일을 브라우저로 열기.
+* 현재 커버리지 : 32% -> 60퍼까지 끌어내자.
 
 # 수동 배포 방법 정리.(개선 필요.)
 

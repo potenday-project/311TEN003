@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
+import com.bside.bside_311.custom.annotations.IntegrationTest;
 import com.bside.bside_311.dto.UserIncludeFollowCountDto;
 import com.bside.bside_311.entity.User;
 import com.bside.bside_311.entity.UserFollow;
@@ -24,7 +25,8 @@ import jakarta.persistence.PersistenceContext;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-	//@Rollback(false)
+//@Rollback(false)
+@IntegrationTest
 class UserRepositoryTest {
 	@Autowired
 	UserRepository userRepository;

@@ -7,11 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import com.bside.bside_311.custom.annotations.IntegrationTest;
 import com.bside.bside_311.entity.UserFollow;
 import com.bside.bside_311.entity.YesOrNo;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@IntegrationTest
 class UserFollowRepositoryTest {
 	@Autowired
 	private UserFollowRepository userFollowRepository;

@@ -2,7 +2,6 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.1.5'
     id 'io.spring.dependency-management' version '1.1.3'
-//	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
     id 'jacoco'
     id 'org.jetbrains.kotlin.jvm' version '1.7.10'
 }
@@ -35,15 +34,11 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
-    // https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui
-//	implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.7.0'
-
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2")
     // Spring Security
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
-// https://mvnrepository.com/artifact/com.cloudinary/cloudinary-http44
     implementation group: 'com.cloudinary', name: 'cloudinary-http44', version: '1.35.0'
 
     implementation 'io.hypersistence:tsid:1.1.0'
@@ -135,24 +130,8 @@ jacocoTestCoverageVerification {
     }
 }
 
-//def querydslDir = "$buildDir/generated/querydsl"
-//
-//querydsl {
-//	jpa = true
-//	querydslSourcesDir = querydslDir
-//}
-//sourceSets {
-//	main.java.srcDir querydslDir
-//}
-//configurations {
-//	querydsl.extendsFrom compileClasspath
-//}
-//compileQuerydsl {
-//	options.annotationProcessorPath = configurations.querydsl
-//}
 jar {
     enabled = false
-//    archiveClassifier = '' // Classifier 제거
 }
 compileKotlin {
     kotlinOptions {

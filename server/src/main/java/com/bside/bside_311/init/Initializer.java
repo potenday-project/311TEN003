@@ -310,13 +310,6 @@ public class Initializer {
 
 	public MultipartFile makeMultiPartFileByLocalFile(String fileName, String classPathFolderPath)
 		throws IOException {
-		//    File file = new File("C:\\temp\\test.xlsx");
-		//    DiskFileItem fileItem = new DiskFileItem("file", Files.probeContentType(file.toPath()), false, file.getName(), (int) file.length() , file.getParentFile());    		       InputStream
-		//                                                                                                                                                                                  input = new FileInputStream(file);
-		//    OutputStream os = fileItem.getOutputStream();
-		//    IOUtils.copy(input, os);
-		//    MultipartFile multipartFile = new MockMultipartFile("1.png", new FileInputStream(new File(filePath)));
-
 		MultipartFile multipartFile = new MockMultipartFile(fileName, new FileInputStream(
 			convertInputStreamToFile(
 				Initializer.class.getResourceAsStream(classPathFolderPath + "/" + fileName))));

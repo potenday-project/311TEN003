@@ -41,7 +41,8 @@ public class ImageStorage {
 		}
 	}
 
-	//  https://console.cloudinary.com/pm/c-e722349e52038395e3e661e2cf4c78/developer-dashboard
+	// reference
+	//  https://console.cloudinary.com/
 	//  https://github.com/cloudinary/cloudinary_java/blob/master/samples/photo_album_gae/src/main/java/cloudinary/models/PhotoUpload.java#L6
 	//  https://cloudinary.com/documentation/image_upload_api_reference#upload_examples
 	//  https://cloudinary.com/documentation/java_asset_administration#upload_api_example_delete_a_single_asset

@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
+import com.bside.bside_311.custom.annotations.IntegrationTest;
 import com.bside.bside_311.dto.AlcoholSearchCondition;
 import com.bside.bside_311.entity.Alcohol;
 import com.bside.bside_311.entity.AlcoholType;
@@ -20,6 +21,7 @@ import jakarta.persistence.PersistenceContext;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@IntegrationTest
 class AlcoholRepositoryTest {
 	@Autowired
 	AlcoholTypeRepository alcoholTypeRepository;

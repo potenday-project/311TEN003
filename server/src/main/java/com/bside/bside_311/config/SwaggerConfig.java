@@ -19,21 +19,6 @@ public class SwaggerConfig {
 
 	@Value("${spring.application.name:-}")
 	private String serviceId;
-	//
-	//    @Value("${spring.application.version:}")
-	//    private String serviceVersion;
-	//
-	//    @Value("${project.build.version:-}")
-	//    private String projectVersion;
-	//
-	//    @Value("${project.build.timestamp:-}")
-	//    private String projectTimestamp;
-	//
-	//    @Value("${ezpmp.build.version:-}")
-	//    private String ezpmpVersion;
-	//
-	//    @Value("${ezpmp.build.timestamp:-}")
-	//    private String ezpmpTimestamp;
 
 	@Bean
 	public GroupedOpenApi testApi() {

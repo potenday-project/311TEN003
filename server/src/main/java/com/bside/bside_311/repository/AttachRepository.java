@@ -12,7 +12,6 @@ import com.bside.bside_311.entity.YesOrNo;
 public interface AttachRepository extends JpaRepository<Attach, Long> {
 	Optional<Attach> findByIdAndDelYnIs(Long attachNo, YesOrNo delYn);
 
-	//  Long<Attach> findByIdAndDelYnIs(Long attachNo, YesOrNo delYn);
 	List<Attach> findByRefNoAndAttachTypeIsAndDelYnIs(Long refNo, AttachType attachType,
 		YesOrNo delYn);
 
