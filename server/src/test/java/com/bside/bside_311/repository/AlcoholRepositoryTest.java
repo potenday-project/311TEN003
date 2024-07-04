@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 
 import com.bside.bside_311.custom.annotations.IntegrationTest;
 import com.bside.bside_311.dto.AlcoholSearchCondition;
@@ -90,5 +91,15 @@ class AlcoholRepositoryTest {
 
 		return alcoholTypeList;
 	}
+
+  @Test
+  void spring_data_jpa_spec_test(){
+    //given
+    //when
+    Specification<Alcohol> hasName = (root, query, cb) -> cb.equal(root.get("name"), "소주");
+    List<Alcohol> all = alcoholRepository.findAll(hasName);
+    System.out.println("all = " + all);
+    //then
+  }
 
 }
