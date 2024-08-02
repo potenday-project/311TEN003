@@ -1,0 +1,88 @@
+@startuml
+
+actor 첨부
+actor 태그
+actor 게시글
+actor 관리자
+actor 유저
+
+  usecase "[o]유저 언팔로우하기" as UC_0
+  usecase "[o]일반 유저 등록" as UC_1
+  usecase "[o] 어드민 유저 등록" as UC_2
+  usecase "성인 인증 API(추후)" as UC_3
+  usecase "임시 비밀번호 전달 API(추후)" as UC_4
+  usecase "[o]유저 로그인" as UC_5
+  usecase "[o]유저 팔로우하기" as UC_6
+  usecase "이메일 인증 API(추후)" as UC_7
+  usecase "이메일 인증코드 확인API(추후)" as UC_8
+  usecase "[o]게시글 목록 조회(v1)" as UC_9
+  usecase "[o]게시글 등록 " as UC_10
+  usecase "[o]인용 등록 " as UC_11
+  usecase "[o]게시글 댓글 조회" as UC_12
+  usecase "[o]게시글 댓글 등록" as UC_13
+  usecase "[o]게시글 좋아요" as UC_14
+  usecase "[o]게시글 좋아요 취소" as UC_15
+  usecase "[o]사진 첨부" as UC_16
+  usecase "[o]술 목록 조회" as UC_17
+  usecase "[o]술 등록 " as UC_18
+  usecase "[o]회원 탈퇴" as UC_19
+  usecase "[o]유저 정보 변경" as UC_20
+  usecase "[o]비밀번호 변경" as UC_21
+  usecase "[o]게시글 상세 조회" as UC_22
+  usecase "[o]게시글 삭제" as UC_23
+  usecase "[o]게시글 수정" as UC_24
+  usecase "[o]게시글 댓글 삭제" as UC_25
+  usecase "[o]게시글 댓글 수정" as UC_26
+  usecase "[o]술 상세 조회" as UC_27
+  usecase "[o]술 삭제" as UC_28
+  usecase "[o]술 수정" as UC_29
+  usecase "[o]유저 정보 조회" as UC_30
+  usecase "[o]나를 팔로잉하는 유저 조회" as UC_31
+  usecase "[o]인기순 유저 조회" as UC_32
+  usecase "[o]내가 팔로잉하는 유저 조회" as UC_33
+  usecase "[o]내 정보 조회" as UC_34
+  usecase "[o]태그 조회" as UC_35
+  usecase "[o]게시글 목록 조회(v2)" as UC_36
+  usecase "[o]인용 복수 조회" as UC_37
+  usecase "[o] 인기 게시글 목록 조회" as UC_38
+  usecase "[o]술 목록 조회v2(성능 최적화)" as UC_39
+  usecase "[o]술 종류 조회 " as UC_40
+  usecase "술타입 MAP 조회" as UC_41
+  usecase "[o]인용 삭제" as UC_42
+  usecase "[o]사진 삭제" as UC_43
+
+  유저 --> UC_0
+  유저 --> UC_1
+  유저 --> UC_2
+  유저 --> UC_5
+  유저 --> UC_6
+  게시글 --> UC_9
+  게시글 --> UC_10
+  게시글 --> UC_12
+  게시글 --> UC_13
+  게시글 --> UC_14
+  게시글 --> UC_15
+  첨부 --> UC_16
+  술 --> UC_17
+  술 --> UC_18
+  유저 --> UC_20
+  게시글 --> UC_22
+  게시글 --> UC_23
+  게시글 --> UC_24
+  게시글 --> UC_25
+  게시글 --> UC_26
+  술 --> UC_27
+  술 --> UC_28
+  술 --> UC_29
+  유저 --> UC_30
+  유저 --> UC_31
+  유저 --> UC_32
+  유저 --> UC_33
+  태그 --> UC_35
+  게시글 --> UC_36
+  게시글 --> UC_38
+  술 --> UC_39
+  술 --> UC_40
+  술 --> UC_41
+
+@enduml
